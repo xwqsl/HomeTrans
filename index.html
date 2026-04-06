@@ -264,6 +264,39 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .chart-empty { text-align: center; padding: 40px 20px; color: var(--gray-400); }
 .chart-empty p { margin-top: 8px; }
 
+/* Summary Panels (Page Progress & Spec Test) */
+.summary-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.summary-panel {
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  border: 1px solid var(--gray-100); overflow: hidden;
+}
+.summary-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 12px; border-bottom: 1px solid var(--gray-100);
+}
+.summary-panel-header h3 { font-size: 14px; color: var(--gray-800); display: flex; align-items: center; gap: 8px; }
+.summary-panel-header .panel-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+}
+.summary-panel-body { max-height: 360px; overflow-y: auto; }
+.summary-table { width: 100%; border-collapse: collapse; }
+.summary-table th {
+  text-align: left; padding: 8px 16px; background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200); font-size: 11px;
+  color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+  position: sticky; top: 0; z-index: 1;
+}
+.summary-table td { padding: 8px 16px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+.summary-table tr:hover td { background: var(--gray-50); }
+.summary-table tbody tr { cursor: pointer; transition: background .1s; }
+.summary-table tbody tr:active td { background: var(--primary-light); }
+.summary-table td:first-child { font-weight: 500; color: var(--gray-800); }
+.summary-num { text-align: center; font-variant-numeric: tabular-nums; }
+.summary-num-zero { color: var(--gray-300); }
+.summary-num-active { color: var(--primary); font-weight: 600; }
+.summary-num-success { color: var(--success); font-weight: 600; }
+
 /* Snapshot Modal */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100;
@@ -411,6 +444,34 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
       <div class="card-progress"><div class="card-progress-bar card-progress-test" id="testBar" style="width:0%"></div></div>
       <div class="card-detail" id="testDetail"></div>
       <div class="card-detail" id="testToken"><span>Token消耗: <strong>-</strong></span></div>
+    </div>
+  </div>
+
+  <!-- Summary Panels: Page Progress & Spec Test -->
+  <div class="summary-panels">
+    <div class="summary-panel">
+      <div class="summary-panel-header">
+        <h3>&#x1F4C4; 页面功能完成情况</h3>
+        <span class="panel-badge" id="pageSummaryBadge" style="background:var(--primary-light);color:var(--primary)">0 页面</span>
+      </div>
+      <div class="summary-panel-body">
+        <table class="summary-table" id="pageSummaryTable">
+          <thead><tr><th>页面</th><th class="summary-num">组件功能点数</th><th class="summary-num">已分析数</th><th class="summary-num">已开发数</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="summary-panel">
+      <div class="summary-panel-header">
+        <h3>&#x1F9EA; 功能测试信息</h3>
+        <span class="panel-badge" id="specTestSummaryBadge" style="background:var(--success-bg);color:#065f46">0 Spec</span>
+      </div>
+      <div class="summary-panel-body">
+        <table class="summary-table" id="specTestSummaryTable">
+          <thead><tr><th>Spec</th><th class="summary-num">测试用例数</th><th class="summary-num">通过用例数</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -1338,41 +1399,74 @@ function update() {
     allPageCoverage[pName] = { total, covered, coveringSpecs: Array.from(pageSpecSet) };
   }
 
-  renderAnalyzedPanel(SPECS, allPageCoverage);
+  renderAnalyzedPanel(SPECS, allPageCoverage, selIds);
   renderDevelopedPanel(sel);
   renderTestedPanel(sel, selTests);
+  renderSummaryPanels();
 }
 
 // ==================== PANELS ====================
-function renderAnalyzedPanel(specs, pageCoverage) {
+function renderAnalyzedPanel(specs, pageCoverage, developedIds) {
   const panel = document.getElementById('panelAnalyzed');
   if (Object.keys(PAGES).length === 0) {
     panel.innerHTML = '<div class="empty-state"><p>该项目无页面数据</p></div>';
     return;
   }
   let html = `<table class="page-table">
-    <thead><tr><th style="width:30px"></th><th>页面</th><th>UI组件数</th><th>覆盖状态</th><th>覆盖Spec</th></tr></thead><tbody>`;
+    <thead><tr><th style="width:30px"></th><th>页面</th><th>UI组件数</th><th>分析覆盖</th><th>开发进度</th><th>覆盖Spec</th></tr></thead><tbody>`;
   for (const [pName, pData] of Object.entries(PAGES)) {
     const cv = pageCoverage[pName];
-    const pct = cv.total > 0 ? Math.round(cv.covered / cv.total * 100) : 0;
-    const color = pct === 100 ? 'var(--success)' : pct > 0 ? 'var(--warning)' : 'var(--danger)';
+    const analyzedPct = cv.total > 0 ? Math.round(cv.covered / cv.total * 100) : 0;
+    const analyzedColor = analyzedPct === 100 ? 'var(--success)' : analyzedPct > 0 ? 'var(--warning)' : 'var(--danger)';
+
+    // Compute developed component count for this page
+    let developedComp = 0;
+    for (const c of pData.components) {
+      const cSpecs = getComponentSpecs(pName, c.id);
+      if (cSpecs.some(id => developedIds.has(id))) developedComp++;
+    }
+    const devPct = cv.total > 0 ? Math.round(developedComp / cv.total * 100) : 0;
+    const devColor = devPct === 100 ? 'var(--success)' : devPct > 0 ? '#3b82f6' : 'var(--gray-300)';
+
+    // Page-level status tag
+    let pageStatusTag = '';
+    if (devPct === 100) pageStatusTag = '<span class="tag tag-pass" style="margin-left:8px;font-size:11px">已开发</span>';
+    else if (devPct > 0) pageStatusTag = '<span class="tag" style="margin-left:8px;font-size:11px;background:#dbeafe;color:#1d4ed8">开发中</span>';
+
+    // Spec badges: green for developed, blue for analyzed-only
+    const specBadges = cv.coveringSpecs.length > 0
+      ? cv.coveringSpecs.map(s => {
+          const isDev = developedIds.has(s);
+          return `<span class="spec-badge ${isDev ? 'badge-developed' : 'badge-analyzed'}" style="margin-right:4px">${s}</span>`;
+        }).join('')
+      : '<span class="tag tag-na">未覆盖</span>';
+
     html += `<tr class="page-row" onclick="togglePageDetail(this, '${pName}')">
       <td><span class="expand-icon">&#x25B6;</span></td>
-      <td><strong>${pData.fullName}</strong></td>
+      <td><strong>${pData.fullName}</strong>${pageStatusTag}</td>
       <td>${cv.total}</td>
-      <td><div class="mini-progress"><div class="mini-bar"><div class="mini-bar-fill" style="width:${pct}%;background:${color}"></div></div><span class="mini-pct" style="color:${color}">${pct}%</span></div></td>
-      <td>${cv.coveringSpecs.length > 0 ? cv.coveringSpecs.map(s=>`<span class="spec-badge badge-analyzed" style="margin-right:4px">${s}</span>`).join('') : '<span class="tag tag-na">未覆盖</span>'}</td>
+      <td><div class="mini-progress"><div class="mini-bar"><div class="mini-bar-fill" style="width:${analyzedPct}%;background:${analyzedColor}"></div></div><span class="mini-pct" style="color:${analyzedColor}">${analyzedPct}%</span></div></td>
+      <td><div class="mini-progress"><div class="mini-bar"><div class="mini-bar-fill" style="width:${devPct}%;background:${devColor}"></div></div><span class="mini-pct" style="color:${devColor}">${devPct}%</span></div></td>
+      <td>${specBadges}</td>
     </tr>`;
-    html += `<tr class="page-detail-row" id="detail-analyzed-${pName}"><td colspan="5"><div class="detail-inner">
-      <table><thead><tr><th>组件ID</th><th>类型</th><th>功能描述</th><th>覆盖Spec</th></tr></thead><tbody>`;
+    html += `<tr class="page-detail-row" id="detail-analyzed-${pName}"><td colspan="6"><div class="detail-inner">
+      <table><thead><tr><th>组件ID</th><th>类型</th><th>功能描述</th><th>状态</th><th>覆盖Spec</th></tr></thead><tbody>`;
     for (const c of pData.components) {
       const compSpecs = getComponentSpecs(pName, c.id);
       if (compSpecs.length > 0) {
+        const hasDevSpec = compSpecs.some(id => developedIds.has(id));
+        const statusTag = hasDevSpec
+          ? '<span class="tag tag-pass" style="font-size:11px">已开发</span>'
+          : '<span class="tag" style="font-size:11px;background:var(--primary-light);color:var(--primary)">已分析</span>';
+        const badges = compSpecs.map(s => {
+          const isDev = developedIds.has(s);
+          return `<span class="spec-badge ${isDev ? 'badge-developed' : 'badge-analyzed'}" style="margin-right:3px">${s}</span>`;
+        }).join('');
         html += `<tr><td>${c.id}</td><td><span class="tag" style="background:var(--gray-100);color:var(--gray-600)">${c.type}</span></td><td>${c.desc}</td>
-          <td>${compSpecs.map(s=>'<span class="spec-badge badge-analyzed" style="margin-right:3px">'+s+'</span>').join('')}</td></tr>`;
+          <td>${statusTag}</td><td>${badges}</td></tr>`;
       } else {
-        html += `<tr><td>${c.id}</td><td><span class="tag" style="background:var(--gray-100);color:var(--gray-600)">${c.type}</span></td><td>${c.desc}</td>
-          <td><span class="status-dot dot-gray"></span>未覆盖</td></tr>`;
+        html += `<tr style="opacity:.55"><td>${c.id}</td><td><span class="tag" style="background:var(--gray-100);color:var(--gray-600)">${c.type}</span></td><td>${c.desc}</td>
+          <td><span class="tag tag-na" style="font-size:11px">未覆盖</span></td><td><span class="status-dot dot-gray"></span>-</td></tr>`;
       }
     }
     html += '</tbody></table></div></td></tr>';
@@ -1450,6 +1544,116 @@ function renderTestedPanel(specs, tests) {
   }
   html += '</tbody></table>';
   panel.innerHTML = html;
+}
+
+// ==================== SUMMARY PANELS ====================
+function renderSummaryPanels() {
+  renderPageSummaryPanel();
+  renderSpecTestSummaryPanel();
+}
+
+function renderPageSummaryPanel() {
+  const tbody = document.querySelector('#pageSummaryTable tbody');
+  const badge = document.getElementById('pageSummaryBadge');
+  const pageNames = Object.keys(PAGES);
+  badge.textContent = pageNames.length + ' 页面';
+
+  if (pageNames.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px">暂无页面数据</td></tr>';
+    return;
+  }
+
+  const selIds = new Set(SPECS.filter(s => selectedSpecs.has(s.id)).map(s => s.id));
+
+  let html = '';
+  for (const pName of pageNames) {
+    const pData = PAGES[pName];
+    const totalComponents = pData.components.length;
+
+    // 已分析数: components that have at least one spec covering them (any spec, not just selected)
+    let analyzedCount = 0;
+    for (const c of pData.components) {
+      const cSpecs = getComponentSpecs(pName, c.id);
+      if (cSpecs.length > 0) analyzedCount++;
+    }
+
+    // 已开发数: components that have at least one selected/developed spec covering them
+    let developedCount = 0;
+    for (const c of pData.components) {
+      const cSpecs = getComponentSpecs(pName, c.id);
+      if (cSpecs.some(id => selIds.has(id))) developedCount++;
+    }
+
+    const numClass = (val) => val === 0 ? 'summary-num summary-num-zero' : 'summary-num summary-num-active';
+    const devClass = (val) => val === 0 ? 'summary-num summary-num-zero' : 'summary-num summary-num-success';
+    html += `<tr style="cursor:pointer" onclick="jumpToAnalyzedPage('${pName}')">
+      <td>${pData.fullName}</td>
+      <td class="summary-num">${totalComponents}</td>
+      <td class="${numClass(analyzedCount)}">${analyzedCount}</td>
+      <td class="${devClass(developedCount)}">${developedCount}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function renderSpecTestSummaryPanel() {
+  const tbody = document.querySelector('#specTestSummaryTable tbody');
+  const badge = document.getElementById('specTestSummaryBadge');
+  badge.textContent = SPECS.length + ' Spec';
+
+  if (SPECS.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--gray-400);padding:24px">暂无 Spec 数据</td></tr>';
+    return;
+  }
+
+  let html = '';
+  for (const s of SPECS) {
+    const specTests = TESTS.filter(t => t.spec === s.id);
+    const totalTests = specTests.length;
+    const passedTests = specTests.filter(t => t.status === 'success').length;
+
+    const totalClass = totalTests === 0 ? 'summary-num summary-num-zero' : 'summary-num summary-num-active';
+    const passClass = totalTests === 0 ? 'summary-num summary-num-zero' : (passedTests === totalTests ? 'summary-num summary-num-success' : 'summary-num summary-num-active');
+    html += `<tr style="cursor:pointer" onclick="jumpToTestedSpec('${s.id}')">
+      <td><span style="color:var(--primary);font-weight:600;margin-right:6px">${s.id}</span>${s.title}</td>
+      <td class="${totalClass}">${totalTests || '-'}</td>
+      <td class="${passClass}">${totalTests > 0 ? passedTests : '-'}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function jumpToAnalyzedPage(pageName) {
+  switchTab('analyzed');
+  // Collapse all, then expand the target row
+  const panel = document.getElementById('panelAnalyzed');
+  panel.querySelectorAll('.page-row.expanded').forEach(r => r.classList.remove('expanded'));
+  panel.querySelectorAll('.page-detail-row.show').forEach(r => r.classList.remove('show'));
+  const detailRow = document.getElementById('detail-analyzed-' + pageName);
+  if (detailRow) {
+    const pageRow = detailRow.previousElementSibling;
+    if (pageRow) {
+      pageRow.classList.add('expanded');
+      detailRow.classList.add('show');
+      setTimeout(() => pageRow.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+    }
+  }
+}
+
+function jumpToTestedSpec(specId) {
+  switchTab('tested');
+  const panel = document.getElementById('panelTested');
+  panel.querySelectorAll('.page-row.expanded').forEach(r => r.classList.remove('expanded'));
+  panel.querySelectorAll('.page-detail-row.show').forEach(r => r.classList.remove('show'));
+  const detailRow = document.getElementById('detail-analyzed-test-' + specId);
+  if (detailRow) {
+    const pageRow = detailRow.previousElementSibling;
+    if (pageRow) {
+      pageRow.classList.add('expanded');
+      detailRow.classList.add('show');
+      setTimeout(() => pageRow.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+    }
+  }
 }
 
 // ==================== INTERACTIONS ====================
