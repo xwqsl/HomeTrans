@@ -540,356 +540,4599 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 <script>
 // ==================== BUILT-IN PROJECT DATA ====================
 const BUILTIN_PROJECTS = {
-  "SimpleGallery": {
-    projectName: "SimpleGallery",
-    projectDescription: "Simple Gallery HarmonyOS 迁移",
-    specs: [
-      { id:"SPEC-01", title:"应用启动与初始化", reqId:"REQ-01", version:"2.2",
-        scenarios:["01-1:冷启动进入主页面","01-2:数据库初始化","01-3:配置恢复","01-4:权限检查","01-5:Want处理","01-6:导航跳转"],
-        coveredPages:["Index"], dependsOn:[] },
-      { id:"SPEC-02", title:"存储权限申请与管理", reqId:"REQ-02", version:"2.2",
-        scenarios:["02-1:权限检测","02-2:权限请求","02-3:权限授予","02-4:权限拒绝"],
-        coveredPages:["Index"], dependsOn:["SPEC-01"] },
-      { id:"SPEC-03", title:"媒体文件夹浏览", reqId:"REQ-03", version:"2.2",
-        scenarios:["03-1:加载文件夹列表","03-2:视图切换","03-3:排序","03-4:置顶","03-5:隐藏/显示","03-6:刷新","03-7:打开相机","03-8:导航到媒体页","03-9:搜索","03-10:筛选","03-11:多选","03-12:创建文件夹","03-13:菜单操作"],
-        coveredPages:["Index","MediaPage"], dependsOn:[] },
-      { id:"SPEC-04", title:"媒体文件浏览", reqId:"REQ-04", version:"2.2",
-        scenarios:["04-1:加载媒体","04-2:视图切换","04-3:分组","04-4:排序","04-5:筛选","04-6:多选","04-7:刷新","04-8:导航","04-9:菜单操作"],
-        coveredPages:["MediaPage","ViewPagerPage"], dependsOn:["SPEC-01","SPEC-03"] },
-      { id:"SPEC-05", title:"图片全屏查看", reqId:"REQ-05", version:"2.2",
-        scenarios:["05-1:打开","05-2:缩放","05-3:平移","05-4:旋转","05-5:EXIF信息","05-6:分享","05-7:编辑","05-8:删除","05-9:收藏","05-10:幻灯片","05-11:旋转按钮","05-12:返回"],
-        coveredPages:["ViewPagerPage"], dependsOn:["SPEC-01","SPEC-04"] },
-      { id:"SPEC-06", title:"视频播放", reqId:"REQ-06", version:"2.2",
-        scenarios:["06-1:视频播放入口","06-2:播放/暂停","06-3:进度控制","06-4:音量控制","06-5:全屏切换","06-6:播放位置记忆"],
-        coveredPages:["ViewPagerPage"], dependsOn:["SPEC-01","SPEC-04","SPEC-05"] },
-      { id:"SPEC-07", title:"全景图片/视频查看", reqId:"REQ-07", version:"2.2",
-        scenarios:["07-1:全景图片检测","07-2:陀螺仪全景","07-3:触摸拖拽全景","07-4:全景视频"],
-        coveredPages:["ViewPagerPage"], dependsOn:["SPEC-05"] },
-      { id:"SPEC-08", title:"媒体搜索", reqId:"REQ-08", version:"2.2",
-        scenarios:["08-1:全量搜索","08-2:文件夹内搜索","08-3:搜索结果展示","08-4:搜索结果点击"],
-        coveredPages:["MediaPage","ViewPagerPage"], dependsOn:["SPEC-03","SPEC-04"] },
-      { id:"SPEC-09", title:"媒体编辑", reqId:"REQ-09", version:"2.2",
-        scenarios:["09-1:进入编辑页","09-2:滤镜","09-3:裁剪","09-4:旋转","09-5:绘画","09-6:覆盖保存","09-7:另存为"],
-        coveredPages:["ViewPagerPage"], dependsOn:["SPEC-05"] },
-      { id:"SPEC-10", title:"媒体文件管理", reqId:"REQ-10", version:"2.2",
-        scenarios:["10-1:复制","10-2:移动","10-3:重命名","10-4:删除移入回收站","10-5:永久删除","10-6:调整大小","10-7:批量操作"],
-        coveredPages:["MediaPage","ViewPagerPage"], dependsOn:["SPEC-04","SPEC-05"] },
-      { id:"SPEC-11", title:"收藏夹管理", reqId:"REQ-11", version:"2.2",
-        scenarios:["11-1:标记收藏","11-2:取消收藏","11-3:查看收藏夹","11-4:导出收藏"],
-        coveredPages:["Index","MediaPage","ViewPagerPage"], dependsOn:["SPEC-03","SPEC-04","SPEC-05"] },
-      { id:"SPEC-12", title:"回收站管理", reqId:"REQ-12", version:"2.2",
-        scenarios:["12-1:删除移入回收站","12-2:查看回收站","12-3:恢复文件","12-4:永久删除","12-5:清空回收站"],
-        coveredPages:["Index","MediaPage"], dependsOn:[] },
-      { id:"SPEC-13", title:"幻灯片播放", reqId:"REQ-13", version:"2.2",
-        scenarios:["13-1:设置对话框","13-2:启动播放","13-3:自动切换","13-4:随机顺序","13-5:循环播放"],
-        coveredPages:["MediaPage","ViewPagerPage"], dependsOn:[] },
-      { id:"SPEC-14", title:"壁纸设置", reqId:"REQ-14", version:"2.2",
-        scenarios:["14-1:主屏幕壁纸","14-2:锁屏壁纸","14-3:双屏壁纸","14-4:外部Want壁纸","14-5:双屏分别设置"],
-        coveredPages:["ViewPagerPage"], dependsOn:[] },
-      { id:"SPEC-15", title:"第三方Want响应", reqId:"REQ-15", version:"2.2",
-        scenarios:["15-1:selectData选择","15-2:返回URI","15-3:viewData查看","15-4:编辑Want","15-5:多选返回"],
-        coveredPages:["Index","MediaPage","ViewPagerPage"], dependsOn:[] },
-      { id:"SPEC-16", title:"隐藏文件夹管理", reqId:"REQ-16", version:"2.2",
-        scenarios:["16-1:标记隐藏","16-2:取消隐藏","16-3:临时显示隐藏"],
-        coveredPages:["Index","SettingsPage"], dependsOn:[] },
-      { id:"SPEC-17", title:"排除/包含文件夹管理", reqId:"REQ-17", version:"2.2",
-        scenarios:["17-1:添加排除","17-2:添加包含","17-3:移除文件夹","17-4:密码保护"],
-        coveredPages:["Index","SettingsPage","ExcludedFoldersPage","IncludedFoldersPage"], dependsOn:["SPEC-03"] },
-      { id:"SPEC-18", title:"桌面小部件", reqId:"REQ-18", version:"2.2",
-        scenarios:["18-1:添加小部件","18-2:显示缩略图","18-3:点击跳转","18-4:刷新更新"],
-        coveredPages:["MediaPage"], dependsOn:[] },
-      { id:"SPEC-19", title:"设置与个性化", reqId:"REQ-19", version:"2.2",
-        scenarios:["19-1:浏览设置项","19-2:外观设置","19-3:显示偏好","19-4:安全设置","19-5:即时生效","19-6:延迟生效"],
-        coveredPages:["SettingsPage","CustomizationPage"], dependsOn:[] },
-      { id:"SPEC-20", title:"后台媒体同步服务", reqId:"REQ-20", version:"2.2",
-        scenarios:["20-1:新增文件同步","20-2:删除文件同步","20-3:开机全量扫描","20-4:增量同步","20-5:前台激活监听","20-6:后台不影响UI"],
-        coveredPages:[], dependsOn:[] }
-    ],
-    tests: [
-      {id:1,name:"冷启动初始化后正常进入主页面",spec:"SPEC-01",steps:"打开Simple Gallery应用",status:"success",duration:42.2},
-      {id:2,name:"从最近任务恢复应用",spec:"SPEC-01",steps:"打开Simple Gallery应用 -> 从系统最近任务列表恢复Simple Gallery应用",status:"success",duration:158.8},
-      {id:3,name:"第三方 Want 拉起应用",spec:"SPEC-01",steps:"打开Simple Gallery应用 -> 外部应用通过 Want 拉起Simple Gallery应用",status:"success",duration:122.3},
-      {id:4,name:"首次打开应用-授权通过-展示所有文件夹",spec:"SPEC-01",steps:"打开Simple Gallery应用 -> 点击允许按钮授予媒体访问权限",status:"success",duration:217.3},
-      {id:5,name:"首次打开应用-授权不通过-展示提示信息",spec:"SPEC-01",steps:"打开Simple Gallery应用 -> 点击拒绝按钮拒绝媒体访问权限",status:"failed",duration:302.0},
-      {id:6,name:"权限申请流程-授予权限",spec:"SPEC-02",steps:"打开Simple Gallery应用 -> 系统弹出权限请求对话框 -> 点击允许按钮",status:"failed",duration:103.6},
-      {id:7,name:"权限申请流程-拒绝权限",spec:"SPEC-02",steps:"打开Simple Gallery应用 -> 系统弹出权限请求对话框 -> 点击拒绝按钮",status:"failed",duration:82.1},
-      {id:8,name:"权限被撤销后重新申请",spec:"SPEC-02",steps:"打开Simple Gallery应用 -> 检测到权限缺失 -> 跳转权限申请流程",status:"success",duration:348.6},
-      {id:9,name:"Android 11+申请全部文件访问权限",spec:"SPEC-02",steps:"打开Simple Gallery应用 -> 触发全部文件授权对话框 -> 点击允许按钮",status:"failed",duration:376.1},
-      {id:10,name:"权限设置页面引导",spec:"SPEC-02",steps:"打开Simple Gallery应用 -> 点击权限说明对话框中的引导按钮 -> 跳转至系统设置页面",status:"failed",duration:400.6},
-      {id:11,name:"文件夹网格展示",spec:"SPEC-03",steps:"打开Simple Gallery应用 -> 进入文件夹网格主页面",status:"failed",duration:398.9},
-      {id:12,name:"下拉刷新文件夹列表",spec:"SPEC-03",steps:"打开Simple Gallery应用 -> 在文件夹列表页面下拉",status:"failed",duration:64.1},
-      {id:13,name:"点击相机图标启动系统相机",spec:"SPEC-03",steps:"打开Simple Gallery应用 -> 点击工具栏相机图标",status:"failed",duration:372.1},
-      {id:14,name:"点击目录入口进入媒体列表页",spec:"SPEC-03",steps:"打开Simple Gallery应用 -> 点击文件夹网格中的某个文件夹",status:"failed",duration:405.5},
-      {id:15,name:"切换排序方式",spec:"SPEC-03",steps:"打开Simple Gallery应用 -> 点击排序按钮 -> 选择排序方式",status:"failed",duration:333.4},
-      {id:16,name:"点击文件夹进入媒体列表",spec:"SPEC-04",steps:"打开Simple Gallery应用 -> 点击文件夹 -> 进入媒体列表页",status:"success",duration:257.4},
-      {id:17,name:"Show All 显示所有媒体",spec:"SPEC-04",steps:"打开Simple Gallery应用 -> 点击 Show All 菜单项",status:"success",duration:419.9},
-      {id:18,name:"媒体列表下拉刷新",spec:"SPEC-04",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 在媒体列表页面下拉",status:"success",duration:73.1},
-      {id:19,name:"文件名显示切换",spec:"SPEC-04",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击显示名称图标切换文件名显示",status:"success",duration:69.5},
-      {id:20,name:"媒体多选模式",spec:"SPEC-04",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选中多个媒体项",status:"success",duration:93.3},
-      {id:21,name:"媒体列表分组显示",spec:"SPEC-04",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击分组按钮 -> 选择分组方式",status:"success",duration:87.1},
-      {id:22,name:"点击图片缩略图进入全屏查看",spec:"SPEC-05",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击媒体缩略图",status:"success",duration:73.4},
-      {id:23,name:"双击放大图片",spec:"SPEC-05",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 双击图片",status:"success",duration:92.8},
-      {id:24,name:"双指缩放图片",spec:"SPEC-05",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 双指捏合或张开",status:"success",duration:110.0},
-      {id:25,name:"左右滑动切换查看其他图片",spec:"SPEC-05",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 向左/右滑动",status:"success",duration:106.4},
-      {id:26,name:"全屏查看页收藏媒体",spec:"SPEC-11",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部收藏按钮",status:"success",duration:86.7},
-      {id:27,name:"全屏查看页删除媒体",spec:"SPEC-12",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 确认删除",status:"success",duration:101.7},
-      {id:28,name:"全屏查看页分享媒体",spec:"SPEC-05",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部分享按钮",status:"success",duration:84.7},
-      {id:29,name:"全屏查看页编辑媒体",spec:"SPEC-09",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部编辑按钮",status:"success",duration:85.7},
-      {id:30,name:"查看图片 EXIF 信息",spec:"SPEC-05",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> 查看属性",status:"success",duration:84.7},
-      {id:31,name:"点击视频缩略图播放视频",spec:"SPEC-06",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击视频缩略图",status:"success",duration:66.4},
-      {id:32,name:"视频播放-暂停/继续",spec:"SPEC-06",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击视频 -> 点击播放/暂停按钮",status:"failed",duration:283.8},
-      {id:33,name:"视频播放-调整进度",spec:"SPEC-06",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击视频 -> 拖动进度条调整播放位置",status:"failed",duration:362.8},
-      {id:34,name:"视频播放-记住播放位置",spec:"SPEC-06",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击视频",status:"success",duration:347.2},
-      {id:35,name:"视频播放-全屏切换",spec:"SPEC-06",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击视频 -> 切换全屏模式",status:"success",duration:86.8},
-      {id:36,name:"查看全景图片",spec:"SPEC-07",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击全景图片",status:"success",duration:71.9},
-      {id:37,name:"查看全景视频",spec:"SPEC-07",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击全景视频",status:"success",duration:73.7},
-      {id:38,name:"非全景媒体不触发全景模式",spec:"SPEC-07",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击普通图片",status:"success",duration:74.0},
-      {id:39,name:"主界面点击搜索并根据文件名筛选",spec:"SPEC-08",steps:"打开Simple Gallery应用 -> 点击搜索图标 -> 输入文件名关键词",status:"success",duration:234.3},
-      {id:40,name:"搜索结果点击进入全屏查看",spec:"SPEC-08",steps:"打开Simple Gallery应用 -> 点击搜索图标 -> 输入关键词 -> 点击搜索结果中的媒体项",status:"failed",duration:218.5},
-      {id:41,name:"空搜索结果展示",spec:"SPEC-08",steps:"打开Simple Gallery应用 -> 点击搜索图标 -> 输入不存在的文件名关键词",status:"failed",duration:295.5},
-      {id:42,name:"搜索范围切换",spec:"SPEC-08",steps:"打开Simple Gallery应用 -> 点击搜索图标 -> 切换搜索范围（全局/当前文件夹）",status:"failed",duration:313.9},
-      {id:43,name:"全屏查看-点击编辑-进入编辑页",spec:"SPEC-09",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部编辑按钮",status:"success",duration:87.4},
-      {id:44,name:"图片裁剪",spec:"SPEC-09",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 点击编辑 -> 选择裁剪工具 -> 调整裁剪框 -> 保存",status:"failed",duration:234.4},
-      {id:45,name:"图片旋转",spec:"SPEC-09",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击旋转菜单 -> 选择旋转角度",status:"success",duration:226.9},
-      {id:46,name:"图片滤镜",spec:"SPEC-09",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 点击编辑 -> 选择滤镜工具 -> 选择滤镜效果 -> 保存",status:"failed",duration:179.3},
-      {id:47,name:"图片绘画",spec:"SPEC-09",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 点击编辑 -> 选择绘画工具 -> 在图片上绘制 -> 保存",status:"failed",duration:208.0},
-      {id:48,name:"删除媒体文件",spec:"SPEC-12",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 确认删除",status:"success",duration:104.8},
-      {id:49,name:"取消删除媒体",spec:"SPEC-10",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 取消删除",status:"success",duration:101.3},
-      {id:50,name:"重命名媒体文件",spec:"SPEC-10",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> Rename -> 输入新名称 -> 确认",status:"failed",duration:310.7},
-      {id:51,name:"调整图片大小",spec:"SPEC-10",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> Resize -> 输入新尺寸 -> 确认",status:"failed",duration:375.0},
-      {id:52,name:"复制媒体文件",spec:"SPEC-10",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选择媒体 -> 点击复制 -> 选择目标文件夹 -> 确认",status:"failed",duration:380.3},
-      {id:53,name:"移动媒体文件",spec:"SPEC-10",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选择媒体 -> 点击移动 -> 选择目标文件夹 -> 确认",status:"failed",duration:200.4},
-      {id:54,name:"多选模式下批量删除",spec:"SPEC-10",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选中多个媒体项 -> 点击批量删除 -> 确认删除",status:"failed",duration:215.0},
-      {id:55,name:"全屏查看页收藏媒体",spec:"SPEC-11",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部收藏按钮",status:"failed",duration:366.5},
-      {id:56,name:"查看收藏夹",spec:"SPEC-11",steps:"打开Simple Gallery应用 -> 进入文件夹网格主页面 -> 点击收藏夹入口",status:"failed",duration:355.2},
-      {id:57,name:"取消收藏",spec:"SPEC-11",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部已高亮的收藏按钮",status:"failed",duration:373.3},
-      {id:58,name:"删除媒体移入回收站",spec:"SPEC-12",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 确认删除",status:"failed",duration:373.9},
-      {id:59,name:"查看回收站",spec:"SPEC-12",steps:"打开Simple Gallery应用 -> 进入文件夹网格主页面 -> 点击回收站入口",status:"failed",duration:390.7},
-      {id:60,name:"恢复回收站媒体",spec:"SPEC-12",steps:"打开Simple Gallery应用 -> 进入回收站 -> 选择媒体 -> 点击恢复",status:"failed",duration:375.4},
-      {id:61,name:"永久删除回收站媒体",spec:"SPEC-12",steps:"打开Simple Gallery应用 -> 进入回收站 -> 选择媒体 -> 点击永久删除 -> 确认",status:"failed",duration:347.9},
-      {id:62,name:"清空回收站",spec:"SPEC-12",steps:"打开Simple Gallery应用 -> 进入回收站 -> 点击清空回收站 -> 确认",status:"failed",duration:390.2},
-      {id:63,name:"在全屏查看页启动幻灯片播放",spec:"SPEC-13",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击工具栏幻灯片菜单 -> 启动幻灯片",status:"failed",duration:374.3},
-      {id:64,name:"幻灯片设置-调整间隔",spec:"SPEC-13",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击工具栏幻灯片菜单 -> 进入幻灯片设置 -> 调整播放间隔",status:"failed",duration:371.6},
-      {id:65,name:"幻灯片播放-包含视频/GIF",spec:"SPEC-13",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击工具栏幻灯片菜单 -> 设置幻灯片包含视频/GIF -> 启动幻灯片",status:"failed",duration:143.2},
-      {id:66,name:"幻灯片播放-随机顺序",spec:"SPEC-13",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击工具栏幻灯片菜单 -> 设置随机顺序 -> 启动幻灯片",status:"failed",duration:393.8},
-      {id:67,name:"全屏查看-设为壁纸-进入壁纸设置页",spec:"SPEC-14",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> 设为壁纸",status:"failed",duration:164.7},
-      {id:68,name:"设置主屏幕壁纸",spec:"SPEC-14",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 设为壁纸 -> 选择主屏幕 -> 确认设置",status:"failed",duration:413.5},
-      {id:69,name:"设置锁屏壁纸",spec:"SPEC-14",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 设为壁纸 -> 选择锁屏 -> 确认设置",status:"failed",duration:347.3},
-      {id:70,name:"设置双屏壁纸",spec:"SPEC-14",steps:"打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 设为壁纸 -> 选择双屏 -> 确认设置",status:"failed",duration:250.5},
-      {id:71,name:"第三方 Want 拉起应用查看图片",spec:"SPEC-15",steps:"外部应用通过 Want 拉起Simple Gallery应用",status:"failed",duration:221.8},
-      {id:72,name:"第三方 Want 拉起应用选择媒体",spec:"SPEC-15",steps:"外部应用通过 Want 拉起Simple Gallery应用进入选择模式 -> 用户选择媒体 -> 确认",status:"failed",duration:360.7},
-      {id:73,name:"第三方 Want 拉起应用编辑图片",spec:"SPEC-15",steps:"外部应用通过 Want 拉起Simple Gallery应用进入编辑模式 -> 用户编辑图片 -> 保存",status:"failed",duration:336.6},
-      {id:74,name:"第三方 Want 拉起应用设为壁纸",spec:"SPEC-15",steps:"外部应用通过 Want 拉起Simple Gallery应用进入壁纸设置模式",status:"success",duration:190.0},
-      {id:75,name:"查看隐藏文件夹列表",spec:"SPEC-16",steps:"打开Simple Gallery应用 -> 点击设置入口 -> 点击隐藏文件夹管理",status:"success",duration:364.3},
-      {id:76,name:"取消隐藏文件夹",spec:"SPEC-16",steps:"打开Simple Gallery应用 -> 设置 -> 隐藏文件夹管理 -> 选择文件夹 -> 取消隐藏",status:"failed",duration:395.7},
-      {id:77,name:"查看排除文件夹列表",spec:"SPEC-17",steps:"打开Simple Gallery应用 -> 点击设置入口 -> 点击排除文件夹管理",status:"failed",duration:285.3},
-      {id:78,name:"添加排除文件夹",spec:"SPEC-17",steps:"打开Simple Gallery应用 -> 设置 -> 排除文件夹管理 -> 添加排除文件夹 -> 选择文件夹 -> 确认",status:"failed",duration:400.3},
-      {id:79,name:"移除排除文件夹",spec:"SPEC-17",steps:"打开Simple Gallery应用 -> 设置 -> 排除文件夹管理 -> 选择已排除的文件夹 -> 移除排除",status:"failed",duration:75.8},
-      {id:80,name:"查看包含文件夹列表",spec:"SPEC-17",steps:"打开Simple Gallery应用 -> 点击设置入口 -> 点击包含文件夹管理",status:"failed",duration:384.0},
-      {id:81,name:"添加包含文件夹",spec:"SPEC-17",steps:"打开Simple Gallery应用 -> 设置 -> 包含文件夹管理 -> 添加包含文件夹 -> 选择文件夹 -> 确认",status:"failed",duration:161.0},
-      {id:82,name:"添加桌面小部件",spec:"SPEC-18",steps:"在系统桌面添加小部件 -> 选择 Simple Gallery 小部件 -> 选择文件夹 -> 确认配置",status:"success",duration:140.7},
-      {id:83,name:"点击桌面小部件进入文件夹",spec:"SPEC-18",steps:"点击桌面上的 Simple Gallery 小部件",status:"success",duration:156.2},
-      {id:84,name:"修改小部件配置",spec:"SPEC-18",steps:"长按小部件 -> 进入小部件配置 -> 修改关联文件夹",status:"failed",duration:422.2},
-      {id:85,name:"进入设置页面",spec:"SPEC-19",steps:"打开Simple Gallery应用 -> 点击设置入口",status:"success",duration:111.1},
-      {id:86,name:"修改主题设置",spec:"SPEC-19",steps:"打开Simple Gallery应用 -> 设置 -> 主题颜色 -> 选择主题",status:"failed",duration:368.4},
-      {id:87,name:"修改底部操作栏配置",spec:"SPEC-19",steps:"打开Simple Gallery应用 -> 设置 -> 管理底部操作 -> 修改可见按钮",status:"failed",duration:360.7},
-      {id:88,name:"修改文件夹视图类型",spec:"SPEC-19",steps:"打开Simple Gallery应用 -> 设置 -> 文件夹样式 -> 选择视图类型",status:"failed",duration:380.6},
-      {id:89,name:"重置所有设置为默认值",spec:"SPEC-19",steps:"打开Simple Gallery应用 -> 设置 -> 重置所有设置",status:"failed",duration:320.1},
-      {id:90,name:"新增媒体文件同步",spec:"SPEC-20",steps:"通过文件管理器向设备添加新的图片或视频文件",status:"success",duration:232.1},
-      {id:91,name:"删除媒体文件同步",spec:"SPEC-20",steps:"通过文件管理器删除设备上的图片或视频文件",status:"success",duration:232.1},
-      {id:92,name:"设备重启后自动同步",spec:"SPEC-20",steps:"重启设备",status:"success",duration:433.1}
-    ],
-    pages: {
-      "Index": {
-        fullName: "Index (MainPage)",
-        components: [
-          {id:"SearchToolbar（搜索图标）",type:"Image",desc:"打开搜索输入模式"},
-          {id:"SearchToolbar（返回箭头）",type:"Image",desc:"关闭搜索，清空文本"},
-          {id:"SearchToolbar（相机）",type:"Image",desc:"启动设备相机应用"},
-          {id:"SearchToolbar（显示全部）",type:"Image",desc:"打开全部媒体视图"},
-          {id:"SearchToolbar（溢出菜单）",type:"Image",desc:"打开溢出菜单"},
-          {id:"DirectoryGridItem（点击）",type:"GridItem",desc:"打开文件夹媒体视图"},
-          {id:"DirectoryListItem（点击）",type:"ListItem",desc:"打开文件夹媒体视图"},
-          {id:"SwitchSearchingBanner",type:"Text",desc:"跳转到全局文件搜索"},
-          {id:"EmptyPlaceholder（操作）",type:"Text",desc:"打开FilterMediaDialog"},
-          {id:"Refresh包裹层",type:"Refresh",desc:"下拉刷新重新加载文件夹"},
-          {id:"sort（菜单）",type:"MenuItem",desc:"打开MainSortingDialog"},
-          {id:"filter（菜单）",type:"MenuItem",desc:"打开MainFilterMediaDialog"},
-          {id:"change_view_type（菜单）",type:"MenuItem",desc:"打开MainChangeViewTypeDialog"},
-          {id:"temporarily_show_hidden（菜单）",type:"MenuItem",desc:"切换隐藏文件夹可见性"},
-          {id:"stop_showing_hidden（菜单）",type:"MenuItem",desc:"恢复隐藏文件夹可见性"},
-          {id:"temporarily_show_excluded（菜单）",type:"MenuItem",desc:"切换排除文件夹可见性"},
-          {id:"stop_showing_excluded（菜单）",type:"MenuItem",desc:"恢复排除文件夹可见性"},
-          {id:"create_new_folder（菜单）",type:"MenuItem",desc:"打开FolderPickerDialog"},
-          {id:"open_recycle_bin（菜单）",type:"MenuItem",desc:"打开回收站媒体列表"},
-          {id:"column_count（菜单）",type:"MenuItem",desc:"打开MainColumnCountDialog"},
-          {id:"set_as_default_folder（菜单）",type:"MenuItem",desc:"清除默认文件夹配置"},
-          {id:"settings（菜单）",type:"MenuItem",desc:"打开设置页面"},
-          {id:"about（菜单）",type:"MenuItem",desc:"打开关于页面"}
-        ]
-      },
-      "MediaPage": {
-        fullName: "MediaPage",
-        components: [
-          {id:"ToolbarContent（返回箭头）",type:"Image",desc:"返回Index或关闭搜索"},
-          {id:"ToolbarContent（搜索图标）",type:"Image",desc:"打开搜索输入模式"},
-          {id:"ToolbarContent（标签切换）",type:"Image",desc:"切换缩略图上文件名显示"},
-          {id:"ToolbarContent（排序）",type:"Image",desc:"打开ChangeSortingDialog"},
-          {id:"ToolbarContent（文件夹视图）",type:"Image",desc:"切换到文件夹浏览视图"},
-          {id:"ToolbarContent（溢出菜单）",type:"Image",desc:"打开溢出菜单"},
-          {id:"MediaThumbnailItem（图片点击）",type:"GridItem",desc:"全屏查看图片"},
-          {id:"MediaThumbnailItem（视频点击）",type:"GridItem",desc:"播放视频"},
-          {id:"MediaThumbnailItem（长按）",type:"GridItem",desc:"进入多选模式"},
-          {id:"slideshow（菜单）",type:"MenuItem",desc:"从第一张开始幻灯片播放"},
-          {id:"folder_view（菜单）",type:"MenuItem",desc:"切换到文件夹浏览视图"},
-          {id:"open_camera（菜单）",type:"MenuItem",desc:"启动设备相机"},
-          {id:"settings（菜单）",type:"MenuItem",desc:"打开设置页面"},
-          {id:"about（菜单）",type:"MenuItem",desc:"打开关于页面"},
-          {id:"open_recycle_bin（菜单）",type:"MenuItem",desc:"打开回收站列表"},
-          {id:"sort（菜单）",type:"MenuItem",desc:"打开ChangeSortingDialog"},
-          {id:"filter（菜单）",type:"MenuItem",desc:"打开MediaFilterDialog"},
-          {id:"change_view_type（菜单）",type:"MenuItem",desc:"打开MediaViewTypeDialog"},
-          {id:"group（菜单）",type:"MenuItem",desc:"打开MediaGroupByDialog"},
-          {id:"toggle_filename（菜单）",type:"MenuItem",desc:"切换文件名显示"},
-          {id:"column_count（菜单）",type:"MenuItem",desc:"打开MediaColumnCountDialog"},
-          {id:"empty_recycle_bin（菜单）",type:"MenuItem",desc:"清空回收站并返回"},
-          {id:"empty_disable_recycle_bin（菜单）",type:"MenuItem",desc:"清空并禁用回收站"},
-          {id:"restore_all_files（菜单）",type:"MenuItem",desc:"恢复所有已删除文件"},
-          {id:"create_new_folder（菜单）",type:"MenuItem",desc:"创建子文件夹"},
-          {id:"temporarily_show_hidden（菜单）",type:"MenuItem",desc:"切换隐藏文件可见性"},
-          {id:"set_as_default_folder（菜单）",type:"MenuItem",desc:"设置为默认启动文件夹"},
-          {id:"unset_as_default_folder（菜单）",type:"MenuItem",desc:"取消默认文件夹设置"},
-          {id:"Refresh包裹层",type:"Refresh",desc:"下拉刷新"}
-        ]
-      },
-      "ViewPagerPage": {
-        fullName: "ViewPagerPage",
-        components: [
-          {id:"TopToolbar（返回）",type:"Image",desc:"返回来源页面"},
-          {id:"TopToolbar（文件名）",type:"Text",desc:"显示当前媒体文件名"},
-          {id:"TopToolbar（删除）",type:"Image",desc:"删除当前文件"},
-          {id:"TopToolbar（分享）",type:"Image",desc:"系统分享"},
-          {id:"TopToolbar（旋转）",type:"Image",desc:"显示旋转子菜单"},
-          {id:"TopToolbar（属性）",type:"Image",desc:"显示PropertiesDialog"},
-          {id:"TopToolbar（溢出菜单）",type:"Image",desc:"显示溢出菜单弹窗"},
-          {id:"Swiper（点击）",type:"Swiper项",desc:"切换全屏模式"},
-          {id:"PhotoPage（全景图标）",type:"Image",desc:"打开全景查看器"},
-          {id:"VideoPage（播放按钮）",type:"Image",desc:"开始视频播放"},
-          {id:"VideoTimeControls（播放/暂停）",type:"Image",desc:"切换视频播放状态"},
-          {id:"VideoTimeControls（进度条）",type:"Slider",desc:"拖动调整播放进度"},
-          {id:"bottom_favorite",type:"Image",desc:"切换收藏状态"},
-          {id:"bottom_edit",type:"Image",desc:"打开外部图片编辑器"},
-          {id:"bottom_share",type:"Image",desc:"系统分享"},
-          {id:"bottom_delete",type:"Image",desc:"删除当前文件"},
-          {id:"bottom_rotate",type:"Image",desc:"顺时针旋转90度"},
-          {id:"bottom_properties",type:"Image",desc:"显示属性对话框"},
-          {id:"bottom_change_orientation",type:"Image",desc:"循环切换屏幕方向锁定"},
-          {id:"bottom_slideshow",type:"Image",desc:"打开幻灯片设置对话框"},
-          {id:"bottom_show_on_map",type:"Image",desc:"在地图应用中显示GPS位置"},
-          {id:"bottom_toggle_file_visibility",type:"Image",desc:"切换文件可见性"},
-          {id:"bottom_rename",type:"Image",desc:"打开重命名对话框"},
-          {id:"bottom_set_as",type:"Image",desc:"打开'设为'选择器"},
-          {id:"bottom_copy",type:"Image",desc:"打开复制到对话框"},
-          {id:"bottom_move",type:"Image",desc:"打开移动到对话框"},
-          {id:"bottom_resize",type:"Image",desc:"打开调整大小对话框"},
-          {id:"溢出菜单: 重命名",type:"MenuItem",desc:"打开RenameDialog"},
-          {id:"溢出菜单: 隐藏/���消隐藏",type:"MenuItem",desc:"切换文件可见性"},
-          {id:"溢出菜单: 复制到",type:"MenuItem",desc:"打开CopyMoveDialog（复制模式）"},
-          {id:"溢出菜单: 移动到",type:"MenuItem",desc:"打开CopyMoveDialog（移动模式）"},
-          {id:"溢出菜单: 创建快捷方式",type:"MenuItem",desc:"创建主屏幕快捷方式"},
-          {id:"溢出菜单: 打开方式",type:"MenuItem",desc:"选择外部应用打开"},
-          {id:"溢出菜单: 设为",type:"MenuItem",desc:"打开'设为'选择器"},
-          {id:"溢出菜单: 更改方向",type:"MenuItem",desc:"显示方向子菜单"},
-          {id:"溢出菜单: 打印",type:"MenuItem",desc:"发送到打印服务"},
-          {id:"溢出菜单: 调整大小",type:"MenuItem",desc:"打开ResizeDialog"},
-          {id:"溢出菜单: 在地图上显示",type:"MenuItem",desc:"在地图应用中显示GPS坐标"},
-          {id:"溢出菜单: 幻灯片",type:"MenuItem",desc:"打开SlideshowDialog"},
-          {id:"溢出菜单: 设置",type:"MenuItem",desc:"打开设置页面"}
-        ]
-      },
-      "SettingsPage": {
-        fullName: "SettingsPage",
-        components: [
-          {id:"settings_toolbar（返回）",type:"Image",desc:"返回上一页"},
-          {id:"颜色定制行",type:"Row",desc:"打开颜色主题定制页面"},
-          {id:"语言行",type:"Row",desc:"打开语言选择面板"},
-          {id:"日期时间格式行",type:"Row",desc:"打开日期时间格式对话框"},
-          {id:"文件加载优先级行",type:"Row",desc:"打开文件加载优先级对话框"},
-          {id:"管理包含文件夹行",type:"Row",desc:"进入包含文件夹管理页面"},
-          {id:"管理排除文件夹行",type:"Row",desc:"进入排除文件夹管理页面"},
-          {id:"显示隐藏项开关",type:"Toggle",desc:"切换隐藏媒体可见性"},
-          {id:"搜索所有文件开关",type:"Toggle",desc:"切换默认全局搜索"},
-          {id:"自动播放视频开关",type:"Toggle",desc:"切换视频自动播放"},
-          {id:"记住视频位置开关",type:"Toggle",desc:"切换记住视频播放位置"},
-          {id:"循环播放视频开关",type:"Toggle",desc:"切换视频循环播放"},
-          {id:"独立视频屏幕开关",type:"Toggle",desc:"切换独立视频播放屏幕"},
-          {id:"视频手势开关",type:"Toggle",desc:"切换视频手势控制"},
-          {id:"裁剪缩略图开关",type:"Toggle",desc:"切换缩略图裁剪"},
-          {id:"动画GIF开关",type:"Toggle",desc:"切换GIF动画预览"},
-          {id:"应用密码保护开关",type:"Toggle",desc:"切换应用密码保护"},
-          {id:"底部操作栏开关",type:"Toggle",desc:"切换底部操作栏显示"},
-          {id:"使用回收站开关",type:"Toggle",desc:"切换回收站功能"},
-          {id:"清空回收站行",type:"Row",desc:"确认后清空回收站"},
-          {id:"清除缓存行",type:"Row",desc:"清除应用图像缓存"},
-          {id:"导出设置行",type:"Row",desc:"导出所有设置到文件"},
-          {id:"导入设置行",type:"Row",desc:"从文件导入设置"}
-        ]
-      },
-      "IncludedFoldersPage": {
-        fullName: "IncludedFoldersPage",
-        components: [
-          {id:"manage_folders_toolbar（返回）",type:"Image",desc:"返回上一页"},
-          {id:"add_folder（工具栏）",type:"Image",desc:"打开文件夹选择器添加文件夹"},
-          {id:"overflow_menu_icon（项）",type:"Image",desc:"打开'移除'选项弹窗"},
-          {id:"PlaceholderBuilder",type:"Text",desc:"显示空状态提示"}
-        ]
-      },
-      "ExcludedFoldersPage": {
-        fullName: "ExcludedFoldersPage",
-        components: [
-          {id:"manage_folders_toolbar（返回）",type:"Image",desc:"返回上一页"},
-          {id:"add_folder（工具栏）",type:"Image",desc:"打开文件夹选择器添加文件夹"},
-          {id:"overflow_menu_icon（项）",type:"Image",desc:"打开'移除'选项弹窗"},
-          {id:"PlaceholderBuilder",type:"Text",desc:"显示空状态提示"}
-        ]
-      },
-      "CustomizationPage": {
-        fullName: "CustomizationPage",
-        components: [
-          {id:"ToolbarBuilder（关闭）",type:"Image",desc:"显示保存/放弃对话框或直接返回"},
-          {id:"ToolbarBuilder（保存）",type:"Image",desc:"保存当前主题设置"},
-          {id:"theme_row",type:"Row",desc:"打开主题选择面板"},
-          {id:"text_color_row",type:"Row",desc:"打开文本颜色选择器"},
-          {id:"background_color_row",type:"Row",desc:"打开背景颜色选择器"},
-          {id:"primary_color_row",type:"Row",desc:"打开主色选择器"},
-          {id:"accent_color_row",type:"Row",desc:"打开强调色选择器"},
-          {id:"app_icon_color_row",type:"Row",desc:"打开应用图标颜色对话框"},
-          {id:"apply_to_all_button",type:"Button",desc:"保存为主题并应用到所有应用"}
-        ]
-      },
-      "AboutPage": {
-        fullName: "AboutPage",
-        components: [
-          {id:"top_app_bar（返回）",type:"Image",desc:"返回上一页"},
-          {id:"faq_item",type:"Row",desc:"打开FAQ页面"},
-          {id:"email_item",type:"Row",desc:"显示邮件确认对话框"},
-          {id:"rate_us_item",type:"Row",desc:"显示评分确认对话框"},
-          {id:"invite_friends_item",type:"Row",desc:"打开分享功能"},
-          {id:"contributors_item",type:"Row",desc:"打开贡献者页面"},
-          {id:"donate_item",type:"Row",desc:"打开捐赠页面"},
-          {id:"facebook_item",type:"Row",desc:"打开Facebook"},
-          {id:"github_item",type:"Row",desc:"打开GitHub"},
-          {id:"reddit_item",type:"Row",desc:"打开Reddit"},
-          {id:"telegram_item",type:"Row",desc:"打开Telegram"},
-          {id:"more_apps_item",type:"Row",desc:"打开应用商店"},
-          {id:"website_item",type:"Row",desc:"打开网站"},
-          {id:"privacy_policy_item",type:"Row",desc:"打开隐私政策"},
-          {id:"license_item",type:"Row",desc:"打开第三方许可证页面"},
-          {id:"version_item",type:"Row",desc:"彩蛋：快速点击7次显示Toast"}
-        ]
-      }
+  "SaltPlayer": {
+  "projectName": "SaltPlayer",
+  "projectDescription": "SaltPlayer 椒盐播放器 Android → HarmonyOS NEXT 迁移项目，包含39个功能规格、34个UI页面",
+  "specs": [
+    {
+      "id": "SPEC-00",
+      "title": "MainPage 集成",
+      "reqId": "REQ-00",
+      "version": "v1.1.0",
+      "scenarios": [
+        "00-1:MainPage 初始化",
+        "00-2:Tab 切换数据加载",
+        "00-3:扫描完成后刷新",
+        "00-4:MiniPlayer 状态同步",
+        "00-5:空状态显示"
+      ],
+      "coveredPages": [
+        "MainPage",
+        "PlayerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-03",
+        "SPEC-15",
+        "SPEC-16",
+        "SPEC-22"
+      ]
+    },
+    {
+      "id": "SPEC-01",
+      "title": "音乐播放核心 + 播放队列",
+      "reqId": "REQ-01",
+      "version": "v1.0.0",
+      "scenarios": [
+        "01-1:播放本地歌曲",
+        "01-2:暂停与恢复播放",
+        "01-3:跳转到指定播放位置",
+        "01-4:切换到下一首歌曲",
+        "01-5:切换到上一首歌曲",
+        "01-6:切换播放模式",
+        "01-7:调整播放速度",
+        "01-8:添加歌曲到播放队列",
+        "01-9:添加歌曲到下一首播放",
+        "01-10:从队列移除歌曲",
+        "01-11:播放不支持的音频格式",
+        "01-12:音频文件损坏或丢失",
+        "01-13:后台播放权限未授予",
+        "01-14:播放队列达到最大容量",
+        "01-15:空队列状态处理",
+        "01-16:歌曲列表页随机播放",
+        "01-17:清空播放队列"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "MainPage",
+        "FolderContentPage",
+        "AlbumContentPage",
+        "ArtistContentPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-02",
+      "title": "歌词显示系统",
+      "reqId": "REQ-03",
+      "version": "v1.0.0",
+      "scenarios": [
+        "02-1:LRC 格式歌词解析与显示",
+        "02-2:歌词与播放进度同步",
+        "02-3:卡拉OK 逐字动画效果",
+        "02-4:翻译歌词显示",
+        "02-5:悬浮歌词窗口启用",
+        "02-6:全屏歌词模式切换",
+        "02-7:内嵌歌词提取",
+        "02-8:SPL 格式歌词解析",
+        "02-9:歌词文件不存在处理",
+        "02-10:歌词解析失败处理",
+        "02-11:悬浮歌词权限缺失",
+        "02-12:歌词字体和样式配置",
+        "02-13:歌词字体粗细配置",
+        "02-14:歌词设置弹窗"
+      ],
+      "coveredPages": [
+        "LyricsInterfacePage",
+        "LyricsSettingsPage",
+        "PlayerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-03",
+      "title": "媒体库管理",
+      "reqId": "REQ-04",
+      "version": "v1.1.0",
+      "scenarios": [
+        "03-1:首次媒体库扫描成功",
+        "03-2:增量媒体库更新",
+        "03-3:查询歌曲列表成功",
+        "03-4:查询专辑列表成功",
+        "03-5:查询艺术家列表成功",
+        "03-6:查询文件夹列表成功",
+        "03-7:查询播放列表成功",
+        "03-8:查看媒体库统计信息",
+        "03-9:排除文件夹配置生效",
+        "03-10:自定义媒体文件夹添加",
+        "03-11:跳过短音频文件配置生效",
+        "03-12:元数据提取失败降级处理",
+        "03-13:媒体库查询失败处理",
+        "03-14:数据库损坏恢复处理",
+        "03-15:封面加载失败占位处理",
+        "03-16:大量歌曲分页加载",
+        "03-17:空媒体库提示处理",
+        "03-18:特殊字符文件名处理",
+        "03-19:多线程并发扫描安全",
+        "03-20:监听系统媒体变化",
+        "03-21:删除歌曲记录处理（单曲删除）",
+        "03-22:批量删除歌曲（多选删除）",
+        "03-23:删除歌曲后统计更新",
+        "03-24:下拉刷新触发增量扫描",
+        "03-25:多选歌曲播放选中队列",
+        "03-26:歌曲列表字母导航",
+        "03-27:扫描进行中重复点击保护",
+        "03-28:分享歌曲"
+      ],
+      "coveredPages": [
+        "MainPage",
+        "MusicLibraryPage",
+        "AlbumContentPage",
+        "ArtistContentPage",
+        "FolderContentPage",
+        "FolderPathPage",
+        "SettingsPage",
+        "BlockedFoldersPage",
+        "MediaSourcePage",
+        "StatisticsPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-02"
+      ]
+    },
+    {
+      "id": "SPEC-04",
+      "title": "音效与均衡器",
+      "reqId": "REQ-05",
+      "version": "v1.0.0",
+      "scenarios": [
+        "04-1:开启音效处理",
+        "04-2:选择音效预设",
+        "04-3:调节音效强度",
+        "04-4:关闭音效处理",
+        "04-5:音效处理初始化恢复",
+        "04-6:音效预设列表为空",
+        "04-7:音效处理异常降级",
+        "04-8:均衡器预设延迟提示"
+      ],
+      "coveredPages": [
+        "FxActivityPage",
+        "PlayerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-05",
+      "title": "播放器界面与主题",
+      "reqId": "REQ-06",
+      "version": "v1.0.0",
+      "scenarios": [
+        "05-1:进入全屏播放器页面",
+        "05-2:下拉手势退出播放器",
+        "05-3:左右滑动切换播放控制页",
+        "05-4:切换播放器布局模式",
+        "05-5:普通布局模式显示",
+        "05-6:横向布局模式显示",
+        "05-7:车载布局模式显示",
+        "05-8:平板布局模式显示",
+        "05-9:切换播放器主题样式",
+        "05-10:流光动态主题效果",
+        "05-11:圆形封面样式显示",
+        "05-12:封面双指缩放查看",
+        "05-13:沉浸模式切换",
+        "05-14:毛玻璃效果显示",
+        "05-15:封面加载失败显示占位图",
+        "05-16:主题资源加载失败",
+        "05-17:多手势同时触发的冲突处理",
+        "05-18:极端屏幕尺寸适配"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "MainPage",
+        "UserInterfacePage",
+        "CarKitPage",
+        "TabletModePage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-02"
+      ]
+    },
+    {
+      "id": "SPEC-06",
+      "title": "通知与媒体会话",
+      "reqId": "REQ-07",
+      "version": "v1.0.0",
+      "scenarios": [
+        "06-1:AVSession 初始化与激活",
+        "06-2:媒体通知创建与显示",
+        "06-3:播放状态同步到 AVSession",
+        "06-4:歌曲元数据同步到 AVSession",
+        "06-5:通知栏播放控制按钮响应",
+        "06-6:蓝牙媒体按键事件处理",
+        "06-7:锁屏界面媒体控制",
+        "06-8:通知权限缺失处理",
+        "06-9:AVSession 激活失败处理",
+        "06-10:蓝牙设备断开时播放控制清理",
+        "06-11:多歌曲快速切换时通知更新优化"
+      ],
+      "coveredPages": [
+        "NotificationPage",
+        "PlayerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-07",
+      "title": "睡眠定时器",
+      "reqId": "REQ-08",
+      "version": "v1.0.0",
+      "scenarios": [
+        "07-1:设置睡眠定时器",
+        "07-2:启动睡眠定时器",
+        "07-3:定时器到期停止播放",
+        "07-4:取消睡眠定时器",
+        "07-5:定时器时间自定义",
+        "07-6:应用后台运行时定时器生效"
+      ],
+      "coveredPages": [
+        "PlayerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-08",
+      "title": "DLNA/UPnP 支持",
+      "reqId": "REQ-09",
+      "version": "v1.0.0",
+      "scenarios": [
+        "08-1:搜索DLNA设备",
+        "08-2:显示可用DLNA设备列表",
+        "08-3:连接DLNA设备",
+        "08-4:投屏播放音频",
+        "08-5:断开DLNA连接",
+        "08-6:搜索无可用设备",
+        "08-7:DLNA连接失败",
+        "08-8:投屏播放中断恢复"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "AudioOutputPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-09",
+      "title": "媒体路由",
+      "reqId": "REQ-10",
+      "version": "v1.0.0",
+      "scenarios": [
+        "09-1:打开媒体路由选择界面",
+        "09-2:选择本地播放",
+        "09-3:选择分布式设备投屏",
+        "09-4:查看当前路由状态",
+        "09-5:路由自动切换（设备离场）",
+        "09-6:路由自动切换（新设备入场）",
+        "09-7:分布式设备连接失败",
+        "09-8:多设备同时投屏选择"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "AudioOutputPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-08"
+      ]
+    },
+    {
+      "id": "SPEC-10",
+      "title": "桌面小组件",
+      "reqId": "REQ-11",
+      "version": "v1.0.0",
+      "scenarios": [
+        "10-1:添加播放控制小组件",
+        "10-2:小组件显示播放状态",
+        "10-3:小组件播放/暂停控制",
+        "10-4:小组件切换上一首/下一首",
+        "10-5:小组件点击进入播放器",
+        "10-6:小组件无播放状态显示",
+        "10-7:小组件尺寸选择",
+        "10-8:小组件定时更新",
+        "10-9:小组件移除",
+        "10-10:多个小组件实例"
+      ],
+      "coveredPages": [
+        "PlayerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-11",
+      "title": "USB 存储支持",
+      "reqId": "REQ-13",
+      "version": "v1.0.0",
+      "scenarios": [
+        "11-1:USB 设备检测",
+        "11-2:USB 权限授予",
+        "11-3:浏览 USB 音乐文件",
+        "11-4:USB 权限拒绝",
+        "11-5:USB 播放中断开",
+        "11-6:大型 USB 音乐库"
+      ],
+      "coveredPages": [
+        "FolderContentPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-12",
+      "title": "设置与偏好",
+      "reqId": "REQ-14",
+      "version": "v1.0.0",
+      "scenarios": [
+        "12-1:加载默认设置",
+        "12-2:切换播放设置",
+        "12-3:更改主题设置",
+        "12-4:设置写入失败",
+        "12-5:损坏的偏好设置",
+        "12-6:最大设置数量"
+      ],
+      "coveredPages": [
+        "SettingsPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-13",
+      "title": "歌曲详情与元数据",
+      "reqId": "REQ-15",
+      "version": "v1.1.0",
+      "scenarios": [
+        "13-1:显示歌曲元数据",
+        "13-2:编辑歌曲元数据",
+        "13-3:查看嵌入歌词",
+        "13-4:缺失元数据",
+        "13-5:损坏的元数据",
+        "13-6:最大标题长度"
+      ],
+      "coveredPages": [
+        "SongInformationPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-14",
+      "title": "搜索功能",
+      "reqId": "REQ-16",
+      "version": "v1.0.0",
+      "scenarios": [
+        "14-1:基础歌曲搜索",
+        "14-2:艺术家搜索",
+        "14-3:实时搜索",
+        "14-4:无搜索结果",
+        "14-5:搜索索引损坏",
+        "14-6:大型媒体库搜索"
+      ],
+      "coveredPages": [
+        "SearchAllSongsPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-15",
+      "title": "文件夹导航",
+      "reqId": "REQ-17",
+      "version": "v1.0.0",
+      "scenarios": [
+        "15-1:浏览根文件夹",
+        "15-2:导航子文件夹",
+        "15-3:从文件夹播放",
+        "15-4:权限被拒绝",
+        "15-5:文件夹访问错误",
+        "15-6:深层嵌套文件夹"
+      ],
+      "coveredPages": [
+        "FolderContentPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-16",
+      "title": "专辑与艺术家视图",
+      "reqId": "REQ-18",
+      "version": "v1.0.0",
+      "scenarios": [
+        "16-1:浏览专辑列表",
+        "16-2:浏览艺术家列表",
+        "16-3:查看专辑详情内容",
+        "16-4:查看艺术家详情内容",
+        "16-5:专辑无封面显示占位图",
+        "16-6:艺术家无头像显示占位图",
+        "16-7:专辑排序切换",
+        "16-8:空专辑列表显示",
+        "16-9:专辑歌曲快速播放",
+        "16-10:艺术家歌曲筛选播放",
+        "16-11:单曲弹窗→艺术家详情页",
+        "16-12:单曲弹窗→专辑详情页"
+      ],
+      "coveredPages": [
+        "AlbumContentPage",
+        "ArtistContentPage"
+      ],
+      "dependsOn": [
+        "SPEC-04"
+      ]
+    },
+    {
+      "id": "SPEC-17",
+      "title": "播放列表管理",
+      "reqId": "REQ-19",
+      "version": "v1.0.0",
+      "scenarios": [
+        "17-1:创建新播放列表",
+        "17-2:向播放列表添加歌曲",
+        "17-3:从播放列表移除歌曲",
+        "17-4:播放列表内歌曲排序",
+        "17-5:删除播放列表",
+        "17-6:播放列表导出为 M3U",
+        "17-7:播放列表导出为 TXT",
+        "17-8:播放播放列表全部歌曲",
+        "17-9:空播放列表显示",
+        "17-10:重命名播放列表"
+      ],
+      "coveredPages": [
+        "MainPage"
+      ],
+      "dependsOn": [
+        "SPEC-04"
+      ]
+    },
+    {
+      "id": "SPEC-18",
+      "title": "播放统计",
+      "reqId": "REQ-20",
+      "version": "v1.0.0",
+      "scenarios": [
+        "18-1:播放次数计数",
+        "18-2:收听时长累计",
+        "18-3:查看收听统计页面",
+        "18-4:年度收听报告生成",
+        "18-5:最近收听历史查看",
+        "18-6:清除收听历史",
+        "18-7:播放次数显示在歌曲详情",
+        "18-8:统计数据无记录时显示",
+        "18-9:播放统计开关控制",
+        "18-10:分享年度报告"
+      ],
+      "coveredPages": [
+        "StatisticsPage",
+        "SongInformationPage",
+        "SettingsPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-04"
+      ]
+    },
+    {
+      "id": "SPEC-19",
+      "title": "Pro/高级功能",
+      "reqId": "REQ-21",
+      "version": "v1.0.0",
+      "scenarios": [
+        "19-1:华为账号登录",
+        "19-2:登录成功获取用户信息",
+        "19-3:登录失败处理",
+        "19-4:发起应用内购",
+        "19-5:购买成功解锁 Pro 功能",
+        "19-6:购买失败处理",
+        "19-7:验证 Pro 状态恢复",
+        "19-8:使用自定义 EQ 功能 (Pro)",
+        "19-9:Pro 未激活时功能提示",
+        "19-10:Hi-Res 音频标识显示 (Pro)"
+      ],
+      "coveredPages": [
+        "SaltPlayerProPage",
+        "PlayerPage",
+        "FxActivityPage",
+        "SettingsPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-20",
+      "title": "音频输出模式",
+      "reqId": "REQ-22",
+      "version": "v1.0.0",
+      "scenarios": [
+        "20-1:查看音频输出配置页面",
+        "20-2:选择扬声器输出模式",
+        "20-3:选择耳机输出模式",
+        "20-4:选择 USB 音频输出模式",
+        "20-5:配置输出采样频率",
+        "20-6:自动匹配设备频率",
+        "20-7:显示音频输出信息",
+        "20-8:DSD 直出模式配置",
+        "20-9:输出设备不支持高采样率提示",
+        "20-10:无可用输出设备处理",
+        "20-11:音频焦点开关控制"
+      ],
+      "coveredPages": [
+        "AudioOutputPage",
+        "SettingsPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-13"
+      ]
+    },
+    {
+      "id": "SPEC-21",
+      "title": "媒体源管理",
+      "reqId": "REQ-23",
+      "version": "v1.0.0",
+      "scenarios": [
+        "21-1:添加自定义文件夹",
+        "21-2:移除自定义文件夹",
+        "21-3:添加排除文件夹",
+        "21-4:移除排除文件夹",
+        "21-5:手动触发媒体扫描",
+        "21-6:查看权限状态",
+        "21-7:文件访问权限未授予",
+        "21-8:文件夹路径无效或不存在",
+        "21-9:扫描过程中发生错误",
+        "21-10:自定义文件夹达到最大数量",
+        "21-11:排除文件夹达到最大数量",
+        "21-12:空媒体源列表状态"
+      ],
+      "coveredPages": [
+        "MediaSourcePage",
+        "BlockedFoldersPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-22",
+      "title": "播放列表管理（增强）",
+      "reqId": "REQ-24",
+      "version": "2.0",
+      "scenarios": [
+        "22-1:创建播放列表",
+        "22-2:删除播放列表",
+        "22-3:重命名播放列表",
+        "22-4:导出播放列表",
+        "22-5:导入标准 M3U 文件",
+        "22-6:导入 M3U8 扩展格式文件",
+        "22-7:匹配 M3U 路径到本地歌曲",
+        "22-8:处理无效 M3U 文件格式",
+        "22-9:导入播放列表同名冲突处理",
+        "22-10:查看播放列表内容",
+        "22-11:空播放列表创建",
+        "22-12:删除最后一个播放列表"
+      ],
+      "coveredPages": [
+        "MainPage"
+      ],
+      "dependsOn": [
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-23",
+      "title": "音频封面加载",
+      "reqId": "REQ-25",
+      "version": "v1.1.0",
+      "scenarios": [
+        "23-1:加载内嵌封面图片",
+        "23-2:内嵌封面不存在时获取专辑封面",
+        "23-3:加载艺术家图片作为封面",
+        "23-4:显示默认占位封面",
+        "23-5:加载非正方形封面图片",
+        "23-6:封面加载失败降级处理",
+        "23-7:忽略系统 MediaStore 封面",
+        "23-8:封面内存缓存管理",
+        "23-9:播放器封面动态取色"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "SettingsPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-24",
+      "title": "用户认证",
+      "reqId": "REQ-26",
+      "version": "1.0",
+      "scenarios": [
+        "24-1:用户登录 Suvine 云服务",
+        "24-2:用户注册新账号",
+        "24-3:登录请求失败处理",
+        "24-4:用户退出登录",
+        "24-5:令牌过期自动刷新",
+        "24-6:会话持久化保持",
+        "24-7:会员状态查询和显示",
+        "24-8:网络请求超时处理"
+      ],
+      "coveredPages": [
+        "SaltPlayerProPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-25",
+      "title": "车载模式集成",
+      "reqId": "REQ-28",
+      "version": "1.0",
+      "scenarios": [
+        "25-1:启用车载模式界面",
+        "25-2:车载界面播放控制",
+        "25-3:车载界面歌曲信息显示",
+        "25-4:启用蓝牙歌词传输",
+        "25-5:蓝牙歌词同步传输",
+        "25-6:车载蓝牙设备断开处理",
+        "25-7:配置 JoviInCar 歌词功能",
+        "25-8:车载模式音量控制",
+        "25-9:车载模式横屏适配"
+      ],
+      "coveredPages": [
+        "CarKitPage",
+        "PlayerPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-26",
+      "title": "开发者功能",
+      "reqId": "REQ-29",
+      "version": "v1.0.0",
+      "scenarios": [
+        "26-1:进入开发者模式",
+        "26-2:开发者选项页面展示",
+        "26-3:开启开发监控",
+        "26-4:查看测试屏幕",
+        "26-5:调整日志级别",
+        "26-6:查看性能统计",
+        "26-7:关闭开发者模式"
+      ],
+      "coveredPages": [
+        "DevPage",
+        "SettingsPage"
+      ],
+      "dependsOn": [
+        "SPEC-14"
+      ]
+    },
+    {
+      "id": "SPEC-27",
+      "title": "关于与致谢",
+      "reqId": "REQ-30",
+      "version": "v1.0.0",
+      "scenarios": [
+        "27-1:进入关于页面",
+        "27-2:查看应用详情",
+        "27-3:进入致谢页面",
+        "27-4:查看开源许可证",
+        "27-5:周年纪念展示",
+        "27-6:检查更新入口",
+        "27-7:分享应用",
+        "27-8:查看用户协议和隐私政策",
+        "27-9:查看备案号页面"
+      ],
+      "coveredPages": [
+        "AboutPage",
+        "CreditsPage",
+        "SettingsPage"
+      ],
+      "dependsOn": [
+        "SPEC-14"
+      ]
+    },
+    {
+      "id": "SPEC-28",
+      "title": "更新与反馈",
+      "reqId": "REQ-31",
+      "version": "v1.0.0",
+      "scenarios": [
+        "28-1:检查应用更新",
+        "28-2:显示更新详情",
+        "28-3:执行应用更新",
+        "28-4:自动检查更新",
+        "28-5:进入反馈页面",
+        "28-6:提交用户反馈",
+        "28-7:上传反馈图片",
+        "28-8:查看反馈历史"
+      ],
+      "coveredPages": [
+        "HelpAndFeedbackPage",
+        "SettingsPage"
+      ],
+      "dependsOn": [
+        "SPEC-14"
+      ]
+    },
+    {
+      "id": "SPEC-29",
+      "title": "OEM 特定功能",
+      "reqId": "REQ-32",
+      "version": "v1.0.0",
+      "scenarios": [
+        "29-1:OEM 厂商检测",
+        "29-2:状态栏歌词 (HarmonyOS)",
+        "29-3:开启/关闭状态栏歌词",
+        "29-4:状态栏歌词点击响应",
+        "29-5:蓝牙歌词传输",
+        "29-6:车载模式歌词显示",
+        "29-7:OEM 特性不兼容处理",
+        "29-8:OEM 特性兼容性检测"
+      ],
+      "coveredPages": [
+        "LyricsSettingsPage",
+        "CarKitPage",
+        "NotificationPage",
+        "StartupAndBackendPage"
+      ],
+      "dependsOn": [
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-30",
+      "title": "权限配置",
+      "reqId": "REQ-33",
+      "version": "v1.0.0",
+      "scenarios": [
+        "30-1:网络权限配置",
+        "30-2:媒体读取权限申请",
+        "30-3:媒体写入权限申请",
+        "30-4:文件管理权限申请",
+        "30-5:USB 设备权限申请",
+        "30-6:通知控制权限申请",
+        "30-7:分布式数据同步权限",
+        "30-8:权限被拒绝处理",
+        "30-9:权限状态检查"
+      ],
+      "coveredPages": [
+        "StartupAndBackendPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-31A",
+      "title": "SPC Core - 播放引擎",
+      "reqId": "REQ-34",
+      "version": "v1.0.0",
+      "scenarios": [
+        "31A-1:初始化播放队列",
+        "31A-2:设置新播放队列",
+        "31A-3:跳转下一首",
+        "31A-4:跳转上一首",
+        "31A-5:设置播放模式",
+        "31A-6:添加到下一首播放",
+        "31A-7:立即播放指定歌曲",
+        "31A-8:移除队列中歌曲",
+        "31A-9:跳转到指定位置",
+        "31A-10:队列拖拽重排序",
+        "31A-11:队列为空边界处理",
+        "31A-12:队列达到上限"
+      ],
+      "coveredPages": [
+        "PlayerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-31B",
+      "title": "SPC Core - 媒体管理",
+      "reqId": "REQ-34",
+      "version": "v1.0.0",
+      "scenarios": [
+        "31B-1:媒体扫描初始化",
+        "31B-2:提取音频元数据",
+        "31B-3:处理缺失元数据",
+        "31B-4:提取音轨信息",
+        "31B-5:处理多艺术家分割",
+        "31B-6:识别曲风标签",
+        "31B-7:自然排序歌曲列表",
+        "31B-8:判断音频格式",
+        "31B-9:处理特殊艺术家名称",
+        "31B-10:处理超大元数据",
+        "31B-11:元数据解析失败",
+        "31B-12:不支持音频格式"
+      ],
+      "coveredPages": [
+        "AlbumContentPage",
+        "ArtistContentPage",
+        "FolderContentPage",
+        "SongInformationPage"
+      ],
+      "dependsOn": [
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-31C",
+      "title": "SPC Core - 数据存储",
+      "reqId": "REQ-34",
+      "version": "v1.0.0",
+      "scenarios": [
+        "31C-1:播放队列持久化",
+        "31C-2:播放队列恢复",
+        "31C-3:用户偏好设置存储",
+        "31C-4:用户偏好设置读取",
+        "31C-5:播放列表存储",
+        "31C-6:播放列表读取",
+        "31C-7:收听统计存储",
+        "31C-8:收听统计查询",
+        "31C-9:持久化数据损坏恢复",
+        "31C-10:数据库写入失败"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "SettingsPage",
+        "StatisticsPage"
+      ],
+      "dependsOn": [
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-32A",
+      "title": "SPC UI - 播放器组件",
+      "reqId": "REQ-35",
+      "version": "v1.0.0",
+      "scenarios": [
+        "32A-1:PlayerPage 基础布局",
+        "32A-2:MiniPlayerComponent 显示",
+        "32A-3:封面显示样式切换",
+        "32A-4:播放控制按钮交互",
+        "32A-5:进度条拖拽交互",
+        "32A-6:迷你歌词显示",
+        "32A-7:流光背景效果",
+        "32A-8:播放器主题切换",
+        "32A-9:横向播放器布局",
+        "32A-10:车载播放器布局"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "LyricsInterfacePage",
+        "CarKitPage"
+      ],
+      "dependsOn": [
+        "SPEC-05"
+      ]
+    },
+    {
+      "id": "SPEC-32B",
+      "title": "SPC UI - 列表组件",
+      "reqId": "REQ-35",
+      "version": "v1.0.0",
+      "scenarios": [
+        "32B-1:SongItemComponent 基础显示",
+        "32B-2:SongItemComponent 封面加载",
+        "32B-3:AlbumTabComponent 网格显示",
+        "32B-4:ArtistTabComponent 列表显示",
+        "32B-5:FolderListComponent 文件夹显示",
+        "32B-6:PlaylistListComponent 播放列表显示",
+        "32B-7:Item 组件通用样式",
+        "32B-8:列表项多选模式",
+        "32B-9:列表项空状态显示",
+        "32B-10:列表项加载更多"
+      ],
+      "coveredPages": [
+        "MainPage",
+        "AlbumContentPage",
+        "ArtistContentPage",
+        "FolderContentPage",
+        "FolderPathPage"
+      ],
+      "dependsOn": [
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-32C",
+      "title": "SPC UI - 设置组件",
+      "reqId": "REQ-35",
+      "version": "v1.0.0",
+      "scenarios": [
+        "32C-1:SettingsPage 主入口",
+        "32C-2:AudioSettingsPage 音频设置",
+        "32C-3:PlaybackSettingsPage 播放设置",
+        "32C-4:ThemeSettingsPage 主题设置",
+        "32C-5:LyricsSettingsPage 歌词设置",
+        "32C-6:SettingsSwitchComponent 开关组件",
+        "32C-7:SettingsSliderComponent 滑块组件",
+        "32C-8:SettingsSelectorComponent 选择组件"
+      ],
+      "coveredPages": [
+        "SettingsPage",
+        "AudioOutputPage",
+        "LyricsSettingsPage",
+        "UserInterfacePage"
+      ],
+      "dependsOn": [
+        "SPEC-12"
+      ]
+    },
+    {
+      "id": "SPEC-33",
+      "title": "Native C++ 模块",
+      "reqId": "REQ-37",
+      "version": "v1.1.0",
+      "scenarios": [
+        "33-1:NAPI 模块初始化",
+        "33-2:图像模糊处理",
+        "33-3:图像缩放处理",
+        "33-4:获取 ReplayGain 信息",
+        "33-5:Native 高斯模糊处理",
+        "33-6:Native 图像缩放处理",
+        "33-7:Native 模块错误处理",
+        "33-8:封面提取失败降级",
+        "33-9:内嵌歌词提取",
+        "33-10:内嵌歌词提取失败降级"
+      ],
+      "coveredPages": [
+        "PlayerPage",
+        "SongInformationPage",
+        "LyricsInterfacePage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-34",
+      "title": "第三方库迁移",
+      "reqId": "REQ-38",
+      "version": "v1.0.0",
+      "scenarios": [
+        "34-1:BASS 音频库替换",
+        "34-2:Jetpack Compose 替换",
+        "34-3:Room 数据库替换",
+        "34-4:MMKV 存储替换",
+        "34-5:Coil 图片库替换",
+        "34-6:ExoPlayer 替换",
+        "34-7:OkHttp 网络库保留",
+        "34-8:Gson JSON 库保留",
+        "34-9:华为内购替换 Google Billing",
+        "34-10:Lottie 动画库评估"
+      ],
+      "coveredPages": [
+        "SaltPlayerProPage"
+      ],
+      "dependsOn": []
+    }
+  ],
+  "tests": [],
+  "pages": {
+    "MainPage": {
+      "fullName": "MainPage (主页面)",
+      "components": [
+        {
+          "id": "侧边栏抽屉菜单",
+          "type": "Column",
+          "desc": "左侧推拉抽屉菜单，包含导航选项（歌曲、专辑、艺术家、文件夹、歌单等）"
+        },
+        {
+          "id": "菜单图标按钮",
+          "type": "Image",
+          "desc": "标题栏左侧汉堡菜单按钮，点击打开/关闭抽屉"
+        },
+        {
+          "id": "搜索图标按钮",
+          "type": "Image",
+          "desc": "标题栏右侧搜索按钮，导航至搜索全部歌曲页面"
+        },
+        {
+          "id": "标题文字",
+          "type": "Text",
+          "desc": "标题栏居中显示当前标签名称（歌曲/专辑/艺术家/文件夹/歌单）"
+        },
+        {
+          "id": "随机播放按钮",
+          "type": "Image",
+          "desc": "工具栏随机播放图标，附带歌曲数量文字"
+        },
+        {
+          "id": "排序按钮",
+          "type": "Image",
+          "desc": "工具栏排序图标，点击弹出排序底部弹窗"
+        },
+        {
+          "id": "多选按钮",
+          "type": "Image",
+          "desc": "工具栏多选图标，进入多选模式"
+        },
+        {
+          "id": "歌曲列表",
+          "type": "List",
+          "desc": "下拉刷新的歌曲列表，支持点击播放、长按菜单"
+        },
+        {
+          "id": "下拉刷新容器",
+          "type": "Refresh",
+          "desc": "包裹歌曲列表实现下拉刷新扫描媒体库"
+        },
+        {
+          "id": "右侧字母索引",
+          "type": "Column",
+          "desc": "RightABC字母索引组件，快速跳转到对应首字母歌曲"
+        },
+        {
+          "id": "定位当前歌曲按钮",
+          "type": "Image",
+          "desc": "浮动按钮，点击滚动列表到当前播放歌曲位置"
+        },
+        {
+          "id": "迷你播放器",
+          "type": "Column",
+          "desc": "底部迷你播放器组件，显示当前歌曲信息和播放控制"
+        },
+        {
+          "id": "导航容器",
+          "type": "Navigation",
+          "desc": "主导航容器，管理NavDestination子页面路由栈"
+        },
+        {
+          "id": "专辑网格标签",
+          "type": "Column",
+          "desc": "专辑标签页内容，使用AlbumTabComponent网格展示专辑"
+        },
+        {
+          "id": "歌单列表标签",
+          "type": "Column",
+          "desc": "歌单标签页内容，使用PlaylistTabComponent展示歌单列表"
+        }
+      ]
+    },
+    "PlayerPage": {
+      "fullName": "PlayerPage (播放器页面)",
+      "components": [
+        {
+          "id": "歌曲标题",
+          "type": "Text",
+          "desc": "顶部栏显示当前播放歌曲标题"
+        },
+        {
+          "id": "艺术家名称",
+          "type": "Text",
+          "desc": "顶部栏显示当前播放歌曲艺术家"
+        },
+        {
+          "id": "投屏选择器",
+          "type": "Column",
+          "desc": "AVCastPicker投屏/媒体路由选择器按钮"
+        },
+        {
+          "id": "水平滑页器",
+          "type": "Swiper",
+          "desc": "水平滑动切换音乐信息面板、专辑封面、歌词三个页面"
+        },
+        {
+          "id": "专辑封面图片",
+          "type": "Image",
+          "desc": "居中显示专辑封面，点击切页，长按查看大图"
+        },
+        {
+          "id": "歌词区域",
+          "type": "Scroll",
+          "desc": "可滚动歌词显示区域"
+        },
+        {
+          "id": "进度条滑块",
+          "type": "Slider",
+          "desc": "播放进度拖动滑块，支持拖拽定位"
+        },
+        {
+          "id": "上一首按钮",
+          "type": "Image",
+          "desc": "播放控制栏上一首按钮"
+        },
+        {
+          "id": "播放暂停按钮",
+          "type": "Image",
+          "desc": "播放控制栏播放/暂停按钮，长按切换沉浸模式"
+        },
+        {
+          "id": "下一首按钮",
+          "type": "Image",
+          "desc": "播放控制栏下一首按钮"
+        },
+        {
+          "id": "播放模式按钮",
+          "type": "Image",
+          "desc": "底部图标栏播放模式切换（顺序/单曲/随机）"
+        },
+        {
+          "id": "睡眠定时按钮",
+          "type": "Image",
+          "desc": "底部图标栏睡眠定时器按钮"
+        },
+        {
+          "id": "音频效果按钮",
+          "type": "Image",
+          "desc": "底部图标栏音频效果按钮"
+        },
+        {
+          "id": "播放队列按钮",
+          "type": "Image",
+          "desc": "底部图标栏播放队列按钮，向上滑动切换到队列页"
+        },
+        {
+          "id": "播放队列列表",
+          "type": "Column",
+          "desc": "第二页播放队列组件，显示队列歌曲可删除和重排"
+        },
+        {
+          "id": "大图浮层",
+          "type": "Stack",
+          "desc": "全屏查看专辑封面大图，支持缩放和拖动"
+        }
+      ]
+    },
+    "SearchAllSongsPage": {
+      "fullName": "SearchAllSongsPage (全局搜索页)",
+      "components": [
+        {
+          "id": "搜索输入框",
+          "type": "TextInput",
+          "desc": "搜索栏文字输入框，自动聚焦，输入关键词搜索歌曲"
+        },
+        {
+          "id": "搜索图标",
+          "type": "Image",
+          "desc": "搜索栏左侧搜索图标"
+        },
+        {
+          "id": "清除按钮",
+          "type": "Image",
+          "desc": "搜索栏右侧清除按钮，清空搜索关键词"
+        },
+        {
+          "id": "取消按钮",
+          "type": "Text",
+          "desc": "搜索栏右侧取消文字按钮，返回上一页"
+        },
+        {
+          "id": "空状态动画",
+          "type": "Canvas",
+          "desc": "无搜索结果时显示Lottie空状态动画"
+        },
+        {
+          "id": "搜索结果列表",
+          "type": "List",
+          "desc": "搜索结果歌曲列表，点击播放"
+        }
+      ]
+    },
+    "AlbumContentPage": {
+      "fullName": "AlbumContentPage (专辑详情页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "标题栏返回箭头按钮"
+        },
+        {
+          "id": "标题文字",
+          "type": "Text",
+          "desc": "滚动后显示的居中专辑标题"
+        },
+        {
+          "id": "专辑封面",
+          "type": "Image",
+          "desc": "专辑顶部区域120vp封面图片，支持几何过渡动画"
+        },
+        {
+          "id": "专辑标题",
+          "type": "Text",
+          "desc": "专辑名称文字"
+        },
+        {
+          "id": "专辑艺术家",
+          "type": "Text",
+          "desc": "专辑艺术家名称文字"
+        },
+        {
+          "id": "统计信息行",
+          "type": "Row",
+          "desc": "显示歌曲数、时长、年份的统计行"
+        },
+        {
+          "id": "歌曲列表",
+          "type": "Scroll",
+          "desc": "可滚动内容区，包含按碟片分组的歌曲列表"
+        },
+        {
+          "id": "参与艺术家列表",
+          "type": "Column",
+          "desc": "底部参与艺术家区域，点击跳转艺术家详情"
+        },
+        {
+          "id": "歌曲菜单弹窗",
+          "type": "Column",
+          "desc": "底部弹出的歌曲操作菜单（添加歌单、下一首播放、分享等）"
+        }
+      ]
+    },
+    "ArtistContentPage": {
+      "fullName": "ArtistContentPage (艺术家详情页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "顶部返回箭头按钮"
+        },
+        {
+          "id": "艺术家头像",
+          "type": "Image",
+          "desc": "圆形艺术家封面图片，100vp直径，支持几何过渡动画"
+        },
+        {
+          "id": "艺术家名称",
+          "type": "Text",
+          "desc": "居中显示的艺术家名称"
+        },
+        {
+          "id": "随机播放按钮",
+          "type": "Row",
+          "desc": "随机播放按钮行，含图标和歌曲数量"
+        },
+        {
+          "id": "折叠展开按钮",
+          "type": "Text",
+          "desc": "右侧折叠/展开歌曲列表的文字按钮"
+        },
+        {
+          "id": "歌曲列表",
+          "type": "Scroll",
+          "desc": "可折叠的歌曲列表区域"
+        },
+        {
+          "id": "专辑区域标题",
+          "type": "Text",
+          "desc": "专辑分区标题文字"
+        },
+        {
+          "id": "专辑列表项",
+          "type": "Row",
+          "desc": "专辑列表行，含封面缩略图、标题、艺术家和歌曲数"
+        }
+      ]
+    },
+    "FolderContentPage": {
+      "fullName": "FolderContentPage (文件夹内容页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "标题栏返回箭头按钮"
+        },
+        {
+          "id": "文件夹名标题",
+          "type": "Text",
+          "desc": "标题栏居中显示文件夹名称"
+        },
+        {
+          "id": "随机播放按钮",
+          "type": "Image",
+          "desc": "工具栏随机播放按钮，附带歌曲数量"
+        },
+        {
+          "id": "排序按钮",
+          "type": "Image",
+          "desc": "工具栏排序按钮，弹出排序底部弹窗"
+        },
+        {
+          "id": "多选按钮",
+          "type": "Image",
+          "desc": "工具栏多选按钮，进入多选模式"
+        },
+        {
+          "id": "歌曲列表",
+          "type": "List",
+          "desc": "文件夹内歌曲列表，支持点击播放和长按菜单"
+        },
+        {
+          "id": "右侧字母索引",
+          "type": "Column",
+          "desc": "RightABC字母索引组件"
+        },
+        {
+          "id": "定位当前歌曲按钮",
+          "type": "Image",
+          "desc": "浮动定位按钮，滚动到当前播放歌曲"
+        },
+        {
+          "id": "多选底部操作栏",
+          "type": "Row",
+          "desc": "多选模式底部操作栏（删除、添加歌单、播放队列）"
+        }
+      ]
+    },
+    "FolderPathPage": {
+      "fullName": "FolderPathPage (文件夹路径浏览页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "标题栏返回箭头按钮"
+        },
+        {
+          "id": "路径标题",
+          "type": "Text",
+          "desc": "标题栏居中显示当前路径名称"
+        },
+        {
+          "id": "子文件夹列表",
+          "type": "List",
+          "desc": "显示子文件夹和歌曲的列表"
+        },
+        {
+          "id": "文件夹图标",
+          "type": "Image",
+          "desc": "子文件夹项左侧文件夹图标"
+        },
+        {
+          "id": "文件夹名称",
+          "type": "Text",
+          "desc": "子文件夹项名称文字，点击递归进入子目录"
+        },
+        {
+          "id": "歌曲列表项",
+          "type": "Column",
+          "desc": "SongItemComponent歌曲列表项"
+        }
+      ]
+    },
+    "SongInformationPage": {
+      "fullName": "SongInformationPage (歌曲信息页)",
+      "components": [
+        {
+          "id": "歌曲信息标题",
+          "type": "Text",
+          "desc": "顶部标题文字'歌曲信息'"
+        },
+        {
+          "id": "专辑视觉设计入口",
+          "type": "Row",
+          "desc": "专辑视觉设计可点击行，含右箭头图标"
+        },
+        {
+          "id": "基本信息区域",
+          "type": "Column",
+          "desc": "显示标题、艺术家、专辑、专辑艺术家的信息卡片"
+        },
+        {
+          "id": "媒体技术信息区域",
+          "type": "Column",
+          "desc": "显示媒体源、播放次数、时长、码率、采样率等技术信息"
+        },
+        {
+          "id": "信息标签文字",
+          "type": "Text",
+          "desc": "ItemValue中的灰色标签文字（如时长、格式等）"
+        },
+        {
+          "id": "信息值文字",
+          "type": "Text",
+          "desc": "ItemValue中的深色值文字"
+        },
+        {
+          "id": "可滚动容器",
+          "type": "Scroll",
+          "desc": "整体可滚动容器"
+        }
+      ]
+    },
+    "SettingsPage": {
+      "fullName": "SettingsPage (设置页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "标题栏返回箭头按钮"
+        },
+        {
+          "id": "设置标题",
+          "type": "Text",
+          "desc": "标题栏居中显示'设置'"
+        },
+        {
+          "id": "Pro会员卡片",
+          "type": "Column",
+          "desc": "Salt Player Pro卡片，含皇冠图标和启用状态"
+        },
+        {
+          "id": "设置项列表",
+          "type": "Column",
+          "desc": "10个设置项分组（用户界面、无障碍、歌词、车载等）"
+        },
+        {
+          "id": "设置项行",
+          "type": "Row",
+          "desc": "单个设置项行，含彩色图标、文字和右箭头"
+        },
+        {
+          "id": "设置项图标",
+          "type": "Image",
+          "desc": "每个设置项左侧的彩色功能图标"
+        },
+        {
+          "id": "右箭头",
+          "type": "Image",
+          "desc": "设置项右侧chevron导航箭头"
+        },
+        {
+          "id": "Windows卡片",
+          "type": "Column",
+          "desc": "Salt Player for Windows卡片入口"
+        },
+        {
+          "id": "可滚动容器",
+          "type": "Scroll",
+          "desc": "设置页可滚动容器"
+        }
+      ]
+    },
+    "UserInterfacePage": {
+      "fullName": "UserInterfacePage (用户界面设置页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "标题栏返回箭头按钮"
+        },
+        {
+          "id": "用户界面标题",
+          "type": "Text",
+          "desc": "标题栏居中显示'用户界面'"
+        },
+        {
+          "id": "主题选择器",
+          "type": "Row",
+          "desc": "跟随系统/浅色/深色三个主题选项卡"
+        },
+        {
+          "id": "主题选项卡",
+          "type": "Stack",
+          "desc": "单个主题选项（图标+文字），带选中高亮边框和水波纹"
+        },
+        {
+          "id": "沉浸模式开关",
+          "type": "Toggle",
+          "desc": "沉浸模式Toggle开关，附带说明文字"
+        },
+        {
+          "id": "隐藏状态栏开关",
+          "type": "Toggle",
+          "desc": "隐藏状态栏Toggle开关"
+        },
+        {
+          "id": "歌曲封面显示开关",
+          "type": "Toggle",
+          "desc": "歌曲列表显示封面Toggle开关"
+        },
+        {
+          "id": "流光模式选择器",
+          "type": "Row",
+          "desc": "播放界面流光模式三个选项（浅色/深色/跟随界面）"
+        },
+        {
+          "id": "播放界面保持亮屏开关",
+          "type": "Toggle",
+          "desc": "播放界面保持屏幕唤醒Toggle开关"
+        },
+        {
+          "id": "迷你歌词开关",
+          "type": "Toggle",
+          "desc": "播放界面迷你歌词Toggle开关"
+        },
+        {
+          "id": "选择图片入口",
+          "type": "Row",
+          "desc": "播放界面背景图片选择入口项"
+        },
+        {
+          "id": "可滚动容器",
+          "type": "Scroll",
+          "desc": "整体可滚动设置内容区域"
+        }
+      ]
+    },
+    "AccessibilityPage": {
+      "fullName": "AccessibilityPage (无障碍设置页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "标题栏返回箭头按钮"
+        },
+        {
+          "id": "无障碍标题",
+          "type": "Text",
+          "desc": "标题栏显示'无障碍'"
+        },
+        {
+          "id": "显示大小缩放滑块",
+          "type": "Slider",
+          "desc": "调整显示大小缩放比例的滑块（0.5-2.0）"
+        },
+        {
+          "id": "缩放数值文字",
+          "type": "Text",
+          "desc": "显示当前缩放比例数值"
+        },
+        {
+          "id": "跟随系统字体开关",
+          "type": "Toggle",
+          "desc": "跟随系统字体缩放Toggle开关"
+        },
+        {
+          "id": "刷新重启按钮",
+          "type": "Text",
+          "desc": "刷新并重启主界面文字按钮"
+        },
+        {
+          "id": "系统无障碍设置入口",
+          "type": "Row",
+          "desc": "打开系统无障碍设置的入口行，带外部链接图标"
+        },
+        {
+          "id": "提示信息文字",
+          "type": "Text",
+          "desc": "缩放说明和警告提示文字"
+        },
+        {
+          "id": "可滚动容器",
+          "type": "Scroll",
+          "desc": "整体可滚动设置内容区域"
+        }
+      ]
+    },
+    "AudioOutputPage": {
+      "fullName": "AudioOutputPage (音频输出设置页)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "标题栏返回箭头按钮"
+        },
+        {
+          "id": "音频输出标题",
+          "type": "Text",
+          "desc": "标题栏居中显示'音频输出'"
+        },
+        {
+          "id": "警告提示卡片",
+          "type": "Text",
+          "desc": "顶部音频输出注意事项提示文字"
+        },
+        {
+          "id": "恢复默认按钮",
+          "type": "Text",
+          "desc": "恢复部分默认设置按钮，点击弹出确认对话框"
+        },
+        {
+          "id": "音频焦点开关",
+          "type": "Toggle",
+          "desc": "音频焦点Toggle开关，附带说明"
+        },
+        {
+          "id": "音量平衡开关",
+          "type": "Toggle",
+          "desc": "音量平衡Toggle开关，附带说明"
+        },
+        {
+          "id": "淡入淡出开关",
+          "type": "Toggle",
+          "desc": "播放暂停淡入淡出Toggle开关"
+        },
+        {
+          "id": "输出模式选择卡片",
+          "type": "Column",
+          "desc": "AudioTrack/OpenSL ES/AAudio三种输出模式可选卡片"
+        },
+        {
+          "id": "输出频率选择器",
+          "type": "Row",
+          "desc": "音频输出采样率选择行，显示当前频率和下拉箭头"
+        },
+        {
+          "id": "播放速度选择器",
+          "type": "Scroll",
+          "desc": "水平滚动的速度选择器（0.25x-50x）"
+        },
+        {
+          "id": "DSP效果入口",
+          "type": "Row",
+          "desc": "DSP音效项（音乐厅氛围、系统均衡器、AUDIOFX V4）"
+        },
+        {
+          "id": "压缩器开关",
+          "type": "Toggle",
+          "desc": "DSP压缩器Toggle开关，附带说明"
+        },
+        {
+          "id": "音频解码入口",
+          "type": "Row",
+          "desc": "音频解码设置导航入口行，含右箭头"
+        },
+        {
+          "id": "可滚动容器",
+          "type": "Scroll",
+          "desc": "整体可滚动设置内容区域"
+        }
+      ]
+    },
+    "LyricsSettingsPage": {
+      "fullName": "LyricsSettingsPage (歌词设置)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'歌词'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有歌词设置项的可滚动区域"
+        },
+        {
+          "id": "歌词界面导航项",
+          "type": "Row",
+          "desc": "点击跳转到歌词界面设置页面，带右箭头"
+        },
+        {
+          "id": "悬浮窗状态栏歌词卡片",
+          "type": "Row",
+          "desc": "Pro功能入口，带皇冠图标和说明文字"
+        },
+        {
+          "id": "桌面歌词开关",
+          "type": "Toggle",
+          "desc": "开启/关闭桌面歌词显示"
+        },
+        {
+          "id": "锁定桌面歌词开关",
+          "type": "Toggle",
+          "desc": "锁定桌面歌词位置，依赖桌面歌词开启"
+        },
+        {
+          "id": "通知栏歌词开关",
+          "type": "Toggle",
+          "desc": "开启/关闭通知栏歌词显示"
+        },
+        {
+          "id": "系统状态栏歌词开关",
+          "type": "Toggle",
+          "desc": "开启/关闭系统级别状态栏歌词"
+        },
+        {
+          "id": "状态栏歌词不显示翻译开关",
+          "type": "Toggle",
+          "desc": "控制状态栏歌词是否隐藏翻译"
+        },
+        {
+          "id": "Xposed状态栏歌词开关",
+          "type": "Toggle",
+          "desc": "开启/关闭Xposed状态栏歌词模块"
+        },
+        {
+          "id": "Xposed确认弹窗",
+          "type": "Column",
+          "desc": "启用Xposed Lyric-Getter前的确认对话框"
+        }
+      ]
+    },
+    "LyricsInterfacePage": {
+      "fullName": "LyricsInterfacePage (歌词界面设置)",
+      "components": [
+        {
+          "id": "导航目的地容器",
+          "type": "NavDestination",
+          "desc": "歌词界面设置的导航目的页"
+        },
+        {
+          "id": "歌词界面对话框组件",
+          "type": "Column",
+          "desc": "引用LyricsInterfaceDialogComponent全屏对话框组件"
+        }
+      ]
+    },
+    "CarKitPage": {
+      "fullName": "CarKitPage (车载设置)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'车载'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有车载设置项的可滚动区域"
+        },
+        {
+          "id": "车机播放界面开关",
+          "type": "Toggle",
+          "desc": "开启/关闭车机播放界面（Pro功能，带皇冠图标）"
+        },
+        {
+          "id": "车载蓝牙歌词开关",
+          "type": "Toggle",
+          "desc": "开启/关闭车载蓝牙歌词显示"
+        },
+        {
+          "id": "vivo智能车载歌词开关",
+          "type": "Toggle",
+          "desc": "开启/关闭vivo Jovi InCar歌词"
+        },
+        {
+          "id": "第三方车载支持标题",
+          "type": "Text",
+          "desc": "显示'第三方车载支持'分区标题"
+        },
+        {
+          "id": "Dudu Auto图标",
+          "type": "Image",
+          "desc": "显示Dudu Auto第三方车载应用图标"
+        },
+        {
+          "id": "官方网站链接",
+          "type": "Row",
+          "desc": "点击打开Dudu Auto官方网站的链接项"
+        },
+        {
+          "id": "外部链接图标",
+          "type": "Image",
+          "desc": "表示打开外部链接的图标"
+        }
+      ]
+    },
+    "NotificationPage": {
+      "fullName": "NotificationPage (通知设置)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'通知'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有通知设置项的可滚动区域"
+        },
+        {
+          "id": "显示桌面歌词按钮开关",
+          "type": "Toggle",
+          "desc": "控制通知栏是否显示桌面歌词按钮"
+        },
+        {
+          "id": "显示关闭按钮开关",
+          "type": "Toggle",
+          "desc": "控制通知栏是否显示关闭按钮"
+        },
+        {
+          "id": "警告信息卡片",
+          "type": "Row",
+          "desc": "带警告图标的提示信息，说明系统通知按钮排序"
+        },
+        {
+          "id": "关闭桌面歌词确认弹窗",
+          "type": "Column",
+          "desc": "是否同时关闭桌面歌词的确认对话框"
+        },
+        {
+          "id": "取消按钮",
+          "type": "Button",
+          "desc": "弹窗中的取消操作按钮"
+        },
+        {
+          "id": "确认按钮",
+          "type": "Button",
+          "desc": "弹窗中的确认操作按钮"
+        }
+      ]
+    },
+    "StartupAndBackendPage": {
+      "fullName": "StartupAndBackendPage (启动与后台)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'启动与后台'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹设置项的可滚动区域"
+        },
+        {
+          "id": "自动播放分区标题",
+          "type": "Text",
+          "desc": "显示'自动播放'分区小标题"
+        },
+        {
+          "id": "自动播放开关",
+          "type": "Toggle",
+          "desc": "开启/关闭启动时自动播放音乐"
+        }
+      ]
+    },
+    "LanguageSettingsPage": {
+      "fullName": "LanguageSettingsPage (语言设置)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'语言'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有语言设置项的可滚动区域"
+        },
+        {
+          "id": "系统语言卡片",
+          "type": "Column",
+          "desc": "显示当前系统语言标签和语言代码"
+        },
+        {
+          "id": "不支持语言警告",
+          "type": "Row",
+          "desc": "当前语言不受支持时显示的警告信息"
+        },
+        {
+          "id": "改变语言项",
+          "type": "Row",
+          "desc": "点击切换应用语言的操作项，带右箭头"
+        },
+        {
+          "id": "帮助翻译项",
+          "type": "Row",
+          "desc": "点击打开翻译帮助页面的操作项"
+        },
+        {
+          "id": "帮助翻译弹窗",
+          "type": "Column",
+          "desc": "帮助翻译的确认对话框"
+        },
+        {
+          "id": "取消按钮",
+          "type": "Button",
+          "desc": "弹窗中的取消操作按钮"
+        },
+        {
+          "id": "确认按钮",
+          "type": "Button",
+          "desc": "弹窗中确认打开翻译链接的按钮"
+        }
+      ]
+    },
+    "LaboratoryPage": {
+      "fullName": "LaboratoryPage (实验室)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有实验室设置项的可滚动区域"
+        },
+        {
+          "id": "大标题",
+          "type": "Text",
+          "desc": "居中显示'实验室'大号标题文字"
+        },
+        {
+          "id": "说明文字",
+          "type": "Text",
+          "desc": "实验室功能的介绍说明文字"
+        },
+        {
+          "id": "自动打开播放界面开关",
+          "type": "Toggle",
+          "desc": "启动软件时自动打开播放界面"
+        },
+        {
+          "id": "立体歌词效果开关",
+          "type": "Toggle",
+          "desc": "开启/关闭3D立体歌词效果（Pro功能）"
+        },
+        {
+          "id": "获取同文件夹封面开关",
+          "type": "Toggle",
+          "desc": "无内嵌封面时尝试获取同文件夹专辑封面"
+        },
+        {
+          "id": "Material分区标题",
+          "type": "Text",
+          "desc": "显示'Material'分区标题"
+        },
+        {
+          "id": "Salt UI Material开关",
+          "type": "Toggle",
+          "desc": "开启/关闭Salt UI材质效果（Pro功能）"
+        },
+        {
+          "id": "Liquid Glass开关",
+          "type": "Toggle",
+          "desc": "开启/关闭液态玻璃效果（Pro功能）"
+        },
+        {
+          "id": "皇冠图标",
+          "type": "Image",
+          "desc": "标识Pro付费功能的皇冠图标"
+        }
+      ]
+    },
+    "TabletModePage": {
+      "fullName": "TabletModePage (平板模式)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'平板模式'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有平板模式设置项的可滚动区域"
+        },
+        {
+          "id": "平板模式介绍",
+          "type": "Text",
+          "desc": "平板模式功能介绍说明文字"
+        },
+        {
+          "id": "键盘快捷键分区标题",
+          "type": "Text",
+          "desc": "显示'键盘快捷键'分区标题"
+        },
+        {
+          "id": "键盘快捷键说明",
+          "type": "Text",
+          "desc": "键盘快捷键操作的介绍文字"
+        },
+        {
+          "id": "空格键播放暂停开关",
+          "type": "Toggle",
+          "desc": "开启/关闭空格键播放或暂停音乐"
+        }
+      ]
+    },
+    "BlockedFoldersPage": {
+      "fullName": "BlockedFoldersPage (被屏蔽的文件夹)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'被屏蔽的文件夹'标题文字"
+        },
+        {
+          "id": "空状态图片",
+          "type": "Image",
+          "desc": "无屏蔽文件夹时显示的空箱子图标"
+        },
+        {
+          "id": "文件夹列表",
+          "type": "List",
+          "desc": "显示所有被屏蔽文件夹路径的列表"
+        },
+        {
+          "id": "文件夹图标",
+          "type": "Image",
+          "desc": "每个文件夹项前的高亮色文件夹图标"
+        },
+        {
+          "id": "文件夹路径文字",
+          "type": "Text",
+          "desc": "显示被屏蔽文件夹的完整路径"
+        },
+        {
+          "id": "移除按钮",
+          "type": "Image",
+          "desc": "点击弹出确认对话框以移除屏蔽文件夹"
+        }
+      ]
+    },
+    "MediaSourcePage": {
+      "fullName": "MediaSourcePage (媒体来源)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'媒体来源'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有媒体来源设置项的可滚动区域"
+        },
+        {
+          "id": "开始扫描按钮",
+          "type": "Row",
+          "desc": "点击开始扫描音乐文件，带扫描图标"
+        },
+        {
+          "id": "使用系统媒体库开关",
+          "type": "Toggle",
+          "desc": "开启/关闭使用Android MediaStore作为媒体来源"
+        },
+        {
+          "id": "自定义文件夹列表",
+          "type": "Column",
+          "desc": "显示已添加的自定义文件夹列表"
+        },
+        {
+          "id": "添加自定义文件夹按钮",
+          "type": "Row",
+          "desc": "点击打开添加自定义文件夹的底部弹窗"
+        },
+        {
+          "id": "管理存储权限链接",
+          "type": "Row",
+          "desc": "点击跳转到系统存储权限管理页面"
+        },
+        {
+          "id": "不扫描60秒以下音频开关",
+          "type": "Toggle",
+          "desc": "开启/关闭过滤60秒以下的短音频"
+        },
+        {
+          "id": "被屏蔽的文件夹导航项",
+          "type": "Row",
+          "desc": "点击跳转到被屏蔽文件夹管理页面"
+        },
+        {
+          "id": "移除文件夹按钮",
+          "type": "Image",
+          "desc": "删除自定义文件夹的取消图标按钮"
+        }
+      ]
+    },
+    "BackgroundMusicProtectionPage": {
+      "fullName": "BackgroundMusicProtectionPage (后台音乐保护)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'后台音乐保护'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有保护检查项的可滚动区域"
+        },
+        {
+          "id": "可读取检查项分区",
+          "type": "Text",
+          "desc": "显示'可读取检查项'分区标题"
+        },
+        {
+          "id": "MIUI自启动权限检查",
+          "type": "Column",
+          "desc": "显示MIUI自启动权限的标题和操作说明"
+        },
+        {
+          "id": "刷新按钮",
+          "type": "Text",
+          "desc": "点击刷新自启动权限检测状态"
+        },
+        {
+          "id": "自行检查项分区",
+          "type": "Text",
+          "desc": "显示'自行检查项'分区标题"
+        },
+        {
+          "id": "保护检查项列表",
+          "type": "Column",
+          "desc": "包含11项自行检查的保护建议（悬浮窗权限、自启动、前台通知等）"
+        },
+        {
+          "id": "谨慎建议分区",
+          "type": "Text",
+          "desc": "显示'谨慎建议'分区标题和补充操作建议"
+        }
+      ]
+    },
+    "FxActivityPage": {
+      "fullName": "FxActivityPage (音效设置)",
+      "components": [
+        {
+          "id": "背景图片",
+          "type": "Image",
+          "desc": "页面顶部的音效主题背景图"
+        },
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的白色箭头图标"
+        },
+        {
+          "id": "标题文字",
+          "type": "Text",
+          "desc": "显示'SALT PLAYER V4'和'AUDIOFX'标题"
+        },
+        {
+          "id": "更多按钮",
+          "type": "Image",
+          "desc": "点击弹出音效说明底部弹窗"
+        },
+        {
+          "id": "频谱图Canvas",
+          "type": "Canvas",
+          "desc": "绘制当前EQ预设的频率响应曲线图"
+        },
+        {
+          "id": "当前预设名称",
+          "type": "Text",
+          "desc": "显示当前选中的AutoEQ预设名称"
+        },
+        {
+          "id": "AutoEQ预设列表",
+          "type": "List",
+          "desc": "显示所有可选的AutoEQ均衡器预设"
+        },
+        {
+          "id": "预设图标",
+          "type": "Image",
+          "desc": "每个预设项前的耳机类型图标"
+        },
+        {
+          "id": "MAX Audio声学调音开关",
+          "type": "Stack",
+          "desc": "V3音效页中的MAX Audio声学调音圆形开关"
+        },
+        {
+          "id": "V3混响开关",
+          "type": "Stack",
+          "desc": "V3音效页中的DX8混响圆形开关"
+        },
+        {
+          "id": "AUDIOFX标签",
+          "type": "Row",
+          "desc": "底部Tab栏的AUDIOFX标签页切换按钮"
+        },
+        {
+          "id": "V3音效标签",
+          "type": "Row",
+          "desc": "底部Tab栏的V3音效标签页切换按钮"
+        },
+        {
+          "id": "说明底部弹窗",
+          "type": "Column",
+          "desc": "展示参数均衡器使用说明的底部Sheet弹窗"
+        }
+      ]
+    },
+    "AboutPage": {
+      "fullName": "AboutPage (关于)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'关于'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有关于页内容的可滚动区域"
+        },
+        {
+          "id": "应用图标",
+          "type": "Image",
+          "desc": "Salt Player应用logo图标"
+        },
+        {
+          "id": "应用名称",
+          "type": "Text",
+          "desc": "显示'Salt Player 椒盐播放器'名称，双击进入开发者页"
+        },
+        {
+          "id": "版本号",
+          "type": "Text",
+          "desc": "显示应用版本号和构建号"
+        },
+        {
+          "id": "App备案号项",
+          "type": "Row",
+          "desc": "点击跳转到备案号网站的操作项"
+        },
+        {
+          "id": "制作人员项",
+          "type": "Row",
+          "desc": "点击跳转到制作人员页面的菜单项"
+        },
+        {
+          "id": "软件使用条款项",
+          "type": "Row",
+          "desc": "点击打开软件使用条款网页"
+        },
+        {
+          "id": "隐私协议项",
+          "type": "Row",
+          "desc": "点击打开隐私协议网页"
+        },
+        {
+          "id": "开源许可项",
+          "type": "Row",
+          "desc": "点击打开开源许可网页"
+        },
+        {
+          "id": "客服邮箱",
+          "type": "Text",
+          "desc": "显示客服邮箱地址，可复制"
+        },
+        {
+          "id": "版权声明",
+          "type": "Text",
+          "desc": "底部居中显示的版权声明文字"
+        }
+      ]
+    },
+    "CreditsPage": {
+      "fullName": "CreditsPage (制作人员)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'制作人员'标题文字"
+        },
+        {
+          "id": "自动滚动容器",
+          "type": "Scroll",
+          "desc": "禁止用户交互的自动滚动字幕区域"
+        },
+        {
+          "id": "职位标题",
+          "type": "Text",
+          "desc": "显示制作、设计、工程、测试等职位分类标题"
+        },
+        {
+          "id": "人员姓名",
+          "type": "Text",
+          "desc": "居中显示各职位对应的人员名称"
+        },
+        {
+          "id": "版权信息",
+          "type": "Text",
+          "desc": "滚动末尾显示的版权信息文字"
+        },
+        {
+          "id": "项目启动信息",
+          "type": "Text",
+          "desc": "滚动结束时居中显示的项目启动日期和地点"
+        }
+      ]
+    },
+    "StatisticsPage": {
+      "fullName": "StatisticsPage (播放统计)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'统计'标题文字"
+        },
+        {
+          "id": "空状态动画",
+          "type": "Canvas",
+          "desc": "无统计数据时显示的Lottie空箱子动画"
+        },
+        {
+          "id": "歌曲排行列表",
+          "type": "List",
+          "desc": "显示播放次数排名前100的歌曲列表"
+        },
+        {
+          "id": "歌曲封面",
+          "type": "Image",
+          "desc": "每首歌曲的专辑封面缩略图"
+        },
+        {
+          "id": "歌曲标题",
+          "type": "Text",
+          "desc": "显示歌曲名称"
+        },
+        {
+          "id": "歌手信息",
+          "type": "Text",
+          "desc": "显示歌曲的歌手/副标题"
+        },
+        {
+          "id": "播放次数",
+          "type": "Text",
+          "desc": "显示该歌曲的累计播放次数"
+        }
+      ]
+    },
+    "MusicLibraryPage": {
+      "fullName": "MusicLibraryPage (音乐库)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'音乐库'标题文字"
+        },
+        {
+          "id": "搜索按钮",
+          "type": "Image",
+          "desc": "点击跳转到搜索全部歌曲页面"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹饼图和质量统计的可滚动区域"
+        },
+        {
+          "id": "饼状图Canvas",
+          "type": "Canvas",
+          "desc": "可旋转可点击高亮的音频质量分布环形饼图"
+        },
+        {
+          "id": "图例行",
+          "type": "Row",
+          "desc": "饼图下方的颜色圆点+标签图例"
+        },
+        {
+          "id": "质量统计列表",
+          "type": "Column",
+          "desc": "显示Size、HQ、SQ、Hi-Res、Others的统计数据"
+        }
+      ]
+    },
+    "SaltPlayerProPage": {
+      "fullName": "SaltPlayerProPage (激活Pro会员)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'激活 Salt Player Pro'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有Pro激活内容的可滚动区域"
+        },
+        {
+          "id": "价格卡片",
+          "type": "Text",
+          "desc": "显示会员价格'￥19.00'"
+        },
+        {
+          "id": "功能特性网格",
+          "type": "Column",
+          "desc": "6行2列展示12个Pro功能特性卡片"
+        },
+        {
+          "id": "功能图标",
+          "type": "Image",
+          "desc": "每个Pro功能卡片的图标"
+        },
+        {
+          "id": "服务说明文字",
+          "type": "Text",
+          "desc": "诚信会员计划的服务说明"
+        },
+        {
+          "id": "会员协议链接",
+          "type": "Row",
+          "desc": "点击打开会员服务协议的外部链接"
+        },
+        {
+          "id": "同意协议复选框",
+          "type": "Image",
+          "desc": "勾选同意会员服务协议的复选框图标"
+        },
+        {
+          "id": "支付按钮",
+          "type": "Column",
+          "desc": "支付宝付款按钮，需勾选协议后启用"
+        },
+        {
+          "id": "重新激活链接",
+          "type": "Text",
+          "desc": "'曾购买过诚信会员？'重新激活的下划线链接"
+        },
+        {
+          "id": "重新激活弹窗",
+          "type": "Column",
+          "desc": "重新激活会员的确认对话框"
+        }
+      ]
+    },
+    "HelpAndFeedbackPage": {
+      "fullName": "HelpAndFeedbackPage (帮助与反馈)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'帮助与反馈'标题文字"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹帮助项的可滚动区域"
+        },
+        {
+          "id": "后台音乐保护项",
+          "type": "Row",
+          "desc": "点击跳转到后台音乐保护页面，带右箭头"
+        },
+        {
+          "id": "技术支持项",
+          "type": "Row",
+          "desc": "点击打开技术支持网页，带右箭头"
+        },
+        {
+          "id": "右箭头图标",
+          "type": "Image",
+          "desc": "列表项右侧的导航箭头图标"
+        }
+      ]
+    },
+    "WebPage": {
+      "fullName": "WebPage (网页浏览器)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "网页标题",
+          "type": "Text",
+          "desc": "动态显示当前加载网页的标题"
+        },
+        {
+          "id": "网页视图",
+          "type": "Web",
+          "desc": "加载并展示网页内容的WebView组件"
+        },
+        {
+          "id": "加载进度条",
+          "type": "Row",
+          "desc": "网页加载时顶部显示的蓝色进度条"
+        }
+      ]
+    },
+    "WindowsPlatformPage": {
+      "fullName": "WindowsPlatformPage (Windows版推广)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有Windows推广内容的可滚动区域"
+        },
+        {
+          "id": "大标题",
+          "type": "Text",
+          "desc": "显示'Salt Player for Windows'大号标题"
+        },
+        {
+          "id": "品牌副标题",
+          "type": "Text",
+          "desc": "显示'数十万用户选择的本地音乐播放器品牌'"
+        },
+        {
+          "id": "推广图片",
+          "type": "Image",
+          "desc": "Salt Player Windows版的宣传图片"
+        },
+        {
+          "id": "官方网站链接",
+          "type": "Row",
+          "desc": "点击打开SPW官方网站的外部链接"
+        },
+        {
+          "id": "下载分区标题",
+          "type": "Text",
+          "desc": "显示'下载'分区标题"
+        },
+        {
+          "id": "Microsoft Store图标",
+          "type": "Image",
+          "desc": "微软商店的彩色logo图标"
+        },
+        {
+          "id": "Microsoft Store下载链接",
+          "type": "Row",
+          "desc": "点击跳转到Microsoft Store下载页面"
+        }
+      ]
+    },
+    "DevPage": {
+      "fullName": "DevPage (开发者页面)",
+      "components": [
+        {
+          "id": "返回按钮",
+          "type": "Image",
+          "desc": "返回上一页的导航箭头图标"
+        },
+        {
+          "id": "页面标题",
+          "type": "Text",
+          "desc": "显示'Moriafly'开发者标题"
+        },
+        {
+          "id": "滚动容器",
+          "type": "Scroll",
+          "desc": "包裹所有开发者信息和控制项的可滚动区域"
+        },
+        {
+          "id": "开发者报告项",
+          "type": "Row",
+          "desc": "点击查看开发者报告的导航项"
+        },
+        {
+          "id": "Dev Monitor开关",
+          "type": "Toggle",
+          "desc": "开启/关闭开发者监控功能"
+        },
+        {
+          "id": "控制操作列表",
+          "type": "Column",
+          "desc": "包含stopSelf、stop MusicService等调试控制项"
+        },
+        {
+          "id": "歌词拖拽效果开关",
+          "type": "Toggle",
+          "desc": "开启/关闭歌词拖拽效果结束设置"
+        },
+        {
+          "id": "设备信息列表",
+          "type": "Column",
+          "desc": "显示品牌、制造商、型号、ROM版本等设备信息"
+        },
+        {
+          "id": "软件信息列表",
+          "type": "Column",
+          "desc": "显示app版本、构建号、debug状态等软件信息"
+        },
+        {
+          "id": "TestScreen项",
+          "type": "Row",
+          "desc": "点击进入测试页面的导航项"
+        },
+        {
+          "id": "安全防护项",
+          "type": "Row",
+          "desc": "点击进入安全防护页面的导航项"
+        }
+      ]
     }
   }
+},
+  "SimpleGallery": {
+  "projectName": "SimpleGallery",
+  "projectDescription": "Simple Gallery HarmonyOS 迁移",
+  "specs": [
+    {
+      "id": "SPEC-01",
+      "title": "应用启动与初始化",
+      "reqId": "REQ-01",
+      "version": "2.2",
+      "scenarios": [
+        "01-1:冷启动进入主页面",
+        "01-2:数据库初始化",
+        "01-3:配置恢复",
+        "01-4:权限检查",
+        "01-5:Want处理",
+        "01-6:导航跳转"
+      ],
+      "coveredPages": [
+        "Index"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-02",
+      "title": "存储权限申请与管理",
+      "reqId": "REQ-02",
+      "version": "2.2",
+      "scenarios": [
+        "02-1:权限检测",
+        "02-2:权限请求",
+        "02-3:权限授予",
+        "02-4:权限拒绝"
+      ],
+      "coveredPages": [
+        "Index"
+      ],
+      "dependsOn": [
+        "SPEC-01"
+      ]
+    },
+    {
+      "id": "SPEC-03",
+      "title": "媒体文件夹浏览",
+      "reqId": "REQ-03",
+      "version": "2.2",
+      "scenarios": [
+        "03-1:加载文件夹列表",
+        "03-2:视图切换",
+        "03-3:排序",
+        "03-4:置顶",
+        "03-5:隐藏/显示",
+        "03-6:刷新",
+        "03-7:打开相机",
+        "03-8:导航到媒体页",
+        "03-9:搜索",
+        "03-10:筛选",
+        "03-11:多选",
+        "03-12:创建文件夹",
+        "03-13:菜单操作"
+      ],
+      "coveredPages": [
+        "Index",
+        "MediaPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-04",
+      "title": "媒体文件浏览",
+      "reqId": "REQ-04",
+      "version": "2.2",
+      "scenarios": [
+        "04-1:加载媒体",
+        "04-2:视图切换",
+        "04-3:分组",
+        "04-4:排序",
+        "04-5:筛选",
+        "04-6:多选",
+        "04-7:刷新",
+        "04-8:导航",
+        "04-9:菜单操作"
+      ],
+      "coveredPages": [
+        "MediaPage",
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-05",
+      "title": "图片全屏查看",
+      "reqId": "REQ-05",
+      "version": "2.2",
+      "scenarios": [
+        "05-1:打开",
+        "05-2:缩放",
+        "05-3:平移",
+        "05-4:旋转",
+        "05-5:EXIF信息",
+        "05-6:分享",
+        "05-7:编辑",
+        "05-8:删除",
+        "05-9:收藏",
+        "05-10:幻灯片",
+        "05-11:旋转按钮",
+        "05-12:返回"
+      ],
+      "coveredPages": [
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-04"
+      ]
+    },
+    {
+      "id": "SPEC-06",
+      "title": "视频播放",
+      "reqId": "REQ-06",
+      "version": "2.2",
+      "scenarios": [
+        "06-1:视频播放入口",
+        "06-2:播放/暂停",
+        "06-3:进度控制",
+        "06-4:音量控制",
+        "06-5:全屏切换",
+        "06-6:播放位置记忆"
+      ],
+      "coveredPages": [
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-01",
+        "SPEC-04",
+        "SPEC-05"
+      ]
+    },
+    {
+      "id": "SPEC-07",
+      "title": "全景图片/视频查看",
+      "reqId": "REQ-07",
+      "version": "2.2",
+      "scenarios": [
+        "07-1:全景图片检测",
+        "07-2:陀螺仪全景",
+        "07-3:触摸拖拽全景",
+        "07-4:全景视频"
+      ],
+      "coveredPages": [
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-05"
+      ]
+    },
+    {
+      "id": "SPEC-08",
+      "title": "媒体搜索",
+      "reqId": "REQ-08",
+      "version": "2.2",
+      "scenarios": [
+        "08-1:全量搜索",
+        "08-2:文件夹内搜索",
+        "08-3:搜索结果展示",
+        "08-4:搜索结果点击"
+      ],
+      "coveredPages": [
+        "MediaPage",
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-03",
+        "SPEC-04"
+      ]
+    },
+    {
+      "id": "SPEC-09",
+      "title": "媒体编辑",
+      "reqId": "REQ-09",
+      "version": "2.2",
+      "scenarios": [
+        "09-1:进入编辑页",
+        "09-2:滤镜",
+        "09-3:裁剪",
+        "09-4:旋转",
+        "09-5:绘画",
+        "09-6:覆盖保存",
+        "09-7:另存为"
+      ],
+      "coveredPages": [
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-05"
+      ]
+    },
+    {
+      "id": "SPEC-10",
+      "title": "媒体文件管理",
+      "reqId": "REQ-10",
+      "version": "2.2",
+      "scenarios": [
+        "10-1:复制",
+        "10-2:移动",
+        "10-3:重命名",
+        "10-4:删除移入回收站",
+        "10-5:永久删除",
+        "10-6:调整大小",
+        "10-7:批量操作"
+      ],
+      "coveredPages": [
+        "MediaPage",
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-04",
+        "SPEC-05"
+      ]
+    },
+    {
+      "id": "SPEC-11",
+      "title": "收藏夹管理",
+      "reqId": "REQ-11",
+      "version": "2.2",
+      "scenarios": [
+        "11-1:标记收藏",
+        "11-2:取消收藏",
+        "11-3:查看收藏夹",
+        "11-4:导出收藏"
+      ],
+      "coveredPages": [
+        "Index",
+        "MediaPage",
+        "ViewPagerPage"
+      ],
+      "dependsOn": [
+        "SPEC-03",
+        "SPEC-04",
+        "SPEC-05"
+      ]
+    },
+    {
+      "id": "SPEC-12",
+      "title": "回收站管理",
+      "reqId": "REQ-12",
+      "version": "2.2",
+      "scenarios": [
+        "12-1:删除移入回收站",
+        "12-2:查看回收站",
+        "12-3:恢复文件",
+        "12-4:永久删除",
+        "12-5:清空回收站"
+      ],
+      "coveredPages": [
+        "Index",
+        "MediaPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-13",
+      "title": "幻灯片播放",
+      "reqId": "REQ-13",
+      "version": "2.2",
+      "scenarios": [
+        "13-1:设置对话框",
+        "13-2:启动播放",
+        "13-3:自动切换",
+        "13-4:随机顺序",
+        "13-5:循环播放"
+      ],
+      "coveredPages": [
+        "MediaPage",
+        "ViewPagerPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-14",
+      "title": "壁纸设置",
+      "reqId": "REQ-14",
+      "version": "2.2",
+      "scenarios": [
+        "14-1:主屏幕壁纸",
+        "14-2:锁屏壁纸",
+        "14-3:双屏壁纸",
+        "14-4:外部Want壁纸",
+        "14-5:双屏分别设置"
+      ],
+      "coveredPages": [
+        "ViewPagerPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-15",
+      "title": "第三方Want响应",
+      "reqId": "REQ-15",
+      "version": "2.2",
+      "scenarios": [
+        "15-1:selectData选择",
+        "15-2:返回URI",
+        "15-3:viewData查看",
+        "15-4:编辑Want",
+        "15-5:多选返回"
+      ],
+      "coveredPages": [
+        "Index",
+        "MediaPage",
+        "ViewPagerPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-16",
+      "title": "隐藏文件夹管理",
+      "reqId": "REQ-16",
+      "version": "2.2",
+      "scenarios": [
+        "16-1:标记隐藏",
+        "16-2:取消隐藏",
+        "16-3:临时显示隐藏"
+      ],
+      "coveredPages": [
+        "Index",
+        "SettingsPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-17",
+      "title": "排除/包含文件夹管理",
+      "reqId": "REQ-17",
+      "version": "2.2",
+      "scenarios": [
+        "17-1:添加排除",
+        "17-2:添加包含",
+        "17-3:移除文件夹",
+        "17-4:密码保护"
+      ],
+      "coveredPages": [
+        "Index",
+        "SettingsPage",
+        "ExcludedFoldersPage",
+        "IncludedFoldersPage"
+      ],
+      "dependsOn": [
+        "SPEC-03"
+      ]
+    },
+    {
+      "id": "SPEC-18",
+      "title": "桌面小部件",
+      "reqId": "REQ-18",
+      "version": "2.2",
+      "scenarios": [
+        "18-1:添加小部件",
+        "18-2:显示缩略图",
+        "18-3:点击跳转",
+        "18-4:刷新更新"
+      ],
+      "coveredPages": [
+        "MediaPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-19",
+      "title": "设置与个性化",
+      "reqId": "REQ-19",
+      "version": "2.2",
+      "scenarios": [
+        "19-1:浏览设置项",
+        "19-2:外观设置",
+        "19-3:显示偏好",
+        "19-4:安全设置",
+        "19-5:即时生效",
+        "19-6:延迟生效"
+      ],
+      "coveredPages": [
+        "SettingsPage",
+        "CustomizationPage"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "SPEC-20",
+      "title": "后台媒体同步服务",
+      "reqId": "REQ-20",
+      "version": "2.2",
+      "scenarios": [
+        "20-1:新增文件同步",
+        "20-2:删除文件同步",
+        "20-3:开机全量扫描",
+        "20-4:增量同步",
+        "20-5:前台激活监听",
+        "20-6:后台不影响UI"
+      ],
+      "coveredPages": [],
+      "dependsOn": []
+    }
+  ],
+  "tests": [
+    {
+      "id": 1,
+      "name": "冷启动初始化后正常进入主页面",
+      "spec": "SPEC-01",
+      "steps": "打开Simple Gallery应用",
+      "status": "success",
+      "duration": 42.2
+    },
+    {
+      "id": 2,
+      "name": "从最近任务恢复应用",
+      "spec": "SPEC-01",
+      "steps": "打开Simple Gallery应用 -> 从系统最近任务列表恢复Simple Gallery应用",
+      "status": "success",
+      "duration": 158.8
+    },
+    {
+      "id": 3,
+      "name": "第三方 Want 拉起应用",
+      "spec": "SPEC-01",
+      "steps": "打开Simple Gallery应用 -> 外部应用通过 Want 拉起Simple Gallery应用",
+      "status": "success",
+      "duration": 122.3
+    },
+    {
+      "id": 4,
+      "name": "首次打开应用-授权通过-展示所有文件夹",
+      "spec": "SPEC-01",
+      "steps": "打开Simple Gallery应用 -> 点击允许按钮授予媒体访问权限",
+      "status": "success",
+      "duration": 217.3
+    },
+    {
+      "id": 5,
+      "name": "首次打开应用-授权不通过-展示提示信息",
+      "spec": "SPEC-01",
+      "steps": "打开Simple Gallery应用 -> 点击拒绝按钮拒绝媒体访问权限",
+      "status": "failed",
+      "duration": 302
+    },
+    {
+      "id": 6,
+      "name": "权限申请流程-授予权限",
+      "spec": "SPEC-02",
+      "steps": "打开Simple Gallery应用 -> 系统弹出权限请求对话框 -> 点击允许按钮",
+      "status": "failed",
+      "duration": 103.6
+    },
+    {
+      "id": 7,
+      "name": "权限申请流程-拒绝权限",
+      "spec": "SPEC-02",
+      "steps": "打开Simple Gallery应用 -> 系统弹出权限请求对话框 -> 点击拒绝按钮",
+      "status": "failed",
+      "duration": 82.1
+    },
+    {
+      "id": 8,
+      "name": "权限被撤销后重新申请",
+      "spec": "SPEC-02",
+      "steps": "打开Simple Gallery应用 -> 检测到权限缺失 -> 跳转权限申请流程",
+      "status": "success",
+      "duration": 348.6
+    },
+    {
+      "id": 9,
+      "name": "Android 11+申请全部文件访问权限",
+      "spec": "SPEC-02",
+      "steps": "打开Simple Gallery应用 -> 触发全部文件授权对话框 -> 点击允许按钮",
+      "status": "failed",
+      "duration": 376.1
+    },
+    {
+      "id": 10,
+      "name": "权限设置页面引导",
+      "spec": "SPEC-02",
+      "steps": "打开Simple Gallery应用 -> 点击权限说明对话框中的引导按钮 -> 跳转至系统设置页面",
+      "status": "failed",
+      "duration": 400.6
+    },
+    {
+      "id": 11,
+      "name": "文件夹网格展示",
+      "spec": "SPEC-03",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹网格主页面",
+      "status": "failed",
+      "duration": 398.9
+    },
+    {
+      "id": 12,
+      "name": "下拉刷新文件夹列表",
+      "spec": "SPEC-03",
+      "steps": "打开Simple Gallery应用 -> 在文件夹列表页面下拉",
+      "status": "failed",
+      "duration": 64.1
+    },
+    {
+      "id": 13,
+      "name": "点击相机图标启动系统相机",
+      "spec": "SPEC-03",
+      "steps": "打开Simple Gallery应用 -> 点击工具栏相机图标",
+      "status": "failed",
+      "duration": 372.1
+    },
+    {
+      "id": 14,
+      "name": "点击目录入口进入媒体列表页",
+      "spec": "SPEC-03",
+      "steps": "打开Simple Gallery应用 -> 点击文件夹网格中的某个文件夹",
+      "status": "failed",
+      "duration": 405.5
+    },
+    {
+      "id": 15,
+      "name": "切换排序方式",
+      "spec": "SPEC-03",
+      "steps": "打开Simple Gallery应用 -> 点击排序按钮 -> 选择排序方式",
+      "status": "failed",
+      "duration": 333.4
+    },
+    {
+      "id": 16,
+      "name": "点击文件夹进入媒体列表",
+      "spec": "SPEC-04",
+      "steps": "打开Simple Gallery应用 -> 点击文件夹 -> 进入媒体列表页",
+      "status": "success",
+      "duration": 257.4
+    },
+    {
+      "id": 17,
+      "name": "Show All 显示所有媒体",
+      "spec": "SPEC-04",
+      "steps": "打开Simple Gallery应用 -> 点击 Show All 菜单项",
+      "status": "success",
+      "duration": 419.9
+    },
+    {
+      "id": 18,
+      "name": "媒体列表下拉刷新",
+      "spec": "SPEC-04",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 在媒体列表页面下拉",
+      "status": "success",
+      "duration": 73.1
+    },
+    {
+      "id": 19,
+      "name": "文件名显示切换",
+      "spec": "SPEC-04",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击显示名称图标切换文件名显示",
+      "status": "success",
+      "duration": 69.5
+    },
+    {
+      "id": 20,
+      "name": "媒体多选模式",
+      "spec": "SPEC-04",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选中多个媒体项",
+      "status": "success",
+      "duration": 93.3
+    },
+    {
+      "id": 21,
+      "name": "媒体列表分组显示",
+      "spec": "SPEC-04",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击分组按钮 -> 选择分组方式",
+      "status": "success",
+      "duration": 87.1
+    },
+    {
+      "id": 22,
+      "name": "点击图片缩略图进入全屏查看",
+      "spec": "SPEC-05",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击媒体缩略图",
+      "status": "success",
+      "duration": 73.4
+    },
+    {
+      "id": 23,
+      "name": "双击放大图片",
+      "spec": "SPEC-05",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 双击图片",
+      "status": "success",
+      "duration": 92.8
+    },
+    {
+      "id": 24,
+      "name": "双指缩放图片",
+      "spec": "SPEC-05",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 双指捏合或张开",
+      "status": "success",
+      "duration": 110
+    },
+    {
+      "id": 25,
+      "name": "左右滑动切换查看其他图片",
+      "spec": "SPEC-05",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 向左/右滑动",
+      "status": "success",
+      "duration": 106.4
+    },
+    {
+      "id": 26,
+      "name": "全屏查看页收藏媒体",
+      "spec": "SPEC-11",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部收藏按钮",
+      "status": "success",
+      "duration": 86.7
+    },
+    {
+      "id": 27,
+      "name": "全屏查看页删除媒体",
+      "spec": "SPEC-12",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 确认删除",
+      "status": "success",
+      "duration": 101.7
+    },
+    {
+      "id": 28,
+      "name": "全屏查看页分享媒体",
+      "spec": "SPEC-05",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部分享按钮",
+      "status": "success",
+      "duration": 84.7
+    },
+    {
+      "id": 29,
+      "name": "全屏查看页编辑媒体",
+      "spec": "SPEC-09",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部编辑按钮",
+      "status": "success",
+      "duration": 85.7
+    },
+    {
+      "id": 30,
+      "name": "查看图片 EXIF 信息",
+      "spec": "SPEC-05",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> 查看属性",
+      "status": "success",
+      "duration": 84.7
+    },
+    {
+      "id": 31,
+      "name": "点击视频缩略图播放视频",
+      "spec": "SPEC-06",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击视频缩略图",
+      "status": "success",
+      "duration": 66.4
+    },
+    {
+      "id": 32,
+      "name": "视频播放-暂停/继续",
+      "spec": "SPEC-06",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击视频 -> 点击播放/暂停按钮",
+      "status": "failed",
+      "duration": 283.8
+    },
+    {
+      "id": 33,
+      "name": "视频播放-调整进度",
+      "spec": "SPEC-06",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击视频 -> 拖动进度条调整播放位置",
+      "status": "failed",
+      "duration": 362.8
+    },
+    {
+      "id": 34,
+      "name": "视频播放-记住播放位置",
+      "spec": "SPEC-06",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击视频",
+      "status": "success",
+      "duration": 347.2
+    },
+    {
+      "id": 35,
+      "name": "视频播放-全屏切换",
+      "spec": "SPEC-06",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击视频 -> 切换全屏模式",
+      "status": "success",
+      "duration": 86.8
+    },
+    {
+      "id": 36,
+      "name": "查看全景图片",
+      "spec": "SPEC-07",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击全景图片",
+      "status": "success",
+      "duration": 71.9
+    },
+    {
+      "id": 37,
+      "name": "查看全景视频",
+      "spec": "SPEC-07",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击全景视频",
+      "status": "success",
+      "duration": 73.7
+    },
+    {
+      "id": 38,
+      "name": "非全景媒体不触发全景模式",
+      "spec": "SPEC-07",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击普通图片",
+      "status": "success",
+      "duration": 74
+    },
+    {
+      "id": 39,
+      "name": "主界面点击搜索并根据文件名筛选",
+      "spec": "SPEC-08",
+      "steps": "打开Simple Gallery应用 -> 点击搜索图标 -> 输入文件名关键词",
+      "status": "success",
+      "duration": 234.3
+    },
+    {
+      "id": 40,
+      "name": "搜索结果点击进入全屏查看",
+      "spec": "SPEC-08",
+      "steps": "打开Simple Gallery应用 -> 点击搜索图标 -> 输入关键词 -> 点击搜索结果中的媒体项",
+      "status": "failed",
+      "duration": 218.5
+    },
+    {
+      "id": 41,
+      "name": "空搜索结果展示",
+      "spec": "SPEC-08",
+      "steps": "打开Simple Gallery应用 -> 点击搜索图标 -> 输入不存在的文件名关键词",
+      "status": "failed",
+      "duration": 295.5
+    },
+    {
+      "id": 42,
+      "name": "搜索范围切换",
+      "spec": "SPEC-08",
+      "steps": "打开Simple Gallery应用 -> 点击搜索图标 -> 切换搜索范围（全局/当前文件夹）",
+      "status": "failed",
+      "duration": 313.9
+    },
+    {
+      "id": 43,
+      "name": "全屏查看-点击编辑-进入编辑页",
+      "spec": "SPEC-09",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部编辑按钮",
+      "status": "success",
+      "duration": 87.4
+    },
+    {
+      "id": 44,
+      "name": "图片裁剪",
+      "spec": "SPEC-09",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 点击编辑 -> 选择裁剪工具 -> 调整裁剪框 -> 保存",
+      "status": "failed",
+      "duration": 234.4
+    },
+    {
+      "id": 45,
+      "name": "图片旋转",
+      "spec": "SPEC-09",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击旋转菜单 -> 选择旋转角度",
+      "status": "success",
+      "duration": 226.9
+    },
+    {
+      "id": 46,
+      "name": "图片滤镜",
+      "spec": "SPEC-09",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 点击编辑 -> 选择滤镜工具 -> 选择滤镜效果 -> 保存",
+      "status": "failed",
+      "duration": 179.3
+    },
+    {
+      "id": 47,
+      "name": "图片绘画",
+      "spec": "SPEC-09",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 点击编辑 -> 选择绘画工具 -> 在图片上绘制 -> 保存",
+      "status": "failed",
+      "duration": 208
+    },
+    {
+      "id": 48,
+      "name": "删除媒体文件",
+      "spec": "SPEC-12",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 确认删除",
+      "status": "success",
+      "duration": 104.8
+    },
+    {
+      "id": 49,
+      "name": "取消删除媒体",
+      "spec": "SPEC-10",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 取消删除",
+      "status": "success",
+      "duration": 101.3
+    },
+    {
+      "id": 50,
+      "name": "重命名媒体文件",
+      "spec": "SPEC-10",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> Rename -> 输入新名称 -> 确认",
+      "status": "failed",
+      "duration": 310.7
+    },
+    {
+      "id": 51,
+      "name": "调整图片大小",
+      "spec": "SPEC-10",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> Resize -> 输入新尺寸 -> 确认",
+      "status": "failed",
+      "duration": 375
+    },
+    {
+      "id": 52,
+      "name": "复制媒体文件",
+      "spec": "SPEC-10",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选择媒体 -> 点击复制 -> 选择目标文件夹 -> 确认",
+      "status": "failed",
+      "duration": 380.3
+    },
+    {
+      "id": 53,
+      "name": "移动媒体文件",
+      "spec": "SPEC-10",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选择媒体 -> 点击移动 -> 选择目标文件夹 -> 确认",
+      "status": "failed",
+      "duration": 200.4
+    },
+    {
+      "id": 54,
+      "name": "多选模式下批量删除",
+      "spec": "SPEC-10",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 长按进入多选模式 -> 选中多个媒体项 -> 点击批量删除 -> 确认删除",
+      "status": "failed",
+      "duration": 215
+    },
+    {
+      "id": 55,
+      "name": "全屏查看页收藏媒体",
+      "spec": "SPEC-11",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部收藏按钮",
+      "status": "failed",
+      "duration": 366.5
+    },
+    {
+      "id": 56,
+      "name": "查看收藏夹",
+      "spec": "SPEC-11",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹网格主页面 -> 点击收藏夹入口",
+      "status": "failed",
+      "duration": 355.2
+    },
+    {
+      "id": 57,
+      "name": "取消收藏",
+      "spec": "SPEC-11",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部已高亮的收藏按钮",
+      "status": "failed",
+      "duration": 373.3
+    },
+    {
+      "id": 58,
+      "name": "删除媒体移入回收站",
+      "spec": "SPEC-12",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击底部删除按钮 -> 确认删除",
+      "status": "failed",
+      "duration": 373.9
+    },
+    {
+      "id": 59,
+      "name": "查看回收站",
+      "spec": "SPEC-12",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹网格主页面 -> 点击回收站入口",
+      "status": "failed",
+      "duration": 390.7
+    },
+    {
+      "id": 60,
+      "name": "恢复回收站媒体",
+      "spec": "SPEC-12",
+      "steps": "打开Simple Gallery应用 -> 进入回收站 -> 选择媒体 -> 点击恢复",
+      "status": "failed",
+      "duration": 375.4
+    },
+    {
+      "id": 61,
+      "name": "永久删除回收站媒体",
+      "spec": "SPEC-12",
+      "steps": "打开Simple Gallery应用 -> 进入回收站 -> 选择媒体 -> 点击永久删除 -> 确认",
+      "status": "failed",
+      "duration": 347.9
+    },
+    {
+      "id": 62,
+      "name": "清空回收站",
+      "spec": "SPEC-12",
+      "steps": "打开Simple Gallery应用 -> 进入回收站 -> 点击清空回收站 -> 确认",
+      "status": "failed",
+      "duration": 390.2
+    },
+    {
+      "id": 63,
+      "name": "在全屏查看页启动幻灯片播放",
+      "spec": "SPEC-13",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击工具栏幻灯片菜单 -> 启动幻灯片",
+      "status": "failed",
+      "duration": 374.3
+    },
+    {
+      "id": 64,
+      "name": "幻灯片设置-调整间隔",
+      "spec": "SPEC-13",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击工具栏幻灯片菜单 -> 进入幻灯片设置 -> 调整播放间隔",
+      "status": "failed",
+      "duration": 371.6
+    },
+    {
+      "id": 65,
+      "name": "幻灯片播放-包含视频/GIF",
+      "spec": "SPEC-13",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击工具栏幻灯片菜单 -> 设置幻灯片包含视频/GIF -> 启动幻灯片",
+      "status": "failed",
+      "duration": 143.2
+    },
+    {
+      "id": 66,
+      "name": "幻灯片播放-随机顺序",
+      "spec": "SPEC-13",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击工具栏幻灯片菜单 -> 设置随机顺序 -> 启动幻灯片",
+      "status": "failed",
+      "duration": 393.8
+    },
+    {
+      "id": 67,
+      "name": "全屏查看-设为壁纸-进入壁纸设置页",
+      "spec": "SPEC-14",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片进入全屏查看 -> 点击更多菜单 -> 设为壁纸",
+      "status": "failed",
+      "duration": 164.7
+    },
+    {
+      "id": 68,
+      "name": "设置主屏幕壁纸",
+      "spec": "SPEC-14",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 设为壁纸 -> 选择主屏幕 -> 确认设置",
+      "status": "failed",
+      "duration": 413.5
+    },
+    {
+      "id": 69,
+      "name": "设置锁屏壁纸",
+      "spec": "SPEC-14",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 设为壁纸 -> 选择锁屏 -> 确认设置",
+      "status": "failed",
+      "duration": 347.3
+    },
+    {
+      "id": 70,
+      "name": "设置双屏壁纸",
+      "spec": "SPEC-14",
+      "steps": "打开Simple Gallery应用 -> 进入文件夹 -> 点击图片 -> 设为壁纸 -> 选择双屏 -> 确认设置",
+      "status": "failed",
+      "duration": 250.5
+    },
+    {
+      "id": 71,
+      "name": "第三方 Want 拉起应用查看图片",
+      "spec": "SPEC-15",
+      "steps": "外部应用通过 Want 拉起Simple Gallery应用",
+      "status": "failed",
+      "duration": 221.8
+    },
+    {
+      "id": 72,
+      "name": "第三方 Want 拉起应用选择媒体",
+      "spec": "SPEC-15",
+      "steps": "外部应用通过 Want 拉起Simple Gallery应用进入选择模式 -> 用户选择媒体 -> 确认",
+      "status": "failed",
+      "duration": 360.7
+    },
+    {
+      "id": 73,
+      "name": "第三方 Want 拉起应用编辑图片",
+      "spec": "SPEC-15",
+      "steps": "外部应用通过 Want 拉起Simple Gallery应用进入编辑模式 -> 用户编辑图片 -> 保存",
+      "status": "failed",
+      "duration": 336.6
+    },
+    {
+      "id": 74,
+      "name": "第三方 Want 拉起应用设为壁纸",
+      "spec": "SPEC-15",
+      "steps": "外部应用通过 Want 拉起Simple Gallery应用进入壁纸设置模式",
+      "status": "success",
+      "duration": 190
+    },
+    {
+      "id": 75,
+      "name": "查看隐藏文件夹列表",
+      "spec": "SPEC-16",
+      "steps": "打开Simple Gallery应用 -> 点击设置入口 -> 点击隐藏文件夹管理",
+      "status": "success",
+      "duration": 364.3
+    },
+    {
+      "id": 76,
+      "name": "取消隐藏文件夹",
+      "spec": "SPEC-16",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 隐藏文件夹管理 -> 选择文件夹 -> 取消隐藏",
+      "status": "failed",
+      "duration": 395.7
+    },
+    {
+      "id": 77,
+      "name": "查看排除文件夹列表",
+      "spec": "SPEC-17",
+      "steps": "打开Simple Gallery应用 -> 点击设置入口 -> 点击排除文件夹管理",
+      "status": "failed",
+      "duration": 285.3
+    },
+    {
+      "id": 78,
+      "name": "添加排除文件夹",
+      "spec": "SPEC-17",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 排除文件夹管理 -> 添加排除文件夹 -> 选择文件夹 -> 确认",
+      "status": "failed",
+      "duration": 400.3
+    },
+    {
+      "id": 79,
+      "name": "移除排除文件夹",
+      "spec": "SPEC-17",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 排除文件夹管理 -> 选择已排除的文件夹 -> 移除排除",
+      "status": "failed",
+      "duration": 75.8
+    },
+    {
+      "id": 80,
+      "name": "查看包含文件夹列表",
+      "spec": "SPEC-17",
+      "steps": "打开Simple Gallery应用 -> 点击设置入口 -> 点击包含文件夹管理",
+      "status": "failed",
+      "duration": 384
+    },
+    {
+      "id": 81,
+      "name": "添加包含文件夹",
+      "spec": "SPEC-17",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 包含文件夹管理 -> 添加包含文件夹 -> 选择文件夹 -> 确认",
+      "status": "failed",
+      "duration": 161
+    },
+    {
+      "id": 82,
+      "name": "添加桌面小部件",
+      "spec": "SPEC-18",
+      "steps": "在系统桌面添加小部件 -> 选择 Simple Gallery 小部件 -> 选择文件夹 -> 确认配置",
+      "status": "success",
+      "duration": 140.7
+    },
+    {
+      "id": 83,
+      "name": "点击桌面小部件进入文件夹",
+      "spec": "SPEC-18",
+      "steps": "点击桌面上的 Simple Gallery 小部件",
+      "status": "success",
+      "duration": 156.2
+    },
+    {
+      "id": 84,
+      "name": "修改小部件配置",
+      "spec": "SPEC-18",
+      "steps": "长按小部件 -> 进入小部件配置 -> 修改关联文件夹",
+      "status": "failed",
+      "duration": 422.2
+    },
+    {
+      "id": 85,
+      "name": "进入设置页面",
+      "spec": "SPEC-19",
+      "steps": "打开Simple Gallery应用 -> 点击设置入口",
+      "status": "success",
+      "duration": 111.1
+    },
+    {
+      "id": 86,
+      "name": "修改主题设置",
+      "spec": "SPEC-19",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 主题颜色 -> 选择主题",
+      "status": "failed",
+      "duration": 368.4
+    },
+    {
+      "id": 87,
+      "name": "修改底部操作栏配置",
+      "spec": "SPEC-19",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 管理底部操作 -> 修改可见按钮",
+      "status": "failed",
+      "duration": 360.7
+    },
+    {
+      "id": 88,
+      "name": "修改文件夹视图类型",
+      "spec": "SPEC-19",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 文件夹样式 -> 选择视图类型",
+      "status": "failed",
+      "duration": 380.6
+    },
+    {
+      "id": 89,
+      "name": "重置所有设置为默认值",
+      "spec": "SPEC-19",
+      "steps": "打开Simple Gallery应用 -> 设置 -> 重置所有设置",
+      "status": "failed",
+      "duration": 320.1
+    },
+    {
+      "id": 90,
+      "name": "新增媒体文件同步",
+      "spec": "SPEC-20",
+      "steps": "通过文件管理器向设备添加新的图片或视频文件",
+      "status": "success",
+      "duration": 232.1
+    },
+    {
+      "id": 91,
+      "name": "删除媒体文件同步",
+      "spec": "SPEC-20",
+      "steps": "通过文件管理器删除设备上的图片或视频文件",
+      "status": "success",
+      "duration": 232.1
+    },
+    {
+      "id": 92,
+      "name": "设备重启后自动同步",
+      "spec": "SPEC-20",
+      "steps": "重启设备",
+      "status": "success",
+      "duration": 433.1
+    }
+  ],
+  "pages": {
+    "Index": {
+      "fullName": "Index (MainPage)",
+      "components": [
+        {
+          "id": "SearchToolbar（搜索图标）",
+          "type": "Image",
+          "desc": "打开搜索输入模式"
+        },
+        {
+          "id": "SearchToolbar（返回箭头）",
+          "type": "Image",
+          "desc": "关闭搜索，清空文本"
+        },
+        {
+          "id": "SearchToolbar（相机）",
+          "type": "Image",
+          "desc": "启动设备相机应用"
+        },
+        {
+          "id": "SearchToolbar（显示全部）",
+          "type": "Image",
+          "desc": "打开全部媒体视图"
+        },
+        {
+          "id": "SearchToolbar（溢出菜单）",
+          "type": "Image",
+          "desc": "打开溢出菜单"
+        },
+        {
+          "id": "DirectoryGridItem（点击）",
+          "type": "GridItem",
+          "desc": "打开文件夹媒体视图"
+        },
+        {
+          "id": "DirectoryListItem（点击）",
+          "type": "ListItem",
+          "desc": "打开文件夹媒体视图"
+        },
+        {
+          "id": "SwitchSearchingBanner",
+          "type": "Text",
+          "desc": "跳转到全局文件搜索"
+        },
+        {
+          "id": "EmptyPlaceholder（操作）",
+          "type": "Text",
+          "desc": "打开FilterMediaDialog"
+        },
+        {
+          "id": "Refresh包裹层",
+          "type": "Refresh",
+          "desc": "下拉刷新重新加载文件夹"
+        },
+        {
+          "id": "sort（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MainSortingDialog"
+        },
+        {
+          "id": "filter（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MainFilterMediaDialog"
+        },
+        {
+          "id": "change_view_type（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MainChangeViewTypeDialog"
+        },
+        {
+          "id": "temporarily_show_hidden（菜单）",
+          "type": "MenuItem",
+          "desc": "切换隐藏文件夹可见性"
+        },
+        {
+          "id": "stop_showing_hidden（菜单）",
+          "type": "MenuItem",
+          "desc": "恢复隐藏文件夹可见性"
+        },
+        {
+          "id": "temporarily_show_excluded（菜单）",
+          "type": "MenuItem",
+          "desc": "切换排除文件夹可见性"
+        },
+        {
+          "id": "stop_showing_excluded（菜单）",
+          "type": "MenuItem",
+          "desc": "恢复排除文件夹可见性"
+        },
+        {
+          "id": "create_new_folder（菜单）",
+          "type": "MenuItem",
+          "desc": "打开FolderPickerDialog"
+        },
+        {
+          "id": "open_recycle_bin（菜单）",
+          "type": "MenuItem",
+          "desc": "打开回收站媒体列表"
+        },
+        {
+          "id": "column_count（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MainColumnCountDialog"
+        },
+        {
+          "id": "set_as_default_folder（菜单）",
+          "type": "MenuItem",
+          "desc": "清除默认文件夹配置"
+        },
+        {
+          "id": "settings（菜单）",
+          "type": "MenuItem",
+          "desc": "打开设置页面"
+        },
+        {
+          "id": "about（菜单）",
+          "type": "MenuItem",
+          "desc": "打开关于页面"
+        }
+      ]
+    },
+    "MediaPage": {
+      "fullName": "MediaPage",
+      "components": [
+        {
+          "id": "ToolbarContent（返回箭头）",
+          "type": "Image",
+          "desc": "返回Index或关闭搜索"
+        },
+        {
+          "id": "ToolbarContent（搜索图标）",
+          "type": "Image",
+          "desc": "打开搜索输入模式"
+        },
+        {
+          "id": "ToolbarContent（标签切换）",
+          "type": "Image",
+          "desc": "切换缩略图上文件名显示"
+        },
+        {
+          "id": "ToolbarContent（排序）",
+          "type": "Image",
+          "desc": "打开ChangeSortingDialog"
+        },
+        {
+          "id": "ToolbarContent（文件夹视图）",
+          "type": "Image",
+          "desc": "切换到文件夹浏览视图"
+        },
+        {
+          "id": "ToolbarContent（溢出菜单）",
+          "type": "Image",
+          "desc": "打开溢出菜单"
+        },
+        {
+          "id": "MediaThumbnailItem（图片点击）",
+          "type": "GridItem",
+          "desc": "全屏查看图片"
+        },
+        {
+          "id": "MediaThumbnailItem（视频点击）",
+          "type": "GridItem",
+          "desc": "播放视频"
+        },
+        {
+          "id": "MediaThumbnailItem（长按）",
+          "type": "GridItem",
+          "desc": "进入多选模式"
+        },
+        {
+          "id": "slideshow（菜单）",
+          "type": "MenuItem",
+          "desc": "从第一张开始幻灯片播放"
+        },
+        {
+          "id": "folder_view（菜单）",
+          "type": "MenuItem",
+          "desc": "切换到文件夹浏览视图"
+        },
+        {
+          "id": "open_camera（菜单）",
+          "type": "MenuItem",
+          "desc": "启动设备相机"
+        },
+        {
+          "id": "settings（菜单）",
+          "type": "MenuItem",
+          "desc": "打开设置页面"
+        },
+        {
+          "id": "about（菜单）",
+          "type": "MenuItem",
+          "desc": "打开关于页面"
+        },
+        {
+          "id": "open_recycle_bin（菜单）",
+          "type": "MenuItem",
+          "desc": "打开回收站列表"
+        },
+        {
+          "id": "sort（菜单）",
+          "type": "MenuItem",
+          "desc": "打开ChangeSortingDialog"
+        },
+        {
+          "id": "filter（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MediaFilterDialog"
+        },
+        {
+          "id": "change_view_type（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MediaViewTypeDialog"
+        },
+        {
+          "id": "group（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MediaGroupByDialog"
+        },
+        {
+          "id": "toggle_filename（菜单）",
+          "type": "MenuItem",
+          "desc": "切换文件名显示"
+        },
+        {
+          "id": "column_count（菜单）",
+          "type": "MenuItem",
+          "desc": "打开MediaColumnCountDialog"
+        },
+        {
+          "id": "empty_recycle_bin（菜单）",
+          "type": "MenuItem",
+          "desc": "清空回收站并返回"
+        },
+        {
+          "id": "empty_disable_recycle_bin（菜单）",
+          "type": "MenuItem",
+          "desc": "清空并禁用回收站"
+        },
+        {
+          "id": "restore_all_files（菜单）",
+          "type": "MenuItem",
+          "desc": "恢复所有已删除文件"
+        },
+        {
+          "id": "create_new_folder（菜单）",
+          "type": "MenuItem",
+          "desc": "创建子文件夹"
+        },
+        {
+          "id": "temporarily_show_hidden（菜单）",
+          "type": "MenuItem",
+          "desc": "切换隐藏文件可见性"
+        },
+        {
+          "id": "set_as_default_folder（菜单）",
+          "type": "MenuItem",
+          "desc": "设置为默认启动文件夹"
+        },
+        {
+          "id": "unset_as_default_folder（菜单）",
+          "type": "MenuItem",
+          "desc": "取消默认文件夹设置"
+        },
+        {
+          "id": "Refresh包裹层",
+          "type": "Refresh",
+          "desc": "下拉刷新"
+        }
+      ]
+    },
+    "ViewPagerPage": {
+      "fullName": "ViewPagerPage",
+      "components": [
+        {
+          "id": "TopToolbar（返回）",
+          "type": "Image",
+          "desc": "返回来源页面"
+        },
+        {
+          "id": "TopToolbar（文件名）",
+          "type": "Text",
+          "desc": "显示当前媒体文件名"
+        },
+        {
+          "id": "TopToolbar（删除）",
+          "type": "Image",
+          "desc": "删除当前文件"
+        },
+        {
+          "id": "TopToolbar（分享）",
+          "type": "Image",
+          "desc": "系统分享"
+        },
+        {
+          "id": "TopToolbar（旋转）",
+          "type": "Image",
+          "desc": "显示旋转子菜单"
+        },
+        {
+          "id": "TopToolbar（属性）",
+          "type": "Image",
+          "desc": "显示PropertiesDialog"
+        },
+        {
+          "id": "TopToolbar（溢出菜单）",
+          "type": "Image",
+          "desc": "显示溢出菜单弹窗"
+        },
+        {
+          "id": "Swiper（点击）",
+          "type": "Swiper项",
+          "desc": "切换全屏模式"
+        },
+        {
+          "id": "PhotoPage（全景图标）",
+          "type": "Image",
+          "desc": "打开全景查看器"
+        },
+        {
+          "id": "VideoPage（播放按钮）",
+          "type": "Image",
+          "desc": "开始视频播放"
+        },
+        {
+          "id": "VideoTimeControls（播放/暂停）",
+          "type": "Image",
+          "desc": "切换视频播放状态"
+        },
+        {
+          "id": "VideoTimeControls（进度条）",
+          "type": "Slider",
+          "desc": "拖动调整播放进度"
+        },
+        {
+          "id": "bottom_favorite",
+          "type": "Image",
+          "desc": "切换收藏状态"
+        },
+        {
+          "id": "bottom_edit",
+          "type": "Image",
+          "desc": "打开外部图片编辑器"
+        },
+        {
+          "id": "bottom_share",
+          "type": "Image",
+          "desc": "系统分享"
+        },
+        {
+          "id": "bottom_delete",
+          "type": "Image",
+          "desc": "删除当前文件"
+        },
+        {
+          "id": "bottom_rotate",
+          "type": "Image",
+          "desc": "顺时针旋转90度"
+        },
+        {
+          "id": "bottom_properties",
+          "type": "Image",
+          "desc": "显示属性对话框"
+        },
+        {
+          "id": "bottom_change_orientation",
+          "type": "Image",
+          "desc": "循环切换屏幕方向锁定"
+        },
+        {
+          "id": "bottom_slideshow",
+          "type": "Image",
+          "desc": "打开幻灯片设置对话框"
+        },
+        {
+          "id": "bottom_show_on_map",
+          "type": "Image",
+          "desc": "在地图应用中显示GPS位置"
+        },
+        {
+          "id": "bottom_toggle_file_visibility",
+          "type": "Image",
+          "desc": "切换文件可见性"
+        },
+        {
+          "id": "bottom_rename",
+          "type": "Image",
+          "desc": "打开重命名对话框"
+        },
+        {
+          "id": "bottom_set_as",
+          "type": "Image",
+          "desc": "打开'设为'选择器"
+        },
+        {
+          "id": "bottom_copy",
+          "type": "Image",
+          "desc": "打开复制到对话框"
+        },
+        {
+          "id": "bottom_move",
+          "type": "Image",
+          "desc": "打开移动到对话框"
+        },
+        {
+          "id": "bottom_resize",
+          "type": "Image",
+          "desc": "打开调整大小对话框"
+        },
+        {
+          "id": "溢出菜单: 重命名",
+          "type": "MenuItem",
+          "desc": "打开RenameDialog"
+        },
+        {
+          "id": "溢出菜单: 隐藏/���消隐藏",
+          "type": "MenuItem",
+          "desc": "切换文件可见性"
+        },
+        {
+          "id": "溢出菜单: 复制到",
+          "type": "MenuItem",
+          "desc": "打开CopyMoveDialog（复制模式）"
+        },
+        {
+          "id": "溢出菜单: 移动到",
+          "type": "MenuItem",
+          "desc": "打开CopyMoveDialog（移动模式）"
+        },
+        {
+          "id": "溢出菜单: 创建快捷方式",
+          "type": "MenuItem",
+          "desc": "创建主屏幕快捷方式"
+        },
+        {
+          "id": "溢出菜单: 打开方式",
+          "type": "MenuItem",
+          "desc": "选择外部应用打开"
+        },
+        {
+          "id": "溢出菜单: 设为",
+          "type": "MenuItem",
+          "desc": "打开'设为'选择器"
+        },
+        {
+          "id": "溢出菜单: 更改方向",
+          "type": "MenuItem",
+          "desc": "显示方向子菜单"
+        },
+        {
+          "id": "溢出菜单: 打印",
+          "type": "MenuItem",
+          "desc": "发送到打印服务"
+        },
+        {
+          "id": "溢出菜单: 调整大小",
+          "type": "MenuItem",
+          "desc": "打开ResizeDialog"
+        },
+        {
+          "id": "溢出菜单: 在地图上显示",
+          "type": "MenuItem",
+          "desc": "在地图应用中显示GPS坐标"
+        },
+        {
+          "id": "溢出菜单: 幻灯片",
+          "type": "MenuItem",
+          "desc": "打开SlideshowDialog"
+        },
+        {
+          "id": "溢出菜单: 设置",
+          "type": "MenuItem",
+          "desc": "打开设置页面"
+        }
+      ]
+    },
+    "SettingsPage": {
+      "fullName": "SettingsPage",
+      "components": [
+        {
+          "id": "settings_toolbar（返回）",
+          "type": "Image",
+          "desc": "返回上一页"
+        },
+        {
+          "id": "颜色定制行",
+          "type": "Row",
+          "desc": "打开颜色主题定制页面"
+        },
+        {
+          "id": "语言行",
+          "type": "Row",
+          "desc": "打开语言选择面板"
+        },
+        {
+          "id": "日期时间格式行",
+          "type": "Row",
+          "desc": "打开日期时间格式对话框"
+        },
+        {
+          "id": "文件加载优先级行",
+          "type": "Row",
+          "desc": "打开文件加载优先级对话框"
+        },
+        {
+          "id": "管理包含文件夹行",
+          "type": "Row",
+          "desc": "进入包含文件夹管理页面"
+        },
+        {
+          "id": "管理排除文件夹行",
+          "type": "Row",
+          "desc": "进入排除文件夹管理页面"
+        },
+        {
+          "id": "显示隐藏项开关",
+          "type": "Toggle",
+          "desc": "切换隐藏媒体可见性"
+        },
+        {
+          "id": "搜索所有文件开关",
+          "type": "Toggle",
+          "desc": "切换默认全局搜索"
+        },
+        {
+          "id": "自动播放视频开关",
+          "type": "Toggle",
+          "desc": "切换视频自动播放"
+        },
+        {
+          "id": "记住视频位置开关",
+          "type": "Toggle",
+          "desc": "切换记住视频播放位置"
+        },
+        {
+          "id": "循环播放视频开关",
+          "type": "Toggle",
+          "desc": "切换视频循环播放"
+        },
+        {
+          "id": "独立视频屏幕开关",
+          "type": "Toggle",
+          "desc": "切换独立视频播放屏幕"
+        },
+        {
+          "id": "视频手势开关",
+          "type": "Toggle",
+          "desc": "切换视频手势控制"
+        },
+        {
+          "id": "裁剪缩略图开关",
+          "type": "Toggle",
+          "desc": "切换缩略图裁剪"
+        },
+        {
+          "id": "动画GIF开关",
+          "type": "Toggle",
+          "desc": "切换GIF动画预览"
+        },
+        {
+          "id": "应用密码保护开关",
+          "type": "Toggle",
+          "desc": "切换应用密码保护"
+        },
+        {
+          "id": "底部操作栏开关",
+          "type": "Toggle",
+          "desc": "切换底部操作栏显示"
+        },
+        {
+          "id": "使用回收站开关",
+          "type": "Toggle",
+          "desc": "切换回收站功能"
+        },
+        {
+          "id": "清空回收站行",
+          "type": "Row",
+          "desc": "确认后清空回收站"
+        },
+        {
+          "id": "清除缓存行",
+          "type": "Row",
+          "desc": "清除应用图像缓存"
+        },
+        {
+          "id": "导出设置行",
+          "type": "Row",
+          "desc": "导出所有设置到文件"
+        },
+        {
+          "id": "导入设置行",
+          "type": "Row",
+          "desc": "从文件导入设置"
+        }
+      ]
+    },
+    "IncludedFoldersPage": {
+      "fullName": "IncludedFoldersPage",
+      "components": [
+        {
+          "id": "manage_folders_toolbar（返回）",
+          "type": "Image",
+          "desc": "返回上一页"
+        },
+        {
+          "id": "add_folder（工具栏）",
+          "type": "Image",
+          "desc": "打开文件夹选择器添加文件夹"
+        },
+        {
+          "id": "overflow_menu_icon（项）",
+          "type": "Image",
+          "desc": "打开'移除'选项弹窗"
+        },
+        {
+          "id": "PlaceholderBuilder",
+          "type": "Text",
+          "desc": "显示空状态提示"
+        }
+      ]
+    },
+    "ExcludedFoldersPage": {
+      "fullName": "ExcludedFoldersPage",
+      "components": [
+        {
+          "id": "manage_folders_toolbar（返回）",
+          "type": "Image",
+          "desc": "返回上一页"
+        },
+        {
+          "id": "add_folder（工具栏）",
+          "type": "Image",
+          "desc": "打开文件夹选择器添加文件夹"
+        },
+        {
+          "id": "overflow_menu_icon（项）",
+          "type": "Image",
+          "desc": "打开'移除'选项弹窗"
+        },
+        {
+          "id": "PlaceholderBuilder",
+          "type": "Text",
+          "desc": "显示空状态提示"
+        }
+      ]
+    },
+    "CustomizationPage": {
+      "fullName": "CustomizationPage",
+      "components": [
+        {
+          "id": "ToolbarBuilder（关闭）",
+          "type": "Image",
+          "desc": "显示保存/放弃对话框或直接返回"
+        },
+        {
+          "id": "ToolbarBuilder（保存）",
+          "type": "Image",
+          "desc": "保存当前主题设置"
+        },
+        {
+          "id": "theme_row",
+          "type": "Row",
+          "desc": "打开主题选择面板"
+        },
+        {
+          "id": "text_color_row",
+          "type": "Row",
+          "desc": "打开文本颜色选择器"
+        },
+        {
+          "id": "background_color_row",
+          "type": "Row",
+          "desc": "打开背景颜色选择器"
+        },
+        {
+          "id": "primary_color_row",
+          "type": "Row",
+          "desc": "打开主色选择器"
+        },
+        {
+          "id": "accent_color_row",
+          "type": "Row",
+          "desc": "打开强调色选择器"
+        },
+        {
+          "id": "app_icon_color_row",
+          "type": "Row",
+          "desc": "打开应用图标颜色对话框"
+        },
+        {
+          "id": "apply_to_all_button",
+          "type": "Button",
+          "desc": "保存为主题并应用到所有应用"
+        }
+      ]
+    },
+    "AboutPage": {
+      "fullName": "AboutPage",
+      "components": [
+        {
+          "id": "top_app_bar（返回）",
+          "type": "Image",
+          "desc": "返回上一页"
+        },
+        {
+          "id": "faq_item",
+          "type": "Row",
+          "desc": "打开FAQ页面"
+        },
+        {
+          "id": "email_item",
+          "type": "Row",
+          "desc": "显示邮件确认对话框"
+        },
+        {
+          "id": "rate_us_item",
+          "type": "Row",
+          "desc": "显示评分确认对话框"
+        },
+        {
+          "id": "invite_friends_item",
+          "type": "Row",
+          "desc": "打开分享功能"
+        },
+        {
+          "id": "contributors_item",
+          "type": "Row",
+          "desc": "打开贡献者页面"
+        },
+        {
+          "id": "donate_item",
+          "type": "Row",
+          "desc": "打开捐赠页面"
+        },
+        {
+          "id": "facebook_item",
+          "type": "Row",
+          "desc": "打开Facebook"
+        },
+        {
+          "id": "github_item",
+          "type": "Row",
+          "desc": "打开GitHub"
+        },
+        {
+          "id": "reddit_item",
+          "type": "Row",
+          "desc": "打开Reddit"
+        },
+        {
+          "id": "telegram_item",
+          "type": "Row",
+          "desc": "打开Telegram"
+        },
+        {
+          "id": "more_apps_item",
+          "type": "Row",
+          "desc": "打开应用商店"
+        },
+        {
+          "id": "website_item",
+          "type": "Row",
+          "desc": "打开网站"
+        },
+        {
+          "id": "privacy_policy_item",
+          "type": "Row",
+          "desc": "打开隐私政策"
+        },
+        {
+          "id": "license_item",
+          "type": "Row",
+          "desc": "打开第三方许可证页面"
+        },
+        {
+          "id": "version_item",
+          "type": "Row",
+          "desc": "彩蛋：快速点击7次显示Toast"
+        }
+      ]
+    }
+  }
+}
 };
 
 // ==================== COMPONENT-SPEC MAPPING ====================
@@ -1105,7 +5348,9 @@ const ProjectStore = {
 
   saveProject(data) {
     const name = data.projectName;
-    localStorage.setItem('dashboard_project_' + name, JSON.stringify(data));
+    // Strip timeline from project data (timeline is stored separately)
+    const { timeline, ...projectData } = data;
+    localStorage.setItem('dashboard_project_' + name, JSON.stringify(projectData));
     const index = this._getIndex();
     if (!index.find(e => e.name === name)) {
       index.push({ name, description: data.projectDescription || '' });
