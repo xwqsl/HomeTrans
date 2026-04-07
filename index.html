@@ -265,7 +265,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .chart-empty p { margin-top: 8px; }
 
 /* Summary Panels (Page Progress & Spec Test) */
-.summary-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+.summary-panels { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+.summary-panel-full { grid-column: 1 / -1; }
 .summary-panel {
   background: #fff; border-radius: 12px;
   box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
@@ -296,6 +297,34 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
 .summary-num-zero { color: var(--gray-300); }
 .summary-num-active { color: var(--primary); font-weight: 600; }
 .summary-num-success { color: var(--success); font-weight: 600; }
+
+/* Issue Tracker Panel */
+.issue-toolbar { display: flex; gap: 8px; align-items: center; }
+.issue-toolbar button {
+  font-size: 11px; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--gray-200);
+  background: #fff; cursor: pointer; font-weight: 500; color: var(--gray-600); transition: all .15s;
+}
+.issue-toolbar button:hover { background: var(--gray-50); border-color: var(--gray-300); }
+.issue-toolbar .btn-add { background: var(--primary); color: #fff; border-color: var(--primary); }
+.issue-toolbar .btn-add:hover { opacity: .9; }
+.issue-form { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+.issue-form-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.issue-form-row:last-child { margin-bottom: 0; }
+.issue-form input, .issue-form select {
+  font-size: 12px; padding: 4px 8px; border: 1px solid var(--gray-200); border-radius: 4px; flex: 1;
+}
+.issue-form select { flex: 0 0 auto; min-width: 100px; }
+.issue-form .btn-save { background: var(--primary); color: #fff; border-color: var(--primary); font-size: 11px; padding: 4px 12px; border-radius: 4px; cursor: pointer; }
+.issue-form .btn-cancel { font-size: 11px; padding: 4px 12px; border-radius: 4px; cursor: pointer; border: 1px solid var(--gray-200); background: #fff; }
+.tag-open { background: #fef2f2; color: #991b1b; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.tag-closed { background: #f0fdf4; color: #166534; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.issue-actions { display: flex; gap: 4px; }
+.issue-actions button {
+  font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid var(--gray-200);
+  background: #fff; cursor: pointer; color: var(--gray-500);
+}
+.issue-actions button:hover { background: var(--gray-50); }
+.issue-actions .btn-del:hover { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
 
 /* Snapshot Modal */
 .modal-overlay {
@@ -451,24 +480,66 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC'
   <div class="summary-panels">
     <div class="summary-panel">
       <div class="summary-panel-header">
-        <h3>&#x1F4C4; 页面功能完成情况</h3>
+        <h3>&#x1F4C4; 页面组件功能点覆盖情况</h3>
         <span class="panel-badge" id="pageSummaryBadge" style="background:var(--primary-light);color:var(--primary)">0 页面</span>
       </div>
       <div class="summary-panel-body">
         <table class="summary-table" id="pageSummaryTable">
-          <thead><tr><th>页面</th><th class="summary-num">组件功能点数</th><th class="summary-num">已分析数</th><th class="summary-num">已开发数</th></tr></thead>
+          <thead><tr><th>页面</th><th class="summary-num">组件功能点数</th><th class="summary-num">Spec已覆盖功能点数</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
     <div class="summary-panel">
       <div class="summary-panel-header">
-        <h3>&#x1F9EA; 功能测试信息</h3>
+        <h3>&#x1F4CB; 需求分析与设计情况</h3>
+        <span class="panel-badge" id="reqSpecPlanBadge" style="background:#fef3c7;color:#92400e">0 需求</span>
+      </div>
+      <div class="summary-panel-body">
+        <table class="summary-table" id="reqSpecPlanTable">
+          <thead><tr><th>需求</th><th>Spec</th><th class="summary-num">场景数</th><th class="summary-num">Plan Task数/Wave数</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="summary-panel">
+      <div class="summary-panel-header">
+        <h3>&#x1F6E0; 开发情况</h3>
+        <span class="panel-badge" id="devStatusBadge" style="background:#dbeafe;color:#1e40af">0 Plan</span>
+      </div>
+      <div class="summary-panel-body">
+        <table class="summary-table" id="devStatusTable">
+          <thead><tr><th>Plan</th><th class="summary-num">Wave数</th><th class="summary-num">Task数</th><th class="summary-num">已开发Task数</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="summary-panel">
+      <div class="summary-panel-header">
+        <h3>&#x1F9EA; 功能测试情况</h3>
         <span class="panel-badge" id="specTestSummaryBadge" style="background:var(--success-bg);color:#065f46">0 Spec</span>
       </div>
       <div class="summary-panel-body">
         <table class="summary-table" id="specTestSummaryTable">
           <thead><tr><th>Spec</th><th class="summary-num">测试用例数</th><th class="summary-num">通过用例数</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="summary-panel summary-panel-full">
+      <div class="summary-panel-header">
+        <h3>&#x1F41B; 问题跟踪情况</h3>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="panel-badge" id="issueTrackerBadge" style="background:#fef2f2;color:#991b1b">0 问题</span>
+          <div class="issue-toolbar">
+            <button class="btn-add" onclick="showIssueForm()">+ 添加问题</button>
+          </div>
+        </div>
+      </div>
+      <div id="issueFormContainer" style="display:none"></div>
+      <div class="summary-panel-body" style="max-height:320px">
+        <table class="summary-table" id="issueTrackerTable">
+          <thead><tr><th>问题描述</th><th>涉及Spec</th><th>提出人</th><th class="summary-num">是否已闭环</th><th class="summary-num">操作</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -5382,11 +5453,81 @@ const ProjectStore = {
   }
 };
 
+// ==================== REQ-SPEC-PLAN DATA ====================
+const REQ_SPEC_PLAN_DATA = {
+  "SaltPlayer": [
+    { req: "REQ-01+02", reqName: "音乐播放核心+播放队列", spec: "SPEC-01", scenarios: 8, tasks: 20, waves: 7 },
+    { req: "REQ-03", reqName: "歌词显示系统", spec: "SPEC-02", scenarios: 4, tasks: 14, waves: 7 },
+    { req: "REQ-04", reqName: "媒体库管理", spec: "SPEC-03", scenarios: 7, tasks: 26, waves: 8 },
+    { req: "REQ-05", reqName: "音效与均衡器", spec: "SPEC-04", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-06", reqName: "播放器UI与主题", spec: "SPEC-05", scenarios: 5, tasks: 15, waves: 7 },
+    { req: "REQ-07", reqName: "通知与媒体会话", spec: "SPEC-06", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-08", reqName: "睡眠定时器", spec: "SPEC-07", scenarios: 6, tasks: 13, waves: 7 },
+    { req: "REQ-09", reqName: "DLNA/UPnP支持", spec: "SPEC-08", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-10", reqName: "媒体路由(投屏)", spec: "SPEC-09", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-11", reqName: "桌面小组件", spec: "SPEC-10", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-13", reqName: "USB存储支持", spec: "SPEC-11", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-14", reqName: "设置与偏好", spec: "SPEC-12", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-15", reqName: "歌曲详情与元数据", spec: "SPEC-13", scenarios: 1, tasks: 3, waves: 3 },
+    { req: "REQ-16", reqName: "搜索功能", spec: "SPEC-14", scenarios: 3, tasks: 13, waves: 7 },
+    { req: "REQ-17", reqName: "文件夹导航", spec: "SPEC-15", scenarios: 2, tasks: 12, waves: 7 },
+    { req: "REQ-18", reqName: "专辑与艺术家视图", spec: "SPEC-16", scenarios: 7, tasks: 23, waves: 7 },
+    { req: "REQ-19", reqName: "播放列表管理", spec: "SPEC-17", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-20", reqName: "播放统计", spec: "SPEC-18", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-21", reqName: "Pro/高级功能", spec: "SPEC-19", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-22", reqName: "音频输出模式", spec: "SPEC-20", scenarios: 3, tasks: 7, waves: 5 },
+    { req: "REQ-23", reqName: "媒体源管理", spec: "SPEC-21", scenarios: 2, tasks: 10, waves: 7 },
+    { req: "REQ-24", reqName: "M3U播放列表导入", spec: "SPEC-22", scenarios: 12, tasks: 8, waves: 4 },
+    { req: "REQ-25", reqName: "音频封面加载", spec: "SPEC-23", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-26", reqName: "用户认证", spec: "SPEC-24", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-28", reqName: "车载模式集成", spec: "SPEC-25", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-29", reqName: "开发者功能", spec: "SPEC-26", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-30", reqName: "关于与致谢", spec: "SPEC-27", scenarios: 5, tasks: 12, waves: 6 },
+    { req: "REQ-31", reqName: "更新与反馈", spec: "SPEC-28", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-32", reqName: "OEM特定功能", spec: "SPEC-29", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-33", reqName: "权限配置", spec: "SPEC-30", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-34", reqName: "SPC Core - 播放引擎", spec: "SPEC-31A", scenarios: 12, tasks: 7, waves: 3 },
+    { req: "REQ-34", reqName: "SPC Core - 媒体管理", spec: "SPEC-31B", scenarios: 12, tasks: 7, waves: 3 },
+    { req: "REQ-34", reqName: "SPC Core - 数据存储", spec: "SPEC-31C", scenarios: 10, tasks: 10, waves: 4 },
+    { req: "REQ-35", reqName: "SPC UI - 播放器组件", spec: "SPEC-32A", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-35", reqName: "SPC UI - 列表组件", spec: "SPEC-32B", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-35", reqName: "SPC UI - 设置组件", spec: "SPEC-32C", scenarios: null, tasks: null, waves: null },
+    { req: "REQ-37", reqName: "Native C++模块", spec: "SPEC-33", scenarios: 8, tasks: 13, waves: 4 },
+    { req: "REQ-38", reqName: "第三方库迁移", spec: "SPEC-34", scenarios: null, tasks: null, waves: null }
+  ]
+};
+
+const DEV_STATUS_DATA = {
+  "SaltPlayer": [
+    { plan: "SPEC-00", planName: "MainPage 集成", waves: 3, tasks: 5, developedTasks: 0 },
+    { plan: "SPEC-01", planName: "音乐播放核心 + 播放队列", waves: 7, tasks: 20, developedTasks: 0 },
+    { plan: "SPEC-02", planName: "歌词显示系统", waves: 7, tasks: 14, developedTasks: 0 },
+    { plan: "SPEC-03", planName: "媒体库管理", waves: 8, tasks: 26, developedTasks: 0 },
+    { plan: "SPEC-05", planName: "播放器 UI 与主题", waves: 7, tasks: 15, developedTasks: 0 },
+    { plan: "SPEC-07", planName: "睡眠定时器", waves: 7, tasks: 13, developedTasks: 0 },
+    { plan: "SPEC-13", planName: "歌曲详情与元数据", waves: 3, tasks: 3, developedTasks: 0 },
+    { plan: "SPEC-14", planName: "搜索功能", waves: 7, tasks: 13, developedTasks: 0 },
+    { plan: "SPEC-15", planName: "文件夹导航", waves: 7, tasks: 12, developedTasks: 0 },
+    { plan: "SPEC-16", planName: "专辑与艺术家视图", waves: 7, tasks: 23, developedTasks: 0 },
+    { plan: "SPEC-20", planName: "音频输出模式", waves: 5, tasks: 7, developedTasks: 0 },
+    { plan: "SPEC-21", planName: "媒体源管理", waves: 7, tasks: 10, developedTasks: 0 },
+    { plan: "SPEC-22", planName: "播放列表管理", waves: 4, tasks: 8, developedTasks: 0 },
+    { plan: "SPEC-27", planName: "关于与致谢", waves: 6, tasks: 12, developedTasks: 0 },
+    { plan: "SPEC-31A", planName: "SPC Core - 播放引擎", waves: 3, tasks: 7, developedTasks: 0 },
+    { plan: "SPEC-31B", planName: "SPC Core - 媒体管理", waves: 3, tasks: 7, developedTasks: 0 },
+    { plan: "SPEC-31C", planName: "SPC Core - 数据存储", waves: 4, tasks: 10, developedTasks: 0 },
+    { plan: "SPEC-33", planName: "Native C++ 模块", waves: 4, tasks: 13, developedTasks: 0 }
+  ]
+};
+
 // ==================== STATE ====================
 let currentProjectName = '';
 let SPECS = [];
 let TESTS = [];
 let PAGES = {};
+let REQ_SPEC_PLAN = [];
+let DEV_STATUS = [];
+let ISSUES = [];
 let selectedSpecs = new Set();
 let selectedDay = null; // 'YYYY-MM-DD' or null
 
@@ -5453,6 +5594,9 @@ function switchProject(name) {
   SPECS = data.specs || [];
   TESTS = data.tests || [];
   PAGES = data.pages || {};
+  REQ_SPEC_PLAN = REQ_SPEC_PLAN_DATA[name] || [];
+  DEV_STATUS = DEV_STATUS_DATA[name] || [];
+  ISSUES = data.issues || [];
   selectedSpecs = new Set(SPECS.map(s => s.id));
   selectedDay = null;
 
@@ -5794,7 +5938,156 @@ function renderTestedPanel(specs, tests) {
 // ==================== SUMMARY PANELS ====================
 function renderSummaryPanels() {
   renderPageSummaryPanel();
+  renderReqSpecPlanPanel();
+  renderDevStatusPanel();
   renderSpecTestSummaryPanel();
+  renderIssueTrackerPanel();
+}
+
+function renderReqSpecPlanPanel() {
+  const tbody = document.querySelector('#reqSpecPlanTable tbody');
+  const badge = document.getElementById('reqSpecPlanBadge');
+  const data = REQ_SPEC_PLAN;
+  const uniqueReqs = new Set(data.map(r => r.req));
+  badge.textContent = uniqueReqs.size + ' 需求 / ' + data.length + ' Spec';
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px">暂无需求分析数据</td></tr>';
+    return;
+  }
+
+  let html = '';
+  for (const row of data) {
+    const hasPlan = row.tasks !== null;
+    const scenarioText = row.scenarios !== null ? row.scenarios : '-';
+    const planText = hasPlan ? (row.tasks + ' / ' + row.waves) : '-';
+    const scenarioClass = row.scenarios ? 'summary-num summary-num-active' : 'summary-num summary-num-zero';
+    const planClass = hasPlan ? 'summary-num summary-num-success' : 'summary-num summary-num-zero';
+    html += `<tr>
+      <td title="${row.req}">${row.reqName}</td>
+      <td>${row.spec}</td>
+      <td class="${scenarioClass}">${scenarioText}</td>
+      <td class="${planClass}">${planText}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function renderDevStatusPanel() {
+  const tbody = document.querySelector('#devStatusTable tbody');
+  const badge = document.getElementById('devStatusBadge');
+  const data = DEV_STATUS;
+  badge.textContent = data.length + ' Plan';
+
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px">暂无开发数据</td></tr>';
+    return;
+  }
+
+  const totalTasks = data.reduce((s, r) => s + r.tasks, 0);
+  const totalDev = data.reduce((s, r) => s + r.developedTasks, 0);
+  badge.textContent = data.length + ' Plan / ' + totalDev + '/' + totalTasks + ' Tasks';
+
+  let html = '';
+  for (const row of data) {
+    const devClass = row.developedTasks === 0
+      ? 'summary-num summary-num-zero'
+      : (row.developedTasks >= row.tasks ? 'summary-num summary-num-success' : 'summary-num summary-num-active');
+    html += `<tr>
+      <td title="${row.plan}">${row.plan} ${row.planName}</td>
+      <td class="summary-num">${row.waves}</td>
+      <td class="summary-num">${row.tasks}</td>
+      <td class="${devClass}">${row.developedTasks}</td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+// ==================== ISSUE TRACKER ====================
+function saveIssues() {
+  const data = ProjectStore.getProject(currentProjectName);
+  if (!data) return;
+  data.issues = ISSUES;
+  ProjectStore.saveProject(data);
+}
+
+function renderIssueTrackerPanel() {
+  const tbody = document.querySelector('#issueTrackerTable tbody');
+  const badge = document.getElementById('issueTrackerBadge');
+  const openCount = ISSUES.filter(i => !i.closed).length;
+  badge.textContent = openCount + ' 待处理 / ' + ISSUES.length + ' 总计';
+
+  if (ISSUES.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400);padding:24px">暂无问题记录，点击 "+ 添加问题" 开始跟踪</td></tr>';
+    return;
+  }
+
+  let html = '';
+  for (let i = 0; i < ISSUES.length; i++) {
+    const issue = ISSUES[i];
+    const statusTag = issue.closed
+      ? '<span class="tag-closed">已闭环</span>'
+      : '<span class="tag-open">待处理</span>';
+    const toggleLabel = issue.closed ? '重开' : '闭环';
+    html += `<tr>
+      <td title="${issue.desc}">${issue.desc}</td>
+      <td>${issue.spec || '-'}</td>
+      <td>${issue.author || '-'}</td>
+      <td class="summary-num">${statusTag}</td>
+      <td class="summary-num"><div class="issue-actions">
+        <button onclick="toggleIssueClosed(${i})">${toggleLabel}</button>
+        <button class="btn-del" onclick="deleteIssue(${i})">删除</button>
+      </div></td>
+    </tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function showIssueForm() {
+  const container = document.getElementById('issueFormContainer');
+  if (container.style.display !== 'none') { container.style.display = 'none'; return; }
+  container.style.display = 'block';
+  container.innerHTML = `<div class="issue-form">
+    <div class="issue-form-row">
+      <input id="issueDesc" placeholder="问题描述" style="flex:2" />
+      <input id="issueSpec" placeholder="涉及Spec (如 SPEC-01)" />
+      <input id="issueAuthor" placeholder="提出人" style="flex:0 0 100px" />
+    </div>
+    <div class="issue-form-row" style="justify-content:flex-end">
+      <button class="btn-cancel" onclick="hideIssueForm()">取消</button>
+      <button class="btn-save" onclick="addIssue()">添加</button>
+    </div>
+  </div>`;
+  document.getElementById('issueDesc').focus();
+}
+
+function hideIssueForm() {
+  document.getElementById('issueFormContainer').style.display = 'none';
+}
+
+function addIssue() {
+  const desc = document.getElementById('issueDesc').value.trim();
+  if (!desc) { showToast('请输入问题描述', 'error'); return; }
+  const spec = document.getElementById('issueSpec').value.trim();
+  const author = document.getElementById('issueAuthor').value.trim();
+  ISSUES.push({ desc, spec, author, closed: false, createdAt: new Date().toISOString() });
+  saveIssues();
+  hideIssueForm();
+  renderIssueTrackerPanel();
+  showToast('问题已添加', 'success');
+}
+
+function toggleIssueClosed(idx) {
+  ISSUES[idx].closed = !ISSUES[idx].closed;
+  saveIssues();
+  renderIssueTrackerPanel();
+}
+
+function deleteIssue(idx) {
+  if (!confirm('确定删除此问题？')) return;
+  ISSUES.splice(idx, 1);
+  saveIssues();
+  renderIssueTrackerPanel();
 }
 
 function renderPageSummaryPanel() {
@@ -5804,7 +6097,7 @@ function renderPageSummaryPanel() {
   badge.textContent = pageNames.length + ' 页面';
 
   if (pageNames.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400);padding:24px">暂无页面数据</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--gray-400);padding:24px">暂无页面数据</td></tr>';
     return;
   }
 
@@ -5815,27 +6108,18 @@ function renderPageSummaryPanel() {
     const pData = PAGES[pName];
     const totalComponents = pData.components.length;
 
-    // 已分析数: components that have at least one spec covering them (any spec, not just selected)
+    // Spec已覆盖功能点数: components that have at least one spec covering them (any spec, not just selected)
     let analyzedCount = 0;
     for (const c of pData.components) {
       const cSpecs = getComponentSpecs(pName, c.id);
       if (cSpecs.length > 0) analyzedCount++;
     }
 
-    // 已开发数: components that have at least one selected/developed spec covering them
-    let developedCount = 0;
-    for (const c of pData.components) {
-      const cSpecs = getComponentSpecs(pName, c.id);
-      if (cSpecs.some(id => selIds.has(id))) developedCount++;
-    }
-
     const numClass = (val) => val === 0 ? 'summary-num summary-num-zero' : 'summary-num summary-num-active';
-    const devClass = (val) => val === 0 ? 'summary-num summary-num-zero' : 'summary-num summary-num-success';
     html += `<tr style="cursor:pointer" onclick="jumpToAnalyzedPage('${pName}')">
       <td>${pData.fullName}</td>
       <td class="summary-num">${totalComponents}</td>
       <td class="${numClass(analyzedCount)}">${analyzedCount}</td>
-      <td class="${devClass(developedCount)}">${developedCount}</td>
     </tr>`;
   }
   tbody.innerHTML = html;
