@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HarmonyOS Migration Dashboard</title>
+<style>
+:root {
+  --primary: #4f46e5;
+  --primary-light: #e0e7ff;
+  --success: #10b981;
+  --success-bg: #d1fae5;
+  --warning: #f59e0b;
+  --warning-bg: #fef3c7;
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --sidebar-w: 280px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--gray-50); color: var(--gray-800); font-size: 14px; }
+.layout { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-w); background: #fff; border-right: 1px solid var(--gray-200);
+  display: flex; flex-direction: column; position: fixed;
+  top: 0; left: 0; bottom: 0; z-index: 10; overflow-y: auto;
+}
+.sidebar-header { padding: 16px; border-bottom: 1px solid var(--gray-200); }
+.sidebar-header h2 { font-size: 15px; color: var(--gray-800); margin-bottom: 2px; }
+.sidebar-header p { font-size: 11px; color: var(--gray-500); }
+
+/* Project Selector */
+.project-section { padding: 10px 16px; border-bottom: 1px solid var(--gray-200); }
+.project-section label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 6px; }
+.project-select {
+  width: 100%; padding: 7px 28px 7px 10px; border: 1px solid var(--gray-300); border-radius: 6px;
+  background: #fff; font-size: 13px; color: var(--gray-800); cursor: pointer;
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 8px center;
+}
+.project-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
+.project-actions { display: flex; gap: 6px; margin-top: 8px; }
+.project-actions button {
+  flex: 1; padding: 5px 0; border: 1px solid var(--gray-300); border-radius: 6px;
+  background: #fff; cursor: pointer; font-size: 11px; color: var(--gray-600); transition: all .15s;
+}
+.project-actions button:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+.project-actions button.danger:hover { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+.project-actions button:disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
+
+.sidebar-actions { padding: 8px 16px; display: flex; gap: 8px; border-bottom: 1px solid var(--gray-100); }
+.sidebar-actions button {
+  flex: 1; padding: 5px 0; border: 1px solid var(--gray-300); border-radius: 6px;
+  background: #fff; cursor: pointer; font-size: 12px; color: var(--gray-600); transition: all .15s;
+}
+.sidebar-actions button:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+.spec-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+.spec-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 16px; cursor: pointer; transition: background .1s;
+}
+.spec-item:hover { background: var(--gray-50); }
+.spec-item input[type=checkbox] {
+  margin-top: 3px; width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0;
+}
+.spec-item-info { flex: 1; min-width: 0; }
+.spec-item-id { font-weight: 600; font-size: 12px; color: var(--primary); }
+.spec-item-title { font-size: 13px; color: var(--gray-700); line-height: 1.3; }
+.spec-item-meta { display: flex; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+.spec-badge { font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 500; }
+.badge-analyzed { background: var(--primary-light); color: var(--primary); }
+.badge-developed { background: var(--success-bg); color: #065f46; }
+.badge-tested { background: var(--warning-bg); color: #92400e; }
+.badge-pass { background: var(--success-bg); color: #065f46; }
+.badge-fail { background: var(--danger-bg); color: #991b1b; }
+
+/* Main */
+.main { margin-left: var(--sidebar-w); flex: 1; padding: 24px; }
+.main-header { margin-bottom: 24px; }
+.main-header h1 { font-size: 22px; color: var(--gray-900); }
+.main-header p { color: var(--gray-500); font-size: 13px; margin-top: 4px; }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.card {
+  background: #fff; border-radius: 12px; padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  border: 1px solid var(--gray-100);
+}
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.card-title { font-size: 13px; color: var(--gray-500); font-weight: 500; }
+.card-icon {
+  width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.card-icon-coverage { background: #ede9fe; }
+.card-icon-req { background: #fef3c7; }
+.card-icon-spec { background: #dbeafe; }
+.card-icon-test { background: #d1fae5; }
+.card-value { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+.card-sub { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.card-progress { margin-top: 12px; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; }
+.card-progress-bar { height: 100%; border-radius: 3px; transition: width .4s ease; }
+.card-progress-coverage { background: linear-gradient(90deg, #8b5cf6, #6d28d9); }
+.card-progress-req { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.card-progress-spec { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.card-progress-test { background: linear-gradient(90deg, #10b981, #059669); }
+.card-detail { display: flex; gap: 16px; margin-top: 10px; font-size: 12px; }
+.card-detail span { color: var(--gray-500); }
+.card-detail strong { color: var(--gray-700); }
+
+/* Tabs */
+.tab-bar {
+  display: flex; gap: 0; background: #fff; border-radius: 10px 10px 0 0;
+  border: 1px solid var(--gray-200); border-bottom: none; overflow: hidden;
+}
+.tab-btn {
+  flex: 1; padding: 12px 16px; border: none; background: #fff; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: var(--gray-500);
+  transition: all .15s; position: relative;
+}
+.tab-btn:hover { background: var(--gray-50); color: var(--gray-700); }
+.tab-btn.active { color: var(--primary); background: var(--primary-light); }
+.tab-btn.active::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--primary);
+}
+.tab-count {
+  display: inline-block; min-width: 20px; padding: 0 6px; height: 18px; line-height: 18px;
+  border-radius: 9px; font-size: 11px; font-weight: 600; margin-left: 6px;
+  background: var(--gray-100); color: var(--gray-600);
+}
+.tab-btn.active .tab-count { background: var(--primary); color: #fff; }
+
+/* Table Panel */
+.table-panel {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: 0 0 10px 10px; overflow: hidden;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Pages Table */
+.page-table { width: 100%; border-collapse: collapse; }
+.page-table th {
+  text-align: left; padding: 10px 16px; background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200); font-size: 12px;
+  color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+}
+.page-table td { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); }
+.page-row { cursor: pointer; transition: background .1s; }
+.page-row:hover { background: var(--gray-50); }
+.page-row td:first-child { font-weight: 600; color: var(--gray-800); }
+.expand-icon { display: inline-block; width: 20px; transition: transform .2s; color: var(--gray-400); }
+.page-row.expanded .expand-icon { transform: rotate(90deg); }
+.page-detail-row { display: none; }
+.page-detail-row.show { display: table-row; }
+.page-detail-row td { padding: 0; background: var(--gray-50); }
+.detail-inner { padding: 12px 16px 12px 48px; }
+.detail-inner table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.detail-inner th {
+  text-align: left; padding: 6px 10px; background: #fff;
+  border-bottom: 1px solid var(--gray-200); font-size: 11px;
+  color: var(--gray-500); font-weight: 600;
+}
+.detail-inner td { padding: 6px 10px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+
+/* Status Dots & Tags */
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.dot-green { background: var(--success); }
+.dot-red { background: var(--danger); }
+.dot-yellow { background: var(--warning); }
+.dot-gray { background: var(--gray-300); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+.tag-pass { background: var(--success-bg); color: #065f46; }
+.tag-fail { background: var(--danger-bg); color: #991b1b; }
+.tag-na { background: var(--gray-100); color: var(--gray-500); }
+
+/* Mini Progress Bar in table */
+.mini-progress { display: flex; align-items: center; gap: 8px; }
+.mini-bar { flex: 1; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; max-width: 120px; }
+.mini-bar-fill { height: 100%; border-radius: 3px; }
+.mini-pct { font-size: 12px; font-weight: 600; min-width: 36px; }
+
+/* Test detail table */
+.test-detail-table { width: 100%; border-collapse: collapse; }
+.test-detail-table th {
+  text-align: left; padding: 8px 12px; background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200); font-size: 11px;
+  color: var(--gray-500); font-weight: 600; text-transform: uppercase;
+}
+.test-detail-table td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+.test-detail-table tr:hover td { background: var(--gray-50); }
+
+/* Toast */
+.toast {
+  position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; z-index: 1000; opacity: 0;
+  transition: opacity .3s, transform .3s; transform: translateY(-10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast-success { background: var(--success); color: #fff; }
+.toast-error { background: var(--danger); color: #fff; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 40px; color: var(--gray-400); }
+
+/* Timeline Section */
+.timeline-section {
+  background: #fff; border-radius: 12px; padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  border: 1px solid var(--gray-100); margin-bottom: 24px;
+}
+.timeline-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;
+}
+.timeline-header h3 { font-size: 15px; color: var(--gray-800); display: flex; align-items: center; gap: 8px; }
+.timeline-controls { display: flex; align-items: center; gap: 8px; }
+.timeline-controls button, .tl-btn {
+  padding: 5px 12px; border: 1px solid var(--gray-300); border-radius: 6px;
+  background: #fff; cursor: pointer; font-size: 12px; color: var(--gray-600); transition: all .15s;
+}
+.timeline-controls button:hover, .tl-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+.tl-btn-primary { background: var(--primary) !important; color: #fff !important; border-color: var(--primary) !important; }
+.tl-btn-primary:hover { opacity: .9; }
+.tl-btn-danger { color: var(--danger) !important; }
+.tl-btn-danger:hover { background: var(--danger-bg) !important; border-color: var(--danger) !important; color: var(--danger) !important; }
+.chart-wrap { position: relative; width: 100%; height: 220px; }
+.chart-wrap canvas { width: 100% !important; height: 100% !important; }
+.timeline-legend {
+  display: flex; gap: 20px; margin-top: 12px; font-size: 12px; color: var(--gray-600); justify-content: center;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+.timeline-info {
+  display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--gray-100); flex-wrap: wrap; gap: 8px;
+}
+.day-badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px;
+  background: var(--primary-light); color: var(--primary); border-radius: 6px;
+  font-size: 13px; font-weight: 600;
+}
+.chart-tooltip {
+  position: absolute; background: var(--gray-800); color: #fff; padding: 8px 12px;
+  border-radius: 6px; font-size: 12px; pointer-events: none; opacity: 0;
+  transition: opacity .15s; white-space: nowrap; z-index: 5;
+}
+.chart-tooltip.show { opacity: 1; }
+.chart-empty { text-align: center; padding: 40px 20px; color: var(--gray-400); }
+.chart-empty p { margin-top: 8px; }
+
+/* Summary Panels (Page Progress & Spec Test) */
+.summary-panels { margin-bottom: 24px; }
+.summary-panel-full { }
+.summary-panel {
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  border: 1px solid var(--gray-100); overflow: hidden; margin-bottom: 16px;
+}
+.summary-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px 12px; border-bottom: 1px solid var(--gray-100);
+}
+.summary-panel-header h3 { font-size: 14px; color: var(--gray-800); display: flex; align-items: center; gap: 8px; }
+.summary-panel-header .panel-badge {
+  font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+}
+.summary-panel-body { max-height: 360px; overflow-y: auto; }
+
+/* Summary Tab Bar */
+.summary-tab-container {
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  border: 1px solid var(--gray-100); overflow: hidden; margin-bottom: 16px;
+}
+.summary-tab-bar {
+  display: flex; gap: 0; border-bottom: 1px solid var(--gray-200); background: var(--gray-50);
+}
+.summary-tab-btn {
+  flex: 1; padding: 10px 12px; border: none; background: transparent; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: var(--gray-500);
+  transition: all .15s; position: relative; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.summary-tab-btn:hover { background: #fff; color: var(--gray-700); }
+.summary-tab-btn.active { color: var(--primary); background: #fff; }
+.summary-tab-btn.active::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--primary);
+}
+.summary-tab-btn .stab-badge {
+  font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 600;
+  background: var(--gray-100); color: var(--gray-500);
+}
+.summary-tab-btn.active .stab-badge { background: var(--primary-light); color: var(--primary); }
+.summary-tab-panel { display: none; }
+.summary-tab-panel.active { display: block; }
+.summary-tab-body { max-height: 300px; overflow-y: auto; }
+.summary-table { width: 100%; border-collapse: collapse; }
+.summary-table th {
+  text-align: left; padding: 8px 16px; background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200); font-size: 11px;
+  color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: .5px;
+  position: sticky; top: 0; z-index: 1;
+}
+.summary-table td { padding: 8px 16px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+.summary-table tr:hover td { background: var(--gray-50); }
+.summary-table tbody tr { cursor: pointer; transition: background .1s; }
+.summary-table tbody tr:active td { background: var(--primary-light); }
+.summary-table td:first-child { font-weight: 500; color: var(--gray-800); }
+.summary-num { text-align: center; font-variant-numeric: tabular-nums; }
+.summary-num-zero { color: var(--gray-300); }
+.summary-num-active { color: var(--primary); font-weight: 600; }
+.summary-num-success { color: var(--success); font-weight: 600; }
+
+/* Issue Tracker Panel */
+.issue-toolbar { display: flex; gap: 8px; align-items: center; }
+.issue-toolbar button {
+  font-size: 11px; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--gray-200);
+  background: #fff; cursor: pointer; font-weight: 500; color: var(--gray-600); transition: all .15s;
+}
+.issue-toolbar button:hover { background: var(--gray-50); border-color: var(--gray-300); }
+.issue-toolbar .btn-add { background: var(--primary); color: #fff; border-color: var(--primary); }
+.issue-toolbar .btn-add:hover { opacity: .9; }
+.issue-form { padding: 12px 16px; border-bottom: 1px solid var(--gray-200); background: var(--gray-50); }
+.issue-form-row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.issue-form-row:last-child { margin-bottom: 0; }
+.issue-form input, .issue-form select {
+  font-size: 12px; padding: 4px 8px; border: 1px solid var(--gray-200); border-radius: 4px; flex: 1;
+}
+.issue-form select { flex: 0 0 auto; min-width: 100px; }
+.issue-form .btn-save { background: var(--primary); color: #fff; border-color: var(--primary); font-size: 11px; padding: 4px 12px; border-radius: 4px; cursor: pointer; }
+.issue-form .btn-cancel { font-size: 11px; padding: 4px 12px; border-radius: 4px; cursor: pointer; border: 1px solid var(--gray-200); background: #fff; }
+.tag-open { background: #fef2f2; color: #991b1b; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.tag-closed { background: #f0fdf4; color: #166534; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+.issue-actions { display: flex; gap: 4px; }
+.issue-actions button {
+  font-size: 10px; padding: 2px 6px; border-radius: 3px; border: 1px solid var(--gray-200);
+  background: #fff; cursor: pointer; color: var(--gray-500);
+}
+.issue-actions button:hover { background: var(--gray-50); }
+.issue-actions .btn-del:hover { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
+
+/* Snapshot Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100;
+  display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: #fff; border-radius: 12px; width: 680px; max-width: 90vw; max-height: 85vh;
+  display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+.modal-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h3 { font-size: 16px; color: var(--gray-800); }
+.modal-close {
+  width: 32px; height: 32px; border: none; background: var(--gray-100); border-radius: 6px;
+  cursor: pointer; font-size: 18px; color: var(--gray-500); display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--gray-200); }
+.modal-body { padding: 16px 20px; overflow-y: auto; flex: 1; }
+.modal-footer {
+  padding: 12px 20px; border-top: 1px solid var(--gray-200);
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+.modal-footer button { padding: 8px 20px; border-radius: 6px; border: 1px solid var(--gray-300); background: #fff; cursor: pointer; font-size: 13px; font-weight: 500; }
+.modal-footer .btn-save { background: var(--primary); color: #fff; border-color: var(--primary); }
+.modal-footer .btn-save:hover { opacity: .9; }
+
+/* Snapshot form */
+.snapshot-date-input { padding: 6px 10px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+.snapshot-section { margin-bottom: 16px; }
+.snapshot-section h4 { font-size: 13px; color: var(--gray-600); margin-bottom: 8px; font-weight: 600; }
+.snapshot-spec-list { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.snapshot-spec-item {
+  display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px;
+  border: 1px solid var(--gray-100); cursor: pointer; transition: background .1s;
+}
+.snapshot-spec-item:hover { background: var(--gray-50); }
+.snapshot-spec-item input { accent-color: var(--primary); cursor: pointer; }
+.snapshot-spec-item label { cursor: pointer; font-size: 13px; flex: 1; }
+.snapshot-spec-item .spec-id { font-weight: 600; color: var(--primary); font-size: 12px; margin-right: 4px; }
+
+/* Test status toggles in modal */
+.snapshot-tests { margin-top: 8px; }
+.snapshot-test-group { margin-bottom: 12px; }
+.snapshot-test-group h5 { font-size: 12px; color: var(--gray-500); margin-bottom: 4px; font-weight: 600; }
+.snapshot-test-item {
+  display: flex; align-items: center; gap: 8px; padding: 4px 8px; font-size: 12px;
+}
+.snapshot-test-item span { flex: 1; color: var(--gray-700); }
+.test-toggle {
+  display: inline-flex; border: 1px solid var(--gray-300); border-radius: 4px; overflow: hidden;
+}
+.test-toggle button {
+  padding: 2px 8px; border: none; cursor: pointer; font-size: 11px; font-weight: 600;
+  background: #fff; color: var(--gray-400); transition: all .15s;
+}
+.test-toggle button.active-pass { background: var(--success-bg); color: #065f46; }
+.test-toggle button.active-fail { background: var(--danger-bg); color: #991b1b; }
+
+/* Timeline Section */
+.timeline-section { background: #fff; border-radius: 12px; padding: 20px; margin-top: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.timeline-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.timeline-header h3 { margin: 0; font-size: 16px; }
+.timeline-controls { display: flex; gap: 8px; }
+.tl-btn { padding: 6px 12px; border: 1px solid var(--gray-300); border-radius: 6px; background: #fff; cursor: pointer; font-size: 12px; transition: all .15s; }
+.tl-btn:hover { background: var(--primary-light); border-color: var(--primary); }
+.tl-btn-primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+.tl-btn-primary:hover { background: #4338ca; }
+.tl-btn-danger { color: var(--danger); border-color: var(--danger); }
+.tl-btn-danger:hover { background: var(--danger-bg); }
+.chart-wrap { position: relative; width: 100%; height: 300px; }
+#timelineChart { width: 100%; height: 100%; cursor: pointer; }
+.chart-tooltip { position: absolute; background: rgba(0,0,0,.8); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; pointer-events: none; opacity: 0; transition: opacity .15s; }
+.timeline-legend { display: flex; gap: 24px; margin-top: 16px; justify-content: center; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-600); }
+.legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+.timeline-info { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--gray-200); }
+
+/* Modal */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; z-index: 100; }
+.modal { background: #fff; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,.1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--gray-200); }
+.modal-header h3 { margin: 0; font-size: 16px; }
+.modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--gray-400); padding: 0; line-height: 1; }
+.modal-close:hover { color: var(--gray-600); }
+.modal-body { padding: 20px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--gray-200); }
+.modal-footer button { padding: 8px 16px; border: 1px solid var(--gray-300); border-radius: 6px; cursor: pointer; font-size: 13px; }
+.btn-save { background: var(--primary); color: #fff; border-color: var(--primary); }
+.btn-save:hover { background: #4338ca; }
+
+/* Tab Bar */
+.tab-bar { display: flex; gap: 0; margin-top: 24px; border-bottom: 1px solid var(--gray-200); }
+.tab-btn { padding: 12px 20px; border: none; background: none; cursor: pointer; font-size: 13px; color: var(--gray-500); border-bottom: 2px solid transparent; transition: all .15s; }
+.tab-btn:hover { color: var(--gray-700); }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+.tab-count { background: var(--gray-100); padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 4px; }
+.tab-btn.active .tab-count { background: var(--primary-light); }
+.tab-content { display: none; background: #fff; border-radius: 0 0 12px 12px; }
+.tab-content.active { display: block; }
+.table-panel { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+<div class="layout">
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h2>HarmonyOS 迁移进度</h2>
+    <p>Migration Dashboard</p>
+  </div>
+
+  <!-- Project Selector -->
+  <div class="project-section">
+    <label>当前项目</label>
+    <select class="project-select" id="projectSelect" onchange="onProjectSelectChange(this.value)"></select>
+    <div class="project-actions">
+      <button onclick="document.getElementById('fileImport').click()" title="导入项目数据">导入</button>
+      <button onclick="exportCurrentProject()" title="导出项目数据">导出</button>
+      <button id="btnDeleteProject" class="danger" onclick="deleteCurrentProject()" title="删除项目">删除</button>
+    </div>
+  </div>
+
+  <div class="sidebar-actions">
+    <button onclick="selectAllSpecs()">全选</button>
+    <button onclick="deselectAllSpecs()">取消全选</button>
+  </div>
+  <div class="spec-list" id="specList"></div>
+</aside>
+
+<!-- Hidden file input -->
+<input type="file" id="fileImport" accept=".json" style="display:none" onchange="handleFileImport(event)">
+
+<!-- Toast container -->
+<div class="toast" id="toast"></div>
+
+<!-- Main -->
+<div class="main">
+  <div class="main-header">
+    <h1 id="mainTitle">HarmonyOS 迁移进度 Dashboard</h1>
+    <p id="mainSub"></p>
+  </div>
+
+  <!-- Day badge above cards -->
+  <div id="dayBadgeBar" style="margin-bottom:12px;display:none">
+    <span class="day-badge" id="selectedDayBadge"></span>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards">
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">组件功能点覆盖</div>
+          <div class="card-value" id="coverageValue">0%</div>
+          <div class="card-sub" id="coverageSub">0 / 0 功能点已覆盖</div>
+        </div>
+        <div class="card-icon card-icon-coverage">&#x1F3AF;</div>
+      </div>
+      <div class="card-progress"><div class="card-progress-bar card-progress-coverage" id="coverageBar" style="width:0%"></div></div>
+      <div class="card-detail" id="coverageDetail"></div>
+      <div class="card-detail" id="coverageToken"><span>Token消耗: <strong>-</strong></span></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">需求分析设计</div>
+          <div class="card-value" id="reqValue">0%</div>
+          <div class="card-sub" id="reqSub">0 / 0 需求已分析</div>
+        </div>
+        <div class="card-icon card-icon-req">&#x1F4DD;</div>
+      </div>
+      <div class="card-progress"><div class="card-progress-bar card-progress-req" id="reqBar" style="width:0%"></div></div>
+      <div class="card-detail" id="reqDetail"></div>
+      <div class="card-detail" id="reqToken"><span>Token消耗: <strong>-</strong></span></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Plan 开发情况</div>
+          <div class="card-value" id="specValue">0%</div>
+          <div class="card-sub" id="specSub">0 / 0 Task 已开发</div>
+        </div>
+        <div class="card-icon card-icon-spec">&#x1F6E0;</div>
+      </div>
+      <div class="card-progress"><div class="card-progress-bar card-progress-spec" id="specBar" style="width:0%"></div></div>
+      <div class="card-detail" id="specDetail"></div>
+      <div class="card-detail" id="specToken"><span>Token消耗: <strong>-</strong></span></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">集成测试通过率</div>
+          <div class="card-value" id="testValue">0%</div>
+          <div class="card-sub" id="testSub">0 / 0 测试用例通过</div>
+        </div>
+        <div class="card-icon card-icon-test">&#x2705;</div>
+      </div>
+      <div class="card-progress"><div class="card-progress-bar card-progress-test" id="testBar" style="width:0%"></div></div>
+      <div class="card-detail" id="testDetail"></div>
+      <div class="card-detail" id="testToken"><span>Token消耗: <strong>-</strong></span></div>
+    </div>
+  </div>
+
+  <!-- Summary Panels: Tabbed -->
+  <div class="summary-panels">
+    <div class="summary-tab-container">
+      <div class="summary-tab-bar">
+        <button class="summary-tab-btn active" onclick="switchSummaryTab('coverage')">
+          &#x1F4C4; 组件功能点覆盖 <span class="stab-badge" id="pageSummaryBadge">0 页面</span>
+        </button>
+        <button class="summary-tab-btn" onclick="switchSummaryTab('req')">
+          &#x1F4CB; 需求分析与设计 <span class="stab-badge" id="reqSpecPlanBadge">0 需求</span>
+        </button>
+        <button class="summary-tab-btn" onclick="switchSummaryTab('dev')">
+          &#x1F6E0; 开发情况 <span class="stab-badge" id="devStatusBadge">0 Plan</span>
+        </button>
+        <button class="summary-tab-btn" onclick="switchSummaryTab('test')">
+          &#x1F9EA; 功能测试 <span class="stab-badge" id="specTestSummaryBadge">0 Spec</span>
+        </button>
+      </div>
+      <div class="summary-tab-panel active" id="summaryPanelCoverage">
+        <div class="summary-tab-body">
+          <table class="summary-table" id="pageSummaryTable">
+            <thead><tr><th>页面</th><th class="summary-num">组件功能点数</th><th class="summary-num">Spec已覆盖功能点数</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="summary-tab-panel" id="summaryPanelReq">
+        <div class="summary-tab-body">
+          <table class="summary-table" id="reqSpecPlanTable">
+            <thead><tr><th>需求</th><th>Spec</th><th class="summary-num">场景数</th><th class="summary-num">Plan Task数/Wave数</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="summary-tab-panel" id="summaryPanelDev">
+        <div class="summary-tab-body">
+          <table class="summary-table" id="devStatusTable">
+            <thead><tr><th>Plan</th><th class="summary-num">Wave数</th><th class="summary-num">Task数</th><th class="summary-num">已开发Task数</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="summary-tab-panel" id="summaryPanelTest">
+        <div class="summary-tab-body">
+          <table class="summary-table" id="specTestSummaryTable">
+            <thead><tr><th>Spec</th><th class="summary-num">测试用例数</th><th class="summary-num">通过用例数</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="summary-panel">
+      <div class="summary-panel-header">
+        <h3>&#x1F41B; 问题跟踪情况</h3>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="panel-badge" id="issueTrackerBadge" style="background:#fef2f2;color:#991b1b">0 问题</span>
+          <div class="issue-toolbar">
+            <button class="btn-add" onclick="showIssueForm()">+ 添加问题</button>
+          </div>
+        </div>
+      </div>
+      <div id="issueFormContainer" style="display:none"></div>
+      <div class="summary-panel-body" style="max-height:320px">
+        <table class="summary-table" id="issueTrackerTable">
+          <thead><tr><th>问题描述</th><th>涉及Spec</th><th>提出人</th><th class="summary-num">是否已闭环</th><th class="summary-num">操作</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline-section" id="timelineSection">
+    <div class="timeline-header">
+      <h3>&#x1F4C5; 进度时间轴</h3>
+      <div class="timeline-controls">
+        <button class="tl-btn tl-btn-primary" onclick="openSnapshotEditor()">+ 添加快照</button>
+      </div>
+    </div>
+    <div class="chart-wrap" id="chartWrap">
+      <canvas id="timelineChart" onclick="handleChartClick(event)" onmousemove="handleChartHover(event)" onmouseleave="hideChartTooltip()"></canvas>
+      <div class="chart-tooltip" id="chartTooltip"></div>
+    </div>
+    <div class="timeline-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>已覆盖功能点数</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>已开发 Spec 数</div>
+    </div>
+    <div class="timeline-info" id="timelineActions" style="display:none">
+      <div></div>
+      <div style="display:flex;gap:6px">
+        <button class="tl-btn" onclick="exportProgressReport()">导出进度清单</button>
+        <button class="tl-btn" onclick="openSnapshotEditor(selectedDay)">编辑此日快照</button>
+        <button class="tl-btn tl-btn-danger" onclick="deleteSnapshot(selectedDay)">删除快照</button>
+        <button class="tl-btn" onclick="deselectDay()">查看最新</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Snapshot Editor Modal -->
+  <div class="modal-overlay" id="snapshotModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="snapshotModalTitle">编辑快照</h3>
+        <button class="modal-close" onclick="closeSnapshotModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="snapshotModalBody"></div>
+      <div class="modal-footer">
+        <button onclick="closeSnapshotModal()">取消</button>
+        <button class="btn-save" onclick="saveSnapshot()">保存快照</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs + Table -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('analyzed')" id="tabAnalyzed">
+      已分析 Spec <span class="tab-count" id="countAnalyzed">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('developed')" id="tabDeveloped">
+      已开发 Spec <span class="tab-count" id="countDeveloped">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('tested')" id="tabTested">
+      已测试 Spec <span class="tab-count" id="countTested">0</span>
+    </button>
+  </div>
+  <div class="table-panel">
+    <div class="tab-content active" id="panelAnalyzed"></div>
+    <div class="tab-content" id="panelDeveloped"></div>
+    <div class="tab-content" id="panelTested"></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ==================== BUILT-IN PROJECT DATA ====================
+// 已清空内置数据，请导入新的JSON数据文件: saltplayer_dashboard_data.json
+const BUILTIN_PROJECTS = {};
+
+// ==================== COMPONENT-SPEC MAPPING ====================
+// Per-component granular spec coverage (pageName::componentId -> [specIds])
+const COMPONENT_SPEC_MAP = {
+  // Index page
+  "Index::SearchToolbar（搜索图标）": ["SPEC-08"],
+  "Index::SearchToolbar（返回箭头）": ["SPEC-08"],
+  "Index::SearchToolbar（相机）": ["SPEC-03"],
+  "Index::SearchToolbar（显示全部）": ["SPEC-04"],
+  "Index::SearchToolbar（溢出菜单）": ["SPEC-03"],
+  "Index::DirectoryGridItem（点击）": ["SPEC-03","SPEC-04"],
+  "Index::DirectoryListItem（点击）": ["SPEC-03","SPEC-04"],
+  "Index::SwitchSearchingBanner": ["SPEC-08"],
+  "Index::EmptyPlaceholder（操作）": ["SPEC-03"],
+  "Index::Refresh包裹层": ["SPEC-03"],
+  "Index::sort（菜单）": ["SPEC-03"],
+  "Index::filter（菜单）": ["SPEC-03"],
+  "Index::change_view_type（菜单）": ["SPEC-03"],
+  "Index::temporarily_show_hidden（菜单）": ["SPEC-16"],
+  "Index::stop_showing_hidden（菜单）": ["SPEC-16"],
+  "Index::temporarily_show_excluded（菜单）": ["SPEC-17"],
+  "Index::stop_showing_excluded（菜单）": ["SPEC-17"],
+  "Index::create_new_folder（菜单）": ["SPEC-03"],
+  "Index::open_recycle_bin（菜单）": ["SPEC-12"],
+  "Index::column_count（菜单）": ["SPEC-03"],
+  "Index::set_as_default_folder（菜单）": ["SPEC-03"],
+  "Index::settings（菜单）": ["SPEC-19"],
+  "Index::about（菜单）": [],
+
+  // MediaPage
+  "MediaPage::ToolbarContent（返回箭头）": ["SPEC-03"],
+  "MediaPage::ToolbarContent（搜索图标）": ["SPEC-08"],
+  "MediaPage::ToolbarContent（标签切换）": ["SPEC-04"],
+  "MediaPage::ToolbarContent（排序）": ["SPEC-04"],
+  "MediaPage::ToolbarContent（文件夹视图）": ["SPEC-03"],
+  "MediaPage::ToolbarContent（溢出菜单）": ["SPEC-04"],
+  "MediaPage::MediaThumbnailItem（图片点击）": ["SPEC-04","SPEC-05"],
+  "MediaPage::MediaThumbnailItem（视频点击）": ["SPEC-04","SPEC-06"],
+  "MediaPage::MediaThumbnailItem（长按）": ["SPEC-04","SPEC-10"],
+  "MediaPage::slideshow（菜单）": ["SPEC-13"],
+  "MediaPage::folder_view（菜单）": ["SPEC-03"],
+  "MediaPage::open_camera（菜单）": ["SPEC-03"],
+  "MediaPage::settings（菜单）": ["SPEC-19"],
+  "MediaPage::about（菜单）": [],
+  "MediaPage::open_recycle_bin（菜单）": ["SPEC-12"],
+  "MediaPage::sort（菜单）": ["SPEC-04"],
+  "MediaPage::filter（菜单）": ["SPEC-04"],
+  "MediaPage::change_view_type（菜单）": ["SPEC-04"],
+  "MediaPage::group（菜单）": ["SPEC-04"],
+  "MediaPage::toggle_filename（菜单）": ["SPEC-04"],
+  "MediaPage::column_count（菜单）": ["SPEC-04"],
+  "MediaPage::empty_recycle_bin（菜单）": ["SPEC-12"],
+  "MediaPage::empty_disable_recycle_bin（菜单）": ["SPEC-12"],
+  "MediaPage::restore_all_files（菜单）": ["SPEC-12"],
+  "MediaPage::create_new_folder（菜单）": ["SPEC-03"],
+  "MediaPage::temporarily_show_hidden（菜单）": ["SPEC-16"],
+  "MediaPage::set_as_default_folder（菜单）": ["SPEC-03"],
+  "MediaPage::unset_as_default_folder（菜单）": ["SPEC-03"],
+  "MediaPage::Refresh包裹层": ["SPEC-04"],
+
+  // ViewPagerPage
+  "ViewPagerPage::TopToolbar（返回）": ["SPEC-05"],
+  "ViewPagerPage::TopToolbar（文件名）": ["SPEC-05"],
+  "ViewPagerPage::TopToolbar（删除）": ["SPEC-10","SPEC-12"],
+  "ViewPagerPage::TopToolbar（分享）": ["SPEC-05"],
+  "ViewPagerPage::TopToolbar（旋转）": ["SPEC-05"],
+  "ViewPagerPage::TopToolbar（属性）": ["SPEC-05"],
+  "ViewPagerPage::TopToolbar（溢出菜单）": ["SPEC-05"],
+  "ViewPagerPage::Swiper（点击）": ["SPEC-05"],
+  "ViewPagerPage::PhotoPage（全景图标）": ["SPEC-07"],
+  "ViewPagerPage::VideoPage（播放按钮）": ["SPEC-06"],
+  "ViewPagerPage::VideoTimeControls（播放/暂停）": ["SPEC-06"],
+  "ViewPagerPage::VideoTimeControls（进度条）": ["SPEC-06"],
+  "ViewPagerPage::bottom_favorite": ["SPEC-05","SPEC-11"],
+  "ViewPagerPage::bottom_edit": ["SPEC-09"],
+  "ViewPagerPage::bottom_rotate": ["SPEC-05"],
+  "ViewPagerPage::bottom_properties": ["SPEC-05"],
+  "ViewPagerPage::bottom_change_orientation": ["SPEC-05"],
+  "ViewPagerPage::bottom_slideshow": ["SPEC-13"],
+  "ViewPagerPage::bottom_show_on_map": ["SPEC-05"],
+  "ViewPagerPage::bottom_toggle_file_visibility": ["SPEC-16"],
+  "ViewPagerPage::bottom_rename": ["SPEC-10"],
+  "ViewPagerPage::bottom_set_as": ["SPEC-14"],
+  "ViewPagerPage::bottom_copy": ["SPEC-10"],
+  "ViewPagerPage::bottom_move": ["SPEC-10"],
+  "ViewPagerPage::bottom_resize": ["SPEC-10"],
+  "ViewPagerPage::溢出菜单: 重命名": ["SPEC-10"],
+  "ViewPagerPage::溢出菜单: 隐藏/取消隐藏": ["SPEC-16"],
+  "ViewPagerPage::溢出菜单: 复制到": ["SPEC-10"],
+  "ViewPagerPage::溢出菜单: 移动到": ["SPEC-10"],
+  "ViewPagerPage::溢出菜单: 创建快捷方式": ["SPEC-05"],
+  "ViewPagerPage::溢出菜单: 打开方式": ["SPEC-05"],
+  "ViewPagerPage::溢出菜单: 设为": ["SPEC-14"],
+  "ViewPagerPage::溢出菜单: 更改方向": ["SPEC-05"],
+  "ViewPagerPage::溢出菜单: 打印": ["SPEC-05"],
+  "ViewPagerPage::溢出菜单: 调整大小": ["SPEC-10"],
+  "ViewPagerPage::溢出菜单: 在地图上显示": ["SPEC-05"],
+  "ViewPagerPage::溢出菜单: 幻灯片": ["SPEC-13"],
+  "ViewPagerPage::溢出菜单: 设置": ["SPEC-19"],
+
+  // SettingsPage
+  "SettingsPage::settings_toolbar（返回）": ["SPEC-19"],
+  "SettingsPage::颜色定制行": ["SPEC-19"],
+  "SettingsPage::语言行": ["SPEC-19"],
+  "SettingsPage::日期时间格式行": ["SPEC-19"],
+  "SettingsPage::文件加载优先级行": ["SPEC-19"],
+  "SettingsPage::管理包含文件夹行": ["SPEC-17"],
+  "SettingsPage::管理排除文件夹行": ["SPEC-17"],
+  "SettingsPage::显示隐藏项开关": ["SPEC-16","SPEC-19"],
+  "SettingsPage::搜索所有文件开关": ["SPEC-08","SPEC-19"],
+  "SettingsPage::自动播放视频开关": ["SPEC-06","SPEC-19"],
+  "SettingsPage::记住视频位置开关": ["SPEC-06","SPEC-19"],
+  "SettingsPage::循环播放视频开关": ["SPEC-06","SPEC-19"],
+  "SettingsPage::独立视频屏幕开关": ["SPEC-06","SPEC-19"],
+  "SettingsPage::视频手势开关": ["SPEC-06","SPEC-19"],
+  "SettingsPage::裁剪缩略图开关": ["SPEC-19"],
+  "SettingsPage::动画GIF开关": ["SPEC-19"],
+  "SettingsPage::应用密码保护开关": ["SPEC-19"],
+  "SettingsPage::底部操作栏开关": ["SPEC-19"],
+  "SettingsPage::使用回收站开关": ["SPEC-12","SPEC-19"],
+  "SettingsPage::清空回收站行": ["SPEC-12"],
+  "SettingsPage::清除缓存行": ["SPEC-19"],
+  "SettingsPage::导出设置行": ["SPEC-19"],
+  "SettingsPage::导入设置行": ["SPEC-19"],
+
+  // IncludedFoldersPage
+  "IncludedFoldersPage::manage_folders_toolbar（返回）": ["SPEC-17"],
+  "IncludedFoldersPage::add_folder（工具栏）": ["SPEC-17"],
+  "IncludedFoldersPage::overflow_menu_icon（项）": ["SPEC-17"],
+  "IncludedFoldersPage::PlaceholderBuilder": ["SPEC-17"],
+
+  // ExcludedFoldersPage
+  "ExcludedFoldersPage::manage_folders_toolbar（返回）": ["SPEC-17"],
+  "ExcludedFoldersPage::add_folder（工具栏）": ["SPEC-17"],
+  "ExcludedFoldersPage::overflow_menu_icon（项）": ["SPEC-17"],
+  "ExcludedFoldersPage::PlaceholderBuilder": ["SPEC-17"],
+
+  // CustomizationPage
+  "CustomizationPage::ToolbarBuilder（关闭）": ["SPEC-19"],
+  "CustomizationPage::ToolbarBuilder（保存）": ["SPEC-19"],
+  "CustomizationPage::theme_row": ["SPEC-19"],
+  "CustomizationPage::text_color_row": ["SPEC-19"],
+  "CustomizationPage::background_color_row": ["SPEC-19"],
+  "CustomizationPage::primary_color_row": ["SPEC-19"],
+  "CustomizationPage::accent_color_row": ["SPEC-19"],
+  "CustomizationPage::app_icon_color_row": ["SPEC-19"],
+  "CustomizationPage::apply_to_all_button": ["SPEC-19"],
+
+  // AboutPage - no specs cover it
+  "AboutPage::top_app_bar（返回）": [],
+  "AboutPage::faq_item": [],
+  "AboutPage::email_item": [],
+  "AboutPage::rate_us_item": [],
+  "AboutPage::invite_friends_item": [],
+  "AboutPage::contributors_item": [],
+  "AboutPage::donate_item": [],
+  "AboutPage::facebook_item": [],
+  "AboutPage::github_item": [],
+  "AboutPage::reddit_item": [],
+  "AboutPage::telegram_item": [],
+  "AboutPage::more_apps_item": [],
+  "AboutPage::website_item": [],
+  "AboutPage::privacy_policy_item": [],
+  "AboutPage::license_item": [],
+  "AboutPage::version_item": []
+};
+
+// Helper: get specs for a component (with fallback to page-level for imported projects)
+function getComponentSpecs(pageName, componentId) {
+  const key = pageName + '::' + componentId;
+  if (COMPONENT_SPEC_MAP[key] !== undefined) return COMPONENT_SPEC_MAP[key];
+  // Fallback: for imported projects without a map, use page-level coverage
+  const pageSpecs = SPECS.filter(s => s.coveredPages && s.coveredPages.includes(pageName));
+  return pageSpecs.map(s => s.id);
+}
+
+// ==================== PROJECT STORE ====================
+const ProjectStore = {
+  INDEX_KEY: 'dashboard_projects_index',
+
+  _getIndex() {
+    try { return JSON.parse(localStorage.getItem(this.INDEX_KEY)) || []; }
+    catch { return []; }
+  },
+  _saveIndex(index) {
+    localStorage.setItem(this.INDEX_KEY, JSON.stringify(index));
+  },
+
+  getAllProjects() {
+    const index = this._getIndex();
+    // Ensure built-in projects are in the index on first load
+    for (const k of Object.keys(BUILTIN_PROJECTS)) {
+      if (!index.find(e => e.name === k)) {
+        index.push({ name: k, description: BUILTIN_PROJECTS[k].projectDescription });
+      }
+    }
+    this._saveIndex(index);
+    return index.map(entry => ({ name: entry.name, description: entry.description }));
+  },
+
+  getProject(name) {
+    // Try localStorage first, then fall back to built-in data
+    try {
+      const data = localStorage.getItem('dashboard_project_' + name);
+      if (data) return JSON.parse(data);
+    } catch {}
+    if (BUILTIN_PROJECTS[name]) return BUILTIN_PROJECTS[name];
+    return null;
+  },
+
+  saveProject(data) {
+    const name = data.projectName;
+    // Strip timeline from project data (timeline is stored separately)
+    const { timeline, ...projectData } = data;
+    localStorage.setItem('dashboard_project_' + name, JSON.stringify(projectData));
+    const index = this._getIndex();
+    if (!index.find(e => e.name === name)) {
+      index.push({ name, description: data.projectDescription || '' });
+      this._saveIndex(index);
+    }
+    return true;
+  },
+
+  deleteProject(name) {
+    localStorage.removeItem('dashboard_project_' + name);
+    const index = this._getIndex().filter(e => e.name !== name);
+    this._saveIndex(index);
+    return true;
+  },
+
+  exportProject(name) {
+    const data = this.getProject(name);
+    if (!data) return;
+    // Include timeline in export
+    const timeline = TimelineStore.getTimeline(name);
+    const exportData = { ...data, timeline };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name + '_dashboard_data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+};
+
+// ==================== REQ-SPEC-PLAN DATA ====================
+const REQ_SPEC_PLAN_DATA = {
+  "SaltPlayer": [
+    { req: "REQ-01+02", reqName: "音乐播放核心+播放队列", spec: "SPEC-01", scenarios: 0, tasks: 0, waves: 0 }
+  ]
+};
+
+// ==================== SPECS ====================
+let SPECS = []; // Will be loaded from imported project data
+
+// ==================== PAGES ====================
+let PAGES = {}; // Will be loaded from imported project data
+
+// ==================== TIMELINE STORE ====================
+const TimelineStore = {
+  TIMELINE_KEY: 'dashboard_timeline_',
+
+  getTimeline(projectName) {
+    try {
+      return JSON.parse(localStorage.getItem(this.TIMELINE_KEY + projectName)) || [];
+    } catch {
+      return [];
+    }
+  },
+
+  saveTimeline(projectName, timeline) {
+    localStorage.setItem(this.TIMELINE_KEY + projectName, JSON.stringify(timeline));
+  },
+
+  addEntry(projectName, entry) {
+    const timeline = this.getTimeline(projectName);
+    timeline.push({ ...entry, timestamp: Date.now() });
+    this.saveTimeline(projectName, timeline);
+  }
+};
+
+// ==================== INITIALIZE ====================
+function initDashboard() {
+  const projects = ProjectStore.getAllProjects();
+  renderProjectList(projects);
+}
+
+function renderProjectList(projects) {
+  const listEl = document.getElementById('projectList');
+  if (!projects || projects.length === 0) {
+    listEl.innerHTML = '<div class="empty-state"><p>暂无项目，请导入JSON数据文件</p></div>';
+    return;
+  }
+  let html = '';
+  for (const p of projects) {
+    html += `<div class="project-card" onclick="loadProject('${p.name}')">
+      <div class="project-name">${p.name}</div>
+      <div class="project-desc">${p.description || ''}</div>
+    </div>`;
+  }
+  listEl.innerHTML = html;
+}
+
+function loadProject(name) {
+  const data = ProjectStore.getProject(name);
+  if (!data) {
+    alert('项目数据加载失败');
+    return;
+  }
+  currentProject = data;
+  SPECS = data.specs || [];
+  PAGES = data.pages || {};
+  document.getElementById('projectSelector').value = name;
+  document.getElementById('projectHeader').style.display = 'flex';
+  document.getElementById('currentProjectName').textContent = name;
+  renderDashboard();
+}
+
+function importProject() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.projectName || !data.specs) {
+          alert('JSON格式不正确，缺少projectName或specs字段');
+          return;
+        }
+        ProjectStore.saveProject(data);
+        alert('导入成功！项目: ' + data.projectName);
+        initDashboard();
+      } catch (err) {
+        alert('JSON解析失败: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function exportCurrentProject() {
+  if (!currentProject) {
+    alert('请先选择一个项目');
+    return;
+  }
+  ProjectStore.exportProject(currentProject.projectName);
+}
+
+function deleteCurrentProject() {
+  if (!currentProject) {
+    alert('请先选择一个项目');
+    return;
+  }
+  if (confirm('确定要删除项目 "' + currentProject.projectName + '" 吗？')) {
+    ProjectStore.deleteProject(currentProject.projectName);
+    currentProject = null;
+    SPECS = [];
+    PAGES = {};
+    initDashboard();
+  }
+}
+
+function renderDashboard() {
+  // Get selected developed specs
+  const selIds = new Set();
+  document.querySelectorAll('#developedList input:checked').forEach(cb => selIds.add(cb.value));
+  
+  // Calculate stats
+  const totalSpecs = SPECS.length;
+  const developedSpecs = selIds.size;
+  const specPct = totalSpecs > 0 ? Math.round(developedSpecs / totalSpecs * 100) : 0;
+  
+  document.getElementById('specProgress').style.width = specPct + '%';
+  document.getElementById('specPct').textContent = specPct + '%';
+  document.getElementById('specSub').textContent = `${developedSpecs} / ${totalSpecs} 规格已开发`;
+  
+  // Render panels
+  const allPageCoverage = {};
+  for (const [pName, pData] of Object.entries(PAGES)) {
+    const total = pData.components ? pData.components.length : 0;
+    let covered = 0;
+    for (const c of (pData.components || [])) {
+      const cSpecs = getComponentSpecs(pName, c.id);
+      if (cSpecs.length > 0) covered++;
+    }
+    allPageCoverage[pName] = { total, covered };
+  }
+  
+  renderAnalyzedPanel(SPECS, allPageCoverage, selIds);
+  renderDevelopedPanel(SPECS, selIds);
+}
+
+function renderAnalyzedPanel(specs, pageCoverage, developedIds) {
+  const panel = document.getElementById('panelAnalyzed');
+  if (Object.keys(PAGES).length === 0) {
+    panel.innerHTML = '<div class="empty-state"><p>该项目无页面数据</p></div>';
+    return;
+  }
+  let html = `<table class="page-table">
+    <thead><tr><th>页面</th><th>UI组件数</th><th>分析覆盖</th><th>覆盖Spec</th></tr></thead><tbody>`;
+  for (const [pName, pData] of Object.entries(PAGES)) {
+    const cv = pageCoverage[pName];
+    const analyzedPct = cv.total > 0 ? Math.round(cv.covered / cv.total * 100) : 0;
+    const analyzedColor = analyzedPct === 100 ? 'var(--success)' : analyzedPct > 0 ? 'var(--warning)' : 'var(--danger)';
+    const specBadges = (pData.components || []).flatMap(c => getComponentSpecs(pName, c.id))
+      .filter((v, i, a) => a.indexOf(v) === i)
+      .map(s => `<span class="spec-badge ${developedIds.has(s) ? 'badge-developed' : 'badge-analyzed'}">${s}</span>`)
+      .join('') || '<span class="tag tag-na">未覆盖</span>';
+    
+    html += `<tr>
+      <td><strong>${pData.fullName || pName}</strong></td>
+      <td>${cv.total}</td>
+      <td><div class="mini-progress"><div class="mini-bar"><div class="mini-bar-fill" style="width:${analyzedPct}%;background:${analyzedColor}"></div></div><span class="mini-pct">${analyzedPct}%</span></div></td>
+      <td>${specBadges}</td>
+    </tr>`;
+  }
+  html += '</tbody></table>';
+  panel.innerHTML = html;
+}
+
+function renderDevelopedPanel(specs, selectedIds) {
+  const panel = document.getElementById('panelDeveloped');
+  if (specs.length === 0) {
+    panel.innerHTML = '<div class="empty-state"><p>暂无规格数据</p></div>';
+    return;
+  }
+  let html = '<div class="spec-list">';
+  for (const s of specs) {
+    const checked = selectedIds.has(s.id) ? 'checked' : '';
+    html += `<label class="spec-item">
+      <input type="checkbox" value="${s.id}" ${checked} onchange="renderDashboard()">
+      <span class="spec-id">${s.id}</span>
+      <span class="spec-title">${s.title}</span>
+      <span class="spec-req">${s.reqId || ''}</span>
+    </label>`;
+  }
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+function renderTestedPanel(sel, tests) {
+  const panel = document.getElementById('panelTested');
+  if (!tests || tests.length === 0) {
+    panel.innerHTML = '<div class="empty-state"><p>暂无测试数据</p></div>';
+    return;
+  }
+  let html = '<table class="test-table"><thead><tr><th>测试ID</th><th>名称</th><th>状态</th></tr></thead><tbody>';
+  for (const t of tests) {
+    const statusTag = t.status === 'success' ? '<span class="tag tag-pass">通过</span>' : '<span class="tag tag-fail">失败</span>';
+    html += `<tr><td>${t.id}</td><td>${t.name}</td><td>${statusTag}</td></tr>`;
+  }
+  html += '</tbody></table>';
+  panel.innerHTML = html;
+}
+
+function togglePageDetail(row, pageName) {
+  const detailRow = document.getElementById('detail-analyzed-' + pageName);
+  if (detailRow) {
+    const isVisible = detailRow.style.display !== 'none';
+    detailRow.style.display = isVisible ? 'none' : 'table-row';
+    row.querySelector('.expand-icon').style.transform = isVisible ? '' : 'rotate(90deg)';
+  }
+}
+
+let currentProject = null;
+let REQ_SPEC_PLAN = [];
+let DEV_STATUS = [];
+let TEST_RESULTS = [];
+let ISSUES = [];
+let currentProjectName = '';
+let selectedDay = new Date().toISOString().split('T')[0];
+let SNAPSHOTS = [];
+
+// ==================== INITIALIZATION ====================
+function init() {
+  loadFromLocalStorage();
+  renderProjectSelect();
+  if (currentProject) {
+    renderAll();
+  }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const savedProject = localStorage.getItem('dashboard_currentProject');
+    if (savedProject) {
+      currentProject = JSON.parse(savedProject);
+      currentProjectName = currentProject.projectName || '';
+    }
+  } catch (e) {
+    console.error('Failed to load from localStorage:', e);
+  }
+}
+
+function saveToLocalStorage() {
+  if (currentProject) {
+    localStorage.setItem('dashboard_currentProject', JSON.stringify(currentProject));
+  }
+}
+
+// ==================== PROJECT MANAGEMENT ====================
+function renderProjectSelect() {
+  const select = document.getElementById('projectSelect');
+  select.innerHTML = '<option value="">-- 选择项目 --</option>';
+  if (currentProject) {
+    select.innerHTML += `<option value="${currentProject.projectName}" selected>${currentProject.projectName}</option>`;
+  }
+}
+
+function onProjectSelectChange(projectName) {
+  if (!projectName) {
+    currentProject = null;
+    currentProjectName = '';
+  }
+  renderAll();
+}
+
+function handleFileImport(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.projectName || !data.specs) {
+        showToast('JSON格式不正确', 'error');
+        return;
+      }
+      currentProject = data;
+      currentProjectName = data.projectName;
+      saveToLocalStorage();
+      renderProjectSelect();
+      renderAll();
+      showToast('项目导入成功: ' + data.projectName, 'success');
+    } catch (err) {
+      showToast('JSON解析失败: ' + err.message, 'error');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function exportCurrentProject() {
+  if (!currentProject) {
+    showToast('请先选择一个项目', 'error');
+    return;
+  }
+  const blob = new Blob([JSON.stringify(currentProject, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = currentProject.projectName + '_dashboard.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('项目已导出', 'success');
+}
+
+function deleteCurrentProject() {
+  if (!currentProject) {
+    showToast('请先选择一个项目', 'error');
+    return;
+  }
+  if (confirm('确定要删除当前项目吗？')) {
+    currentProject = null;
+    currentProjectName = '';
+    localStorage.removeItem('dashboard_currentProject');
+    renderProjectSelect();
+    renderAll();
+    showToast('项目已删除', 'success');
+  }
+}
+
+// ==================== SPEC SELECTION ====================
+function selectAllSpecs() {
+  if (!currentProject || !currentProject.specs) return;
+  currentProject.specs.forEach(s => s.selected = true);
+  saveToLocalStorage();
+  renderSpecList();
+  renderAll();
+}
+
+function deselectAllSpecs() {
+  if (!currentProject || !currentProject.specs) return;
+  currentProject.specs.forEach(s => s.selected = false);
+  saveToLocalStorage();
+  renderSpecList();
+  renderAll();
+}
+
+// ==================== RENDERING ====================
+function renderAll() {
+  if (!currentProject) {
+    document.getElementById('mainTitle').textContent = 'HarmonyOS 迁移进度 Dashboard';
+    document.getElementById('mainSub').textContent = '';
+    document.getElementById('specList').innerHTML = '<div style="padding:16px;color:var(--gray-400);text-align:center">请导入项目数据</div>';
+    resetCards();
+    resetPanels();
+    return;
+  }
+  
+  document.getElementById('mainTitle').textContent = currentProject.projectName || 'Migration Dashboard';
+  document.getElementById('mainSub').textContent = currentProject.projectDescription || '';
+  
+  renderSpecList();
+  renderCards();
+  renderSummaryPanels();
+}
+
+function resetCards() {
+  ['coverageValue', 'reqValue', 'specValue', 'testValue'].forEach(id => {
+    document.getElementById(id).textContent = '0%';
+  });
+  ['coverageSub', 'reqSub', 'specSub', 'testSub'].forEach(id => {
+    document.getElementById(id).textContent = '0 / 0';
+  });
+  ['coverageBar', 'reqBar', 'specBar', 'testBar'].forEach(id => {
+    document.getElementById(id).style.width = '0%';
+  });
+}
+
+function resetPanels() {
+  ['pageSummaryTable', 'reqSpecPlanTable', 'devStatusTable', 'specTestSummaryTable', 'issueTrackerTable'].forEach(id => {
+    const table = document.getElementById(id);
+    if (table) table.querySelector('tbody').innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--gray-400)">暂无数据</td></tr>';
+  });
+}
+
+function renderSpecList() {
+  const container = document.getElementById('specList');
+  if (!currentProject || !currentProject.specs || currentProject.specs.length === 0) {
+    container.innerHTML = '<div style="padding:16px;color:var(--gray-400);text-align:center">暂无规格数据</div>';
+    return;
+  }
+  
+  let html = '';
+  currentProject.specs.forEach((spec, index) => {
+    const selected = spec.selected ? 'checked' : '';
+    html += `<label class="spec-item">
+      <input type="checkbox" ${selected} onchange="toggleSpec(${index})">
+      <div class="spec-item-info">
+        <div class="spec-item-id">${spec.id}</div>
+        <div class="spec-item-title">${spec.title}</div>
+      </div>
+    </label>`;
+  });
+  container.innerHTML = html;
+}
+
+function toggleSpec(index) {
+  if (!currentProject || !currentProject.specs) return;
+  currentProject.specs[index].selected = !currentProject.specs[index].selected;
+  saveToLocalStorage();
+  renderCards();
+  renderSummaryPanels();
+}
+
+function renderCards() {
+  if (!currentProject || !currentProject.specs) return;
+  
+  const specs = currentProject.specs;
+  const selectedSpecs = specs.filter(s => s.selected);
+  const totalSpecs = specs.length;
+  const selectedCount = selectedSpecs.length;
+  
+  // 组件功能点覆盖 - 由renderPageSummaryPanel更新
+  
+  // 需求分析
+  const uniqueReqs = new Set(specs.map(s => s.reqId).filter(Boolean));
+  document.getElementById('reqValue').textContent = uniqueReqs.size > 0 ? '100%' : '0%';
+  document.getElementById('reqSub').textContent = `${uniqueReqs.size} 需求已分析`;
+  document.getElementById('reqBar').style.width = (uniqueReqs.size > 0 ? 100 : 0) + '%';
+  
+  // Plan开发情况
+  const plans = currentProject.plans || {};
+  let totalTasks = 0;
+  let developedTasks = 0;
+  
+  for (const plan of Object.values(plans)) {
+    totalTasks += plan.summary?.total_tasks || 0;
+  }
+  
+  const planPct = totalTasks > 0 ? Math.round(developedTasks / totalTasks * 100) : 0;
+  document.getElementById('specValue').textContent = planPct + '%';
+  document.getElementById('specSub').textContent = `${developedTasks} / ${totalTasks} Task已开发`;
+  document.getElementById('specBar').style.width = planPct + '%';
+  
+  // 测试
+  document.getElementById('testValue').textContent = '0%';
+  document.getElementById('testSub').textContent = '0 / 0 测试用例通过';
+  document.getElementById('testBar').style.width = '0%';
+}
+
+function renderSummaryPanels() {
+  renderPageSummaryPanel();
+  renderReqSpecPlanPanel();
+  renderDevStatusPanel();
+  renderSpecTestSummaryPanel();
+  renderIssueTrackerPanel();
+  renderTimelineChart();
+  renderAnalyzedPanel();
+  renderDevelopedPanel();
+  renderTestedPanel();
+}
+
+// Tab切换函数
+function switchTab(tabName) {
+  // 切换tab按钮状态
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+  
+  // 切换面板显示
+  document.querySelectorAll('.tab-content').forEach(panel => panel.classList.remove('active'));
+  document.getElementById('panel' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+}
+
+// 已分析面板渲染
+function renderAnalyzedPanel() {
+  const panel = document.getElementById('panelAnalyzed');
+  if (!currentProject || !currentProject.specs) {
+    panel.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray-400)">暂无规格数据</div>';
+    document.getElementById('countAnalyzed').textContent = '0';
+    return;
+  }
+  
+  const specs = currentProject.specs;
+  document.getElementById('countAnalyzed').textContent = specs.length;
+  
+  let html = `<table class="page-table">
+    <thead><tr><th style="width:30px"></th><th>页面</th><th>UI组件数</th><th>分析覆盖</th><th>覆盖Spec</th></tr></thead><tbody>`;
+  
+  // 构建页面到Spec的映射
+  const pageToSpecs = {};
+  for (const spec of specs) {
+    if (spec.coveredPages) {
+      for (const page of spec.coveredPages) {
+        if (!pageToSpecs[page]) pageToSpecs[page] = [];
+        pageToSpecs[page].push(spec.id);
+      }
+    }
+  }
+  
+  // 渲染每个页面
+  if (currentProject.pages) {
+    for (const [pageName, pageData] of Object.entries(currentProject.pages)) {
+      const components = pageData.components || [];
+      let compCount = components.length;
+      let coveredCount = 0;
+      
+      // 如果没有components数据，估算组件数
+      if (compCount === 0) {
+        compCount = estimateComponentCount(pageName);
+      }
+      
+      // 计算覆盖数
+      const coveringSpecs = pageToSpecs[pageName] || [];
+      if (coveringSpecs.length > 0) {
+        coveredCount = Math.min(compCount, coveringSpecs.length * 3);
+      }
+      
+      const coveragePct = compCount > 0 ? Math.round(coveredCount / compCount * 100) : 0;
+      const coverageColor = coveragePct === 100 ? 'var(--success)' : coveragePct > 0 ? 'var(--warning)' : 'var(--danger)';
+      
+      const specBadges = coveringSpecs.length > 0 
+        ? coveringSpecs.slice(0, 4).map(s => `<span class="spec-badge badge-analyzed" style="font-size:10px;margin-right:2px">${s}</span>`).join('') + (coveringSpecs.length > 4 ? `<span style="font-size:10px;color:var(--gray-500)">+${coveringSpecs.length - 4}</span>` : '')
+        : '<span class="tag tag-na">未覆盖</span>';
+      
+      html += `<tr class="page-row" onclick="togglePageDetail(this, '${pageName}')">
+        <td><span class="expand-icon">&#x25B6;</span></td>
+        <td><strong>${pageData.fullName || pageName}</strong></td>
+        <td>${compCount}</td>
+        <td><div class="mini-progress"><div class="mini-bar"><div class="mini-bar-fill" style="width:${coveragePct}%;background:${coverageColor}"></div></div><span class="mini-pct" style="color:${coverageColor}">${coveragePct}%</span></div></td>
+        <td>${specBadges}</td>
+      </tr>`;
+      
+      // 详情行
+      html += `<tr class="page-detail-row" id="detail-analyzed-${pageName}"><td colspan="5"><div class="detail-inner">
+        <table><thead><tr><th>组件ID</th><th>类型</th><th>功能描述</th><th>覆盖Spec</th></tr></thead><tbody>`;
+      
+      // 如果有组件数据，显示组件
+      if (components.length > 0) {
+        for (const comp of components) {
+          const compSpecs = getComponentSpecs(pageName, comp.id);
+          const badges = compSpecs.length > 0 
+            ? compSpecs.map(s => `<span class="spec-badge badge-analyzed" style="font-size:10px;margin-right:2px">${s}</span>`).join('')
+            : '<span class="tag tag-na" style="font-size:10px">未覆盖</span>';
+          html += `<tr><td>${comp.id}</td><td><span class="tag" style="background:var(--gray-100);color:var(--gray-600);font-size:11px">${comp.type}</span></td><td>${comp.desc}</td><td>${badges}</td></tr>`;
+        }
+      } else {
+        html += `<tr><td colspan="4" style="text-align:center;color:var(--gray-400);font-style:italic">组件数据待完善</td></tr>`;
+      }
+      
+      html += '</tbody></table></div></td></tr>';
+    }
+  }
+  
+  html += '</tbody></table>';
+  panel.innerHTML = html;
+}
+
+// 已开发面板渲染
+function renderDevelopedPanel() {
+  const panel = document.getElementById('panelDeveloped');
+  if (!currentProject || !currentProject.specs) {
+    panel.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray-400)">暂无规格数据</div>';
+    document.getElementById('countDeveloped').textContent = '0';
+    return;
+  }
+  
+  const specs = currentProject.specs;
+  
+  // 统计已开发的Spec（基于快照数据）
+  let developedSpecIds = new Set();
+  if (currentProject.snapshots) {
+    for (const snapshot of currentProject.snapshots) {
+      if (snapshot.developedSpecs) {
+        snapshot.developedSpecs.forEach(id => developedSpecIds.add(id));
+      }
+    }
+  }
+  
+  document.getElementById('countDeveloped').textContent = developedSpecIds.size;
+  
+  if (developedSpecIds.size === 0) {
+    panel.innerHTML = `
+      <div style="padding:40px 20px;text-align:center">
+        <div style="font-size:48px;margin-bottom:16px">📝</div>
+        <div style="color:var(--gray-500);margin-bottom:8px">暂无已开发的Spec</div>
+        <div style="font-size:12px;color:var(--gray-400)">添加快照并选择已开发的Spec后会在此显示</div>
+      </div>`;
+    return;
+  }
+  
+  let html = '<div class="spec-list" style="padding:12px">';
+  
+  // 按Spec ID排序
+  const developedSpecs = specs.filter(s => developedSpecIds.has(s.id)).sort((a, b) => a.id.localeCompare(b.id));
+  
+  for (const spec of developedSpecs) {
+    const plan = currentProject.plans?.[spec.id];
+    const taskCount = plan?.summary?.total_tasks || 0;
+    const waveCount = plan?.summary?.total_waves || 0;
+    
+    html += `<div style="padding:12px;border-bottom:1px solid var(--gray-100)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span class="spec-badge badge-developed" style="font-size:12px">${spec.id}</span>
+        <span style="font-weight:600;color:var(--gray-800)">${spec.title}</span>
+      </div>
+      <div style="font-size:12px;color:var(--gray-500)">
+        <span style="margin-right:16px">需求: ${spec.reqId || '-'}</span>
+        <span style="margin-right:16px">Task: ${taskCount}个</span>
+        <span>Wave: ${waveCount}个</span>
+      </div>
+      <div style="margin-top:6px">${(spec.scenarios || []).slice(0, 3).map(s => `<span class="spec-badge" style="font-size:10px;background:var(--gray-100);color:var(--gray-600);margin-right:4px">${s.split(':')[0]}</span>`).join('')}${(spec.scenarios || []).length > 3 ? `<span style="font-size:10px;color:var(--gray-400)">+${spec.scenarios.length - 3}</span>` : ''}</div>
+    </div>`;
+  }
+  
+  html += '</div>';
+  panel.innerHTML = html;
+}
+
+// 已测试面板渲染
+function renderTestedPanel() {
+  const panel = document.getElementById('panelTested');
+  if (!currentProject || !currentProject.specs) {
+    panel.innerHTML = '<div style="padding:20px;text-align:center;color:var(--gray-400)">暂无规格数据</div>';
+    document.getElementById('countTested').textContent = '0';
+    return;
+  }
+  
+  // 测试数据暂时为空（需要后续添加测试功能）
+  document.getElementById('countTested').textContent = '0';
+  
+  panel.innerHTML = `
+    <div style="padding:40px 20px;text-align:center">
+      <div style="font-size:48px;margin-bottom:16px">🧪</div>
+      <div style="color:var(--gray-500);margin-bottom:8px">暂无测试数据</div>
+      <div style="font-size:12px;color:var(--gray-400)">测试功能开发中，敬请期待</div>
+    </div>`;
+}
+
+// 页面详情展开/收起
+function togglePageDetail(row, pageName) {
+  const detailRow = document.getElementById('detail-analyzed-' + pageName);
+  if (detailRow) {
+    const isVisible = detailRow.style.display !== 'none';
+    detailRow.style.display = isVisible ? 'none' : 'table-row';
+    row.querySelector('.expand-icon').style.transform = isVisible ? '' : 'rotate(90deg)';
+  }
+}
+
+function switchSummaryTab(tabName) {
+  document.querySelectorAll('.summary-tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.summary-tab-panel').forEach(panel => panel.classList.remove('active'));
+  
+  event.target.classList.add('active');
+  document.getElementById('summaryPanel' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+}
+
+function renderPageSummaryPanel() {
+  const tbody = document.querySelector('#pageSummaryTable tbody');
+  if (!currentProject || !currentProject.pages) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--gray-400)">暂无页面数据</td></tr>';
+    document.getElementById('pageSummaryBadge').textContent = '0 页面';
+    return;
+  }
+  
+  // 构建页面到Spec的映射
+  const pageToSpecs = {};
+  if (currentProject.specs) {
+    for (const spec of currentProject.specs) {
+      if (spec.coveredPages) {
+        for (const page of spec.coveredPages) {
+          if (!pageToSpecs[page]) pageToSpecs[page] = [];
+          pageToSpecs[page].push(spec.id);
+        }
+      }
+    }
+  }
+  
+  let totalComponents = 0;
+  let totalCovered = 0;
+  let html = '';
+  
+  for (const [pageName, pageData] of Object.entries(currentProject.pages)) {
+    const components = pageData.components || [];
+    let compCount = components.length;
+    let coveredCount = 0;
+    
+    // 如果有components数据，计算被Spec覆盖的组件数
+    if (compCount > 0) {
+      totalComponents += compCount;
+      for (const comp of components) {
+        const compSpecs = getComponentSpecs(pageName, comp.id);
+        if (compSpecs.length > 0) {
+          coveredCount++;
+          totalCovered++;
+        }
+      }
+    } else {
+      // 如果没有components数据，基于Spec的coveredPages推断
+      // 假设每个页面有基础功能点数（基于页面类型估算）
+      const baseComponentCount = estimateComponentCount(pageName);
+      compCount = baseComponentCount;
+      totalComponents += compCount;
+      
+      // 如果有Spec覆盖此页面，认为部分功能点已覆盖
+      const coveringSpecs = pageToSpecs[pageName] || [];
+      if (coveringSpecs.length > 0) {
+        coveredCount = Math.min(compCount, coveringSpecs.length * 3); // 每个Spec约覆盖3个功能点
+        totalCovered += coveredCount;
+      }
+    }
+    
+    const coveringSpecs = pageToSpecs[pageName] || [];
+    const coveragePct = compCount > 0 ? Math.round(coveredCount / compCount * 100) : 0;
+    const coverageColor = coveragePct === 100 ? 'var(--success)' : coveragePct > 0 ? 'var(--warning)' : 'var(--danger)';
+    
+    const specBadgesHtml = coveringSpecs.length > 0 
+      ? `<div style="margin-top:4px">${coveringSpecs.slice(0, 4).map(s => `<span class="spec-badge badge-analyzed" style="font-size:10px;margin-right:2px">${s}</span>`).join('')}${coveringSpecs.length > 4 ? `<span style="font-size:10px;color:var(--gray-500)">+${coveringSpecs.length - 4}</span>` : ''}</div>`
+      : '';
+    
+    html += `<tr>
+      <td><strong>${pageData.fullName || pageName}</strong>${specBadgesHtml}</td>
+      <td class="summary-num">${compCount}</td>
+      <td class="summary-num">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:600">${coveredCount}</span>
+          <div class="mini-progress" style="flex:1;min-width:60px">
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:${coveragePct}%;background:${coverageColor}"></div></div>
+          </div>
+          <span style="font-size:11px;color:${coverageColor};min-width:32px">${coveragePct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }
+  
+  tbody.innerHTML = html || '<tr><td colspan="3" style="text-align:center;color:var(--gray-400)">暂无页面数据</td></tr>';
+  document.getElementById('pageSummaryBadge').textContent = Object.keys(currentProject.pages || {}).length + ' 页面';
+  
+  // 更新顶部卡片的组件覆盖数据
+  const overallPct = totalComponents > 0 ? Math.round(totalCovered / totalComponents * 100) : 0;
+  document.getElementById('coverageValue').textContent = overallPct + '%';
+  document.getElementById('coverageSub').textContent = `${totalCovered} / ${totalComponents} 功能点已覆盖`;
+  document.getElementById('coverageBar').style.width = overallPct + '%';
+}
+
+// 根据页面类型估算组件数量
+function estimateComponentCount(pageName) {
+  const estimates = {
+    'MainPage': 12,
+    'PlayerPage': 18,
+    'SearchAllSongsPage': 6,
+    'AlbumContentPage': 10,
+    'ArtistContentPage': 10,
+    'FolderContentPage': 8,
+    'FolderPathPage': 6,
+    'SongInformationPage': 14,
+    'SettingsPage': 16,
+    'UserInterfacePage': 10,
+    'AccessibilityPage': 8,
+    'AudioOutputPage': 12,
+    'LyricsSettingsPage': 10,
+    'LyricsInterfacePage': 8,
+    'CarKitPage': 8,
+    'NotificationPage': 6,
+    'StartupAndBackendPage': 8,
+    'LanguageSettingsPage': 6,
+    'LaboratoryPage': 6,
+    'TabletModePage': 6,
+    'BlockedFoldersPage': 6,
+    'MediaSourcePage': 8,
+    'BackgroundMusicProtectionPage': 4,
+    'FxActivityPage': 10,
+    'AboutPage': 10,
+    'CreditsPage': 6,
+    'StatisticsPage': 8,
+    'MusicLibraryPage': 8,
+    'SaltPlayerProPage': 8,
+    'DevPage': 10,
+    'HelpAndFeedbackPage': 8,
+    'WindowsPlatformPage': 6,
+    'WebPage': 4
+  };
+  return estimates[pageName] || 6; // 默认6个组件
+}
+
+function renderReqSpecPlanPanel() {
+  const tbody = document.querySelector('#reqSpecPlanTable tbody');
+  
+  if (!currentProject || !currentProject.specs) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400)">暂无需求数据</td></tr>';
+    return;
+  }
+  
+  let html = '';
+  for (const spec of currentProject.specs) {
+    const scenarioCount = spec.scenarios ? spec.scenarios.length : 0;
+    const plan = currentProject.plans?.[spec.id];
+    const taskCount = plan?.summary?.total_tasks || 0;
+    const waveCount = plan?.summary?.total_waves || 0;
+    
+    html += `<tr>
+      <td>${spec.reqId || '-'}</td>
+      <td><span class="spec-badge badge-analyzed">${spec.id}</span> ${spec.title}</td>
+      <td class="summary-num">${scenarioCount}</td>
+      <td class="summary-num">${taskCount} / ${waveCount}</td>
+    </tr>`;
+  }
+  
+  tbody.innerHTML = html || '<tr><td colspan="4" style="text-align:center;color:var(--gray-400)">暂无数据</td></tr>';
+  
+  const uniqueReqs = new Set(currentProject.specs.map(s => s.reqId).filter(Boolean));
+  document.getElementById('reqSpecPlanBadge').textContent = uniqueReqs.size + ' 需求';
+}
+
+function renderDevStatusPanel() {
+  const tbody = document.querySelector('#devStatusTable tbody');
+  
+  if (!currentProject || !currentProject.plans || Object.keys(currentProject.plans).length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400)">暂无开发计划数据</td></tr>';
+    document.getElementById('devStatusBadge').textContent = '0 Plan';
+    return;
+  }
+  
+  let html = '';
+  let totalTasks = 0;
+  let totalDevelopedTasks = 0;
+  
+  for (const [specId, plan] of Object.entries(currentProject.plans)) {
+    const tasks = plan.summary?.total_tasks || 0;
+    const waves = plan.summary?.total_waves || 0;
+    const developed = 0; // 所有任务默认pending
+    
+    totalTasks += tasks;
+    totalDevelopedTasks += developed;
+    
+    html += `<tr>
+      <td><span class="spec-badge badge-analyzed">${specId}</span> ${plan.spec_name || ''}</td>
+      <td class="summary-num">${waves}</td>
+      <td class="summary-num">${tasks}</td>
+      <td class="summary-num">${developed}</td>
+    </tr>`;
+  }
+  
+  tbody.innerHTML = html;
+  document.getElementById('devStatusBadge').textContent = Object.keys(currentProject.plans).length + ' Plan';
+}
+
+function renderSpecTestSummaryPanel() {
+  const tbody = document.querySelector('#specTestSummaryTable tbody');
+  tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--gray-400)">暂无测试数据</td></tr>';
+  document.getElementById('specTestSummaryBadge').textContent = '0 Spec';
+}
+
+function renderIssueTrackerPanel() {
+  const tbody = document.querySelector('#issueTrackerTable tbody');
+  const issues = currentProject?.issues || [];
+  
+  if (issues.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray-400)">暂无问题</td></tr>';
+    document.getElementById('issueTrackerBadge').textContent = '0 问题';
+    return;
+  }
+  
+  let html = '';
+  for (let i = 0; i < issues.length; i++) {
+    const issue = issues[i];
+    const statusTag = issue.closed 
+      ? '<span class="tag tag-pass">已闭环</span>' 
+      : '<span class="tag" style="background:var(--warning-bg);color:#92400e">待处理</span>';
+    const specBadges = (issue.specs || []).map(s => 
+      `<span class="spec-badge badge-analyzed" style="font-size:10px">${s}</span>`
+    ).join(' ') || '-';
+    
+    html += `<tr>
+      <td style="max-width:280px">${issue.description}</td>
+      <td>${specBadges}</td>
+      <td>${issue.reporter || '-'}</td>
+      <td class="summary-num">${statusTag}</td>
+      <td class="summary-num">
+        <button onclick="toggleIssueClosed(${i})" style="padding:2px 8px;font-size:11px;margin-right:4px;border:1px solid var(--gray-300);border-radius:4px;cursor:pointer;background:#fff">${issue.closed ? '重新打开' : '标记闭环'}</button>
+        <button onclick="deleteIssue(${i})" style="padding:2px 8px;font-size:11px;border:1px solid var(--danger);border-radius:4px;cursor:pointer;background:#fff;color:var(--danger)">删除</button>
+      </td>
+    </tr>`;
+  }
+  
+  tbody.innerHTML = html;
+  const openCount = issues.filter(i => !i.closed).length;
+  document.getElementById('issueTrackerBadge').textContent = `${openCount} 问题`;
+}
+
+function showIssueForm() {
+  const container = document.getElementById('issueFormContainer');
+  container.style.display = 'block';
+  
+  // 获取所有Spec ID用于选择
+  const specOptions = (currentProject?.specs || []).map(s => 
+    `<option value="${s.id}">${s.id} - ${s.title}</option>`
+  ).join('');
+  
+  container.innerHTML = `
+    <div style="background:var(--gray-50);padding:16px;border-radius:8px;margin-bottom:12px;border:1px solid var(--gray-200)">
+      <h4 style="margin:0 0 12px 0;font-size:14px">添加新问题</h4>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <label style="display:block;font-size:12px;color:var(--gray-600);margin-bottom:4px">问题描述 *</label>
+          <textarea id="issueDescription" style="width:100%;height:60px;padding:8px;border:1px solid var(--gray-300);border-radius:6px;font-size:13px;resize:vertical" placeholder="请描述发现的问题..."></textarea>
+        </div>
+        <div style="display:flex;gap:12px">
+          <div style="flex:1">
+            <label style="display:block;font-size:12px;color:var(--gray-600);margin-bottom:4px">涉及Spec</label>
+            <select id="issueSpecs" multiple style="width:100%;height:80px;padding:8px;border:1px solid var(--gray-300);border-radius:6px;font-size:12px">
+              ${specOptions}
+            </select>
+            <span style="font-size:11px;color:var(--gray-500)">按住Ctrl多选</span>
+          </div>
+          <div style="flex:1">
+            <label style="display:block;font-size:12px;color:var(--gray-600);margin-bottom:4px">提出人</label>
+            <input type="text" id="issueReporter" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:6px;font-size:13px" placeholder="姓名">
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button onclick="hideIssueForm()" style="padding:6px 16px;border:1px solid var(--gray-300);border-radius:6px;background:#fff;cursor:pointer;font-size:13px">取消</button>
+          <button onclick="saveIssue()" style="padding:6px 16px;border:none;border-radius:6px;background:var(--primary);color:#fff;cursor:pointer;font-size:13px">保存问题</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function hideIssueForm() {
+  document.getElementById('issueFormContainer').style.display = 'none';
+}
+
+function saveIssue() {
+  const description = document.getElementById('issueDescription').value.trim();
+  const reporter = document.getElementById('issueReporter').value.trim();
+  const specsSelect = document.getElementById('issueSpecs');
+  const specs = Array.from(specsSelect.selectedOptions).map(o => o.value);
+  
+  if (!description) {
+    showToast('请输入问题描述', 'error');
+    return;
+  }
+  
+  if (!currentProject) {
+    showToast('请先导入项目', 'error');
+    return;
+  }
+  
+  if (!currentProject.issues) {
+    currentProject.issues = [];
+  }
+  
+  currentProject.issues.unshift({
+    id: 'ISSUE-' + Date.now(),
+    description: description,
+    specs: specs,
+    reporter: reporter,
+    closed: false,
+    createdAt: new Date().toISOString()
+  });
+  
+  saveToLocalStorage();
+  hideIssueForm();
+  renderIssueTrackerPanel();
+  showToast('问题已添加', 'success');
+}
+
+function deleteIssue(index) {
+  if (!currentProject || !currentProject.issues) return;
+  
+  if (confirm('确定要删除这个问题吗？')) {
+    currentProject.issues.splice(index, 1);
+    saveToLocalStorage();
+    renderIssueTrackerPanel();
+    showToast('问题已删除', 'success');
+  }
+}
+
+function toggleIssueClosed(index) {
+  if (!currentProject || !currentProject.issues) return;
+  
+  currentProject.issues[index].closed = !currentProject.issues[index].closed;
+  saveToLocalStorage();
+  renderIssueTrackerPanel();
+  showToast(currentProject.issues[index].closed ? '问题已标记为闭环' : '问题已重新打开', 'success');
+}
+
+function openSnapshotEditor(dateStr) {
+  const modal = document.getElementById('snapshotModal');
+  const title = document.getElementById('snapshotModalTitle');
+  const body = document.getElementById('snapshotModalBody');
+  
+  const editMode = !!dateStr;
+  title.textContent = editMode ? '编辑快照' : '添加快照';
+  
+  // 获取当前日期或编辑的日期
+  const snapshotDate = dateStr || new Date().toISOString().split('T')[0];
+  
+  // 获取现有快照数据（如果是编辑模式）
+  const existingSnapshot = editMode ? (currentProject?.snapshots || []).find(s => s.date === dateStr) : null;
+  
+  // 计算基于现有选择的统计数据
+  const initialSpecs = existingSnapshot?.developedSpecs || [];
+  const initialStats = calculateStatsFromSpecs(initialSpecs);
+  
+  body.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <label style="display:block;font-size:12px;color:var(--gray-600);margin-bottom:4px;font-weight:600">快照日期</label>
+        <input type="date" id="snapshotDate" value="${snapshotDate}" style="width:100%;padding:8px;border:1px solid var(--gray-300);border-radius:6px;font-size:14px" ${editMode ? 'readonly' : ''}>
+      </div>
+      
+      <div style="background:var(--gray-50);padding:12px;border-radius:8px;border:1px solid var(--gray-200)">
+        <h4 style="margin:0 0 12px 0;font-size:13px;color:var(--gray-700)">进度数据预览 <span style="font-size:11px;font-weight:400;color:var(--gray-500)">(勾选Spec后自动更新)</span></h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div style="font-size:11px;color:var(--gray-500)">已覆盖功能点数</div>
+            <div id="previewCoveredComponents" style="font-size:20px;font-weight:600;color:#8b5cf6">${initialStats.coveredComponents}</div>
+            <div style="font-size:11px;color:var(--gray-400)">/ 总计 ${initialStats.totalComponents}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray-500)">已开发Spec数</div>
+            <div id="previewDevelopedSpecs" style="font-size:20px;font-weight:600;color:#3b82f6">${initialSpecs.length}</div>
+            <div style="font-size:11px;color:var(--gray-400)">/ 总计 ${currentProject?.specs?.length || 0}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray-500)">已分析需求</div>
+            <div id="previewAnalyzedReqs" style="font-size:20px;font-weight:600;color:var(--primary)">${initialStats.analyzedReqs}</div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--gray-500)">相关Task数</div>
+            <div id="previewTotalTasks" style="font-size:20px;font-weight:600;color:var(--primary)">${initialStats.totalTasks}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div>
+        <label style="display:block;font-size:12px;color:var(--gray-600);margin-bottom:4px;font-weight:600">备注说明</label>
+        <textarea id="snapshotNote" style="width:100%;height:80px;padding:8px;border:1px solid var(--gray-300);border-radius:6px;font-size:13px;resize:vertical" placeholder="可选：添加关于此快照的备注说明...">${existingSnapshot?.note || ''}</textarea>
+      </div>
+      
+      <div>
+        <label style="display:block;font-size:12px;color:var(--gray-600);margin-bottom:8px;font-weight:600">已开发Spec（勾选保存状态）</label>
+        <div style="max-height:200px;overflow-y:auto;border:1px solid var(--gray-200);border-radius:6px;padding:8px;background:#fff" id="specCheckboxContainer">
+          ${renderSpecCheckboxes(initialSpecs)}
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 添加实时更新事件监听
+  setTimeout(() => {
+    const checkboxes = document.querySelectorAll('.snapshot-spec-check');
+    checkboxes.forEach(cb => {
+      cb.addEventListener('change', updatePreviewData);
+    });
+  }, 0);
+  
+  // 保存编辑模式标志
+  modal.dataset.editMode = editMode ? 'true' : 'false';
+  modal.dataset.originalDate = dateStr || '';
+  
+  modal.style.display = 'flex';
+}
+
+// 更新预览数据
+function updatePreviewData() {
+  const selectedSpecs = Array.from(document.querySelectorAll('.snapshot-spec-check:checked')).map(cb => cb.value);
+  const stats = calculateStatsFromSpecs(selectedSpecs);
+  
+  document.getElementById('previewCoveredComponents').textContent = stats.coveredComponents;
+  document.getElementById('previewDevelopedSpecs').textContent = selectedSpecs.length;
+  document.getElementById('previewAnalyzedReqs').textContent = stats.analyzedReqs;
+  document.getElementById('previewTotalTasks').textContent = stats.totalTasks;
+}
+
+function renderSpecCheckboxes(selectedSpecs) {
+  if (!currentProject?.specs) return '<div style="color:var(--gray-400);padding:8px">暂无Spec数据</div>';
+  
+  return currentProject.specs.map(spec => {
+    const checked = selectedSpecs.includes(spec.id) ? 'checked' : '';
+    return `
+      <label style="display:flex;align-items:center;gap:8px;padding:4px 8px;cursor:pointer;border-radius:4px;transition:background 0.15s" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'">
+        <input type="checkbox" class="snapshot-spec-check" value="${spec.id}" ${checked} style="accent-color:var(--primary)">
+        <span class="spec-badge badge-analyzed" style="font-size:11px">${spec.id}</span>
+        <span style="font-size:12px;color:var(--gray-600)">${spec.title}</span>
+      </label>
+    `;
+  }).join('');
+}
+
+function closeSnapshotModal() {
+  document.getElementById('snapshotModal').style.display = 'none';
+}
+
+function saveSnapshot() {
+  const date = document.getElementById('snapshotDate').value;
+  const note = document.getElementById('snapshotNote').value.trim();
+  const developedSpecs = Array.from(document.querySelectorAll('.snapshot-spec-check:checked')).map(cb => cb.value);
+  
+  if (!date) {
+    showToast('请选择快照日期', 'error');
+    return;
+  }
+  
+  if (!currentProject) {
+    showToast('请先导入项目', 'error');
+    return;
+  }
+  
+  if (!currentProject.snapshots) {
+    currentProject.snapshots = [];
+  }
+  
+  // 基于选择的Spec计算统计数据
+  const stats = calculateStatsFromSpecs(developedSpecs);
+  
+  const snapshot = {
+    date: date,
+    note: note,
+    developedSpecs: developedSpecs,
+    stats: {
+      totalComponents: stats.totalComponents,
+      coveredComponents: stats.coveredComponents,
+      analyzedReqs: stats.analyzedReqs,
+      totalTasks: stats.totalTasks,
+      developedTasks: stats.developedTasks,
+      totalTests: stats.totalTests,
+      passedTests: stats.passedTests
+    },
+    createdAt: new Date().toISOString()
+  };
+  
+  // 检查是否已存在同日期快照
+  const existingIndex = currentProject.snapshots.findIndex(s => s.date === date);
+  if (existingIndex >= 0) {
+    currentProject.snapshots[existingIndex] = snapshot;
+    showToast('快照已更新', 'success');
+  } else {
+    currentProject.snapshots.push(snapshot);
+    // 按日期排序
+    currentProject.snapshots.sort((a, b) => a.date.localeCompare(b.date));
+    showToast('快照已保存', 'success');
+  }
+  
+  saveToLocalStorage();
+  closeSnapshotModal();
+  renderTimelineChart();
+}
+
+// 根据选择的Spec计算统计数据
+function calculateStatsFromSpecs(selectedSpecIds) {
+  const stats = {
+    totalComponents: 0,
+    coveredComponents: 0,
+    analyzedReqs: 0,
+    totalTasks: 0,
+    developedTasks: 0,
+    totalTests: 0,
+    passedTests: 0,
+    developedSpecs: selectedSpecIds.length
+  };
+  
+  if (!currentProject) return stats;
+  
+  // 获取选择的Spec详情
+  const selectedSpecs = (currentProject.specs || []).filter(s => selectedSpecIds.includes(s.id));
+  
+  // 1. 计算总功能点数（所有页面的功能点总和）
+  if (currentProject.pages) {
+    for (const [pageName, pageData] of Object.entries(currentProject.pages)) {
+      const compCount = pageData.components?.length || estimateComponentCount(pageName);
+      stats.totalComponents += compCount;
+    }
+  }
+  
+  // 2. 计算已覆盖功能点数：基于选择的Spec覆盖的页面计算
+  const pageCoverage = {}; // 记录每个页面被多少个选择的Spec覆盖
+  
+  selectedSpecs.forEach(spec => {
+    if (spec.coveredPages) {
+      spec.coveredPages.forEach(page => {
+        pageCoverage[page] = (pageCoverage[page] || 0) + 1;
+      });
+    }
+  });
+  
+  // 计算已覆盖的功能点数
+  if (currentProject.pages) {
+    for (const [pageName, pageData] of Object.entries(currentProject.pages)) {
+      if (pageCoverage[pageName]) {
+        const compCount = pageData.components?.length || estimateComponentCount(pageName);
+        // 这个页面被选择的Spec覆盖了
+        // 每个覆盖该页面的Spec贡献一定的功能点覆盖
+        const coveringSpecsCount = pageCoverage[pageName];
+        const coveredComps = Math.min(compCount, coveringSpecsCount * 3); // 每个Spec覆盖最多3个功能点
+        stats.coveredComponents += coveredComps;
+      }
+    }
+  }
+  
+  // 3. 计算已分析需求数（基于选择的Spec）
+  const reqs = new Set(selectedSpecs.map(s => s.reqId).filter(Boolean));
+  stats.analyzedReqs = reqs.size;
+  
+  // 4. 计算相关Plan Task数（只计算选择的Spec对应的Task）
+  if (currentProject.plans) {
+    selectedSpecIds.forEach(specId => {
+      const plan = currentProject.plans[specId];
+      if (plan && plan.summary) {
+        stats.totalTasks += plan.summary.total_tasks || 0;
+      }
+    });
+  }
+  
+  return stats;
+}
+
+function deleteSnapshot(date) {
+  if (!currentProject?.snapshots) return;
+  
+  if (confirm(`确定要删除 ${date} 的快照吗？`)) {
+    currentProject.snapshots = currentProject.snapshots.filter(s => s.date !== date);
+    saveToLocalStorage();
+    renderTimelineChart();
+    deselectDay();
+    showToast('快照已删除', 'success');
+  }
+}
+
+function deselectDay() {
+  selectedDay = null;
+  document.getElementById('timelineActions').style.display = 'none';
+  renderTimelineChart();
+}
+
+function calculateCurrentStats() {
+  const stats = {
+    totalComponents: 0,
+    coveredComponents: 0,
+    analyzedReqs: 0,
+    totalTasks: 0,
+    developedTasks: 0,
+    totalTests: 0,
+    passedTests: 0
+  };
+  
+  if (!currentProject) return stats;
+  
+  // 组件功能点
+  if (currentProject.pages) {
+    for (const [pageName, pageData] of Object.entries(currentProject.pages)) {
+      const compCount = pageData.components?.length || estimateComponentCount(pageName);
+      stats.totalComponents += compCount;
+      
+      // 计算覆盖
+      const pageToSpecs = {};
+      if (currentProject.specs) {
+        for (const spec of currentProject.specs) {
+          if (spec.coveredPages?.includes(pageName)) {
+            stats.coveredComponents += Math.min(compCount, 3);
+          }
+        }
+      }
+    }
+  }
+  
+  // 需求分析
+  if (currentProject.specs) {
+    const reqs = new Set(currentProject.specs.map(s => s.reqId).filter(Boolean));
+    stats.analyzedReqs = reqs.size;
+  }
+  
+  // Plan Task
+  if (currentProject.plans) {
+    for (const plan of Object.values(currentProject.plans)) {
+      stats.totalTasks += plan.summary?.total_tasks || 0;
+    }
+  }
+  
+  return stats;
+}
+
+function renderTimelineChart() {
+  const canvas = document.getElementById('timelineChart');
+  const ctx = canvas.getContext('2d');
+  
+  // 设置canvas尺寸
+  const container = document.getElementById('chartWrap');
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = container.offsetWidth * dpr;
+  canvas.height = 300 * dpr;
+  canvas.style.width = container.offsetWidth + 'px';
+  canvas.style.height = '300px';
+  ctx.scale(dpr, dpr);
+  
+  const width = container.offsetWidth;
+  const height = 300;
+  
+  // 清空画布
+  ctx.clearRect(0, 0, width, height);
+  
+  const snapshots = currentProject?.snapshots || [];
+  
+  if (snapshots.length === 0) {
+    // 显示空状态
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '14px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('暂无快照数据，点击"添加快照"开始记录进度', width / 2, height / 2);
+    return;
+  }
+  
+  // 图表参数 - 左右两个Y轴
+  const padding = { top: 30, right: 70, bottom: 60, left: 70 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  
+  // 计算两个Y轴的最大值
+  let maxComponents = 0;
+  let maxSpecs = 0;
+  
+  snapshots.forEach(s => {
+    maxComponents = Math.max(maxComponents, s.stats?.coveredComponents || 0);
+    maxSpecs = Math.max(maxSpecs, (s.developedSpecs?.length || 0));
+  });
+  
+  // 确保最小值
+  maxComponents = Math.max(maxComponents, 10);
+  maxSpecs = Math.max(maxSpecs, 5);
+  
+  const yScaleComponents = chartHeight / maxComponents;
+  const yScaleSpecs = chartHeight / maxSpecs;
+  const xStep = chartWidth / Math.max(snapshots.length - 1, 1);
+  
+  // 绘制背景网格
+  ctx.strokeStyle = '#f3f4f6';
+  ctx.lineWidth = 1;
+  
+  // 水平网格线
+  const ySteps = 5;
+  for (let i = 0; i <= ySteps; i++) {
+    const y = padding.top + (chartHeight / ySteps) * i;
+    ctx.beginPath();
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(width - padding.right, y);
+    ctx.stroke();
+  }
+  
+  // 绘制左侧Y轴标签（已覆盖功能点数 - 紫色）
+  ctx.fillStyle = '#8b5cf6';
+  ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= ySteps; i++) {
+    const value = Math.round(maxComponents - (maxComponents / ySteps) * i);
+    const y = padding.top + (chartHeight / ySteps) * i;
+    ctx.fillText(value.toString(), padding.left - 10, y + 4);
+  }
+  
+  // 左侧Y轴标题
+  ctx.save();
+  ctx.translate(15, height / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillStyle = '#8b5cf6';
+  ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('已覆盖功能点', 0, 0);
+  ctx.restore();
+  
+  // 绘制右侧Y轴标签（已开发Spec数 - 蓝色）
+  ctx.fillStyle = '#3b82f6';
+  ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'left';
+  for (let i = 0; i <= ySteps; i++) {
+    const value = Math.round(maxSpecs - (maxSpecs / ySteps) * i);
+    const y = padding.top + (chartHeight / ySteps) * i;
+    ctx.fillText(value.toString(), width - padding.right + 10, y + 4);
+  }
+  
+  // 右侧Y轴标题
+  ctx.save();
+  ctx.translate(width - 15, height / 2);
+  ctx.rotate(Math.PI / 2);
+  ctx.fillStyle = '#3b82f6';
+  ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('已开发Spec', 0, 0);
+  ctx.restore();
+  
+  // 准备数据点
+  const componentPoints = [];
+  const specPoints = [];
+  
+  snapshots.forEach((snapshot, index) => {
+    const x = padding.left + (snapshots.length === 1 ? chartWidth / 2 : index * xStep);
+    
+    // 功能点覆盖（左侧Y轴）
+    const compY = padding.top + chartHeight - (snapshot.stats?.coveredComponents || 0) * yScaleComponents;
+    componentPoints.push({ x, y: compY, snapshot });
+    
+    // 已开发Spec数（右侧Y轴）
+    const specY = padding.top + chartHeight - (snapshot.developedSpecs?.length || 0) * yScaleSpecs;
+    specPoints.push({ x, y: specY, snapshot });
+  });
+  
+  // 绘制功能点覆盖折线（紫色 - 左侧Y轴）
+  if (componentPoints.length > 0) {
+    // 绘制区域填充
+    ctx.beginPath();
+    ctx.moveTo(componentPoints[0].x, padding.top + chartHeight);
+    componentPoints.forEach(point => {
+      ctx.lineTo(point.x, point.y);
+    });
+    ctx.lineTo(componentPoints[componentPoints.length - 1].x, padding.top + chartHeight);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(139, 92, 246, 0.1)';
+    ctx.fill();
+    
+    // 绘制折线
+    ctx.beginPath();
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    
+    componentPoints.forEach((point, index) => {
+      if (index === 0) {
+        ctx.moveTo(point.x, point.y);
+      } else {
+        ctx.lineTo(point.x, point.y);
+      }
+    });
+    ctx.stroke();
+  }
+  
+  // 绘制已开发Spec折线（蓝色 - 右侧Y轴）
+  if (specPoints.length > 0) {
+    // 绘制区域填充
+    ctx.beginPath();
+    ctx.moveTo(specPoints[0].x, padding.top + chartHeight);
+    specPoints.forEach(point => {
+      ctx.lineTo(point.x, point.y);
+    });
+    ctx.lineTo(specPoints[specPoints.length - 1].x, padding.top + chartHeight);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+    ctx.fill();
+    
+    // 绘制折线
+    ctx.beginPath();
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    
+    specPoints.forEach((point, index) => {
+      if (index === 0) {
+        ctx.moveTo(point.x, point.y);
+      } else {
+        ctx.lineTo(point.x, point.y);
+      }
+    });
+    ctx.stroke();
+  }
+  
+  // 绘制数据点 - 功能点（紫色）
+  componentPoints.forEach(point => {
+    const isSelected = selectedDay === point.snapshot.date;
+    
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, isSelected ? 7 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#8b5cf6';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    if (isSelected) {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 11, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+  });
+  
+  // 绘制数据点 - 已开发Spec（蓝色）
+  specPoints.forEach(point => {
+    const isSelected = selectedDay === point.snapshot.date;
+    
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, isSelected ? 7 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#3b82f6';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    if (isSelected) {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 11, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(59, 130, 246, 0.5)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+  });
+  
+  // 绘制X轴日期标签
+  const maxLabels = Math.min(snapshots.length, 10);
+  const labelStep = Math.ceil(snapshots.length / maxLabels);
+  
+  snapshots.forEach((snapshot, index) => {
+    if (index % labelStep === 0 || index === snapshots.length - 1) {
+      const x = padding.left + (snapshots.length === 1 ? chartWidth / 2 : index * xStep);
+      const dateLabel = snapshot.date.slice(5); // MM-DD
+      
+      // 背景
+      ctx.fillStyle = selectedDay === snapshot.date ? '#4f46e5' : '#6b7280';
+      ctx.font = (selectedDay === snapshot.date ? 'bold ' : '') + '11px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(dateLabel, x, height - padding.bottom + 20);
+    }
+  });
+  
+  // X轴标题
+  ctx.fillStyle = '#374151';
+  ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('日期', width / 2, height - 10);
+}
+
+function exportProgressReport() {
+  if (!currentProject || !currentProject.snapshots || currentProject.snapshots.length === 0) {
+    showToast('暂无快照数据可导出', 'warning');
+    return;
+  }
+  
+  const snapshot = currentProject.snapshots.find(s => s.date === selectedDay) || currentProject.snapshots[currentProject.snapshots.length - 1];
+  
+  let markdown = `# ${currentProject.projectName} 迁移进度报告\n\n`;
+  markdown += `**报告日期**: ${snapshot.date}\n\n`;
+  markdown += `---\n\n`;
+  markdown += `## 进度概览\n\n`;
+  markdown += `| 指标 | 数值 | 进度 |\n`;
+  markdown += `| --- | --- | --- |\n`;
+  
+  const coveragePct = snapshot.stats?.totalComponents > 0 
+    ? Math.round((snapshot.stats?.coveredComponents || 0) / snapshot.stats.totalComponents * 100) 
+    : 0;
+  markdown += `| 组件功能点覆盖 | ${snapshot.stats?.coveredComponents || 0} / ${snapshot.stats?.totalComponents || 0} | ${coveragePct}% |\n`;
+  
+  markdown += `| 需求已分析 | ${snapshot.stats?.analyzedReqs || 0} | 100% |\n`;
+  
+  const taskPct = snapshot.stats?.totalTasks > 0 
+    ? Math.round((snapshot.stats?.developedTasks || 0) / snapshot.stats.totalTasks * 100) 
+    : 0;
+  markdown += `| Plan Task已开发 | ${snapshot.stats?.developedTasks || 0} / ${snapshot.stats?.totalTasks || 0} | ${taskPct}% |\n`;
+  
+  markdown += `| 测试用例通过 | ${snapshot.stats?.passedTests || 0} / ${snapshot.stats?.totalTests || 0} | - |\n`;
+  
+  if (snapshot.note) {
+    markdown += `\n---\n\n## 备注\n\n${snapshot.note}\n`;
+  }
+  
+  if (snapshot.developedSpecs && snapshot.developedSpecs.length > 0) {
+    markdown += `\n---\n\n## 已开发Spec\n\n`;
+    snapshot.developedSpecs.forEach(specId => {
+      const spec = currentProject.specs?.find(s => s.id === specId);
+      if (spec) {
+        markdown += `- **${spec.id}**: ${spec.title}\n`;
+      }
+    });
+  }
+  
+  markdown += `\n---\n\n*报告生成时间: ${new Date().toLocaleString('zh-CN')}*\n`;
+  
+  // 下载文件
+  const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${currentProject.projectName}_进度报告_${snapshot.date}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+  
+  showToast('进度报告已导出', 'success');
+}
+
+function handleChartClick(event) {
+  if (!currentProject?.snapshots || currentProject.snapshots.length === 0) return;
+  
+  const canvas = document.getElementById('timelineChart');
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  
+  const snapshots = currentProject.snapshots;
+  const width = canvas.offsetWidth;
+  const height = 300;
+  const padding = { top: 30, right: 30, bottom: 60, left: 70 };
+  const chartWidth = width - padding.left - padding.right;
+  const chartHeight = height - padding.top - padding.bottom;
+  const xStep = chartWidth / Math.max(snapshots.length - 1, 1);
+  
+  // 检测点击的是哪个快照数据点
+  const clickRadius = 15;
+  
+  for (let i = 0; i < snapshots.length; i++) {
+    const pointX = padding.left + (snapshots.length === 1 ? chartWidth / 2 : i * xStep);
+    
+    // 检查x坐标是否在范围内
+    if (Math.abs(x - pointX) <= clickRadius) {
+      selectedDay = snapshots[i].date;
+      document.getElementById('timelineActions').style.display = 'flex';
+      renderTimelineChart();
+      
+      // 显示tooltip
+      showChartTooltip(event, snapshots[i]);
+      return;
+    }
+  }
+  
+  // 点击空白区域，取消选择
+  hideChartTooltip();
+  deselectDay();
+}
+
+function showChartTooltip(event, snapshot) {
+  const tooltip = document.getElementById('chartTooltip');
+  const canvas = document.getElementById('timelineChart');
+  const rect = canvas.getBoundingClientRect();
+  
+  const developedSpecs = snapshot.developedSpecs?.length || 0;
+  const coveredComponents = snapshot.stats?.coveredComponents || 0;
+  const totalComponents = snapshot.stats?.totalComponents || 0;
+  const coveragePct = totalComponents > 0 ? Math.round(coveredComponents / totalComponents * 100) : 0;
+  
+  tooltip.innerHTML = `
+    <div style="font-weight:600;margin-bottom:4px">${snapshot.date}</div>
+    <div style="font-size:11px">
+      <div style="display:flex;align-items:center;gap:6px;margin:2px 0">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b5cf6"></span>
+        功能点覆盖: ${coveredComponents} / ${totalComponents} (${coveragePct}%)
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin:2px 0">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#3b82f6"></span>
+        已开发Spec: ${developedSpecs}个
+      </div>
+    </div>
+    ${snapshot.note ? `<div style="font-size:10px;color:#9ca3af;margin-top:4px;font-style:italic">${snapshot.note}</div>` : ''}
+  `;
+  
+  tooltip.style.left = (event.clientX - rect.left + 10) + 'px';
+  tooltip.style.top = (event.clientY - rect.top - 10) + 'px';
+  tooltip.style.opacity = '1';
+}
+
+function hideChartTooltip() {
+  document.getElementById('chartTooltip').style.opacity = '0';
+}
+
+function handleChartHover(event) {
+  if (!currentProject?.snapshots || currentProject.snapshots.length === 0) return;
+  
+  const canvas = document.getElementById('timelineChart');
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  
+  const snapshots = currentProject.snapshots;
+  const width = canvas.offsetWidth;
+  const padding = { top: 30, right: 30, bottom: 60, left: 70 };
+  const chartWidth = width - padding.left - padding.right;
+  const xStep = chartWidth / Math.max(snapshots.length - 1, 1);
+  
+  // 检测悬停在哪个快照上
+  const hoverRadius = 20;
+  
+  for (let i = 0; i < snapshots.length; i++) {
+    const pointX = padding.left + (snapshots.length === 1 ? chartWidth / 2 : i * xStep);
+    
+    if (Math.abs(x - pointX) <= hoverRadius) {
+      canvas.style.cursor = 'pointer';
+      showChartTooltip(event, snapshots[i]);
+      return;
+    }
+  }
+  
+  canvas.style.cursor = 'default';
+  hideChartTooltip();
+}
+
+function showToast(message, type = 'info') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast toast-' + type + ' show';
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
